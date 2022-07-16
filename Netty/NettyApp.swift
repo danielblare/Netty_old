@@ -10,9 +10,7 @@ import SwiftUI
 @main
 struct NettyApp: App {
     
-    @State private var userSignedIn: Bool = false
-    @StateObject private var signUpViewModel = SignUpViewModel()
-    
+    @State private var userSignedIn: Bool = false // Is signed in logic
     
     var body: some Scene {
         WindowGroup {
@@ -20,7 +18,6 @@ struct NettyApp: App {
 //                HomeView()
             } else {
                 SignUpView()
-                    .environmentObject(signUpViewModel)
             }
         }
     }
