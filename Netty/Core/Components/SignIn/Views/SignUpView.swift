@@ -92,7 +92,7 @@ extension SignUpView {
                 
             }
             .navigationTitle("Welcome to Netty")
-            .background(Color.theme.background.onTapGesture {
+            .background(Color.theme.background.ignoresSafeArea().onTapGesture {
                 UIApplication.shared.endEditing()
             })
         }
@@ -152,7 +152,7 @@ extension SignUpView {
                 
             }
             .navigationTitle("Create account")
-            .background(Color.theme.background.onTapGesture {
+            .background(Color.theme.background.ignoresSafeArea().onTapGesture {
                 UIApplication.shared.endEditing()
             })
         }
@@ -276,7 +276,7 @@ extension SignUpView {
                 }
             }
             .navigationTitle("Create Nickname")
-            .background(Color.theme.background.onTapGesture {
+            .background(Color.theme.background.ignoresSafeArea().onTapGesture {
                 UIApplication.shared.endEditing()
             })
         }

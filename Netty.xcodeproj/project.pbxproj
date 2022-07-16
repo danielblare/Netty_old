@@ -16,6 +16,7 @@
 		BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AAF2882DA3800CBDEAD /* UserModel.swift */; };
 		BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */; };
 		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
+		BBE9E48E2883626900775325 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9E48D2883626900775325 /* HapticManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		BBE72AAF2882DA3800CBDEAD /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		BBE9E48D2883626900775325 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +86,7 @@
 		BBE72A9F2882CE3E00CBDEAD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				BBE9E48D2883626900775325 /* HapticManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -226,6 +229,7 @@
 			files = (
 				BBA71B952883024A0089D613 /* String.swift in Sources */,
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
+				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,

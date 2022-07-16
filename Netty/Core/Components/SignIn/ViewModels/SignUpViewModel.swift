@@ -203,9 +203,11 @@ class SignUpViewModel: ObservableObject {
 
             if nickname.hasPrefix("stuffed") { // Logic simulation
                 availabilityIsPassed = true
+                HapticManager.instance.notification(of: .success)
                 nextButtonIsDisabled = false
             } else {
                 nicknameError = NicknameError.nameIsUsed
+                HapticManager.instance.notification(of: .error)
             }
         })
     }
