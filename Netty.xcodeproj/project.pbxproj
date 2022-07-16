@@ -7,18 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BBA71B952883024A0089D613 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B942883024A0089D613 /* String.swift */; };
+		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
 		BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A912882CE0600CBDEAD /* NettyApp.swift */; };
-		BBE72A942882CE0600CBDEAD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A932882CE0600CBDEAD /* ContentView.swift */; };
 		BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A952882CE0800CBDEAD /* Assets.xcassets */; };
 		BBE72A992882CE0800CBDEAD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */; };
+		BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AAB2882D27100CBDEAD /* SignUpView.swift */; };
+		BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AAF2882DA3800CBDEAD /* UserModel.swift */; };
+		BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */; };
+		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BBA71B942883024A0089D613 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		BBE72A8E2882CE0600CBDEAD /* Netty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Netty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
-		BBE72A932882CE0600CBDEAD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		BBE72A952882CE0800CBDEAD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		BBE72AAB2882D27100CBDEAD /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		BBE72AAF2882DA3800CBDEAD /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
+		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +46,7 @@
 			isa = PBXGroup;
 			children = (
 				BBE72A902882CE0600CBDEAD /* Netty */,
+				BBE72A952882CE0800CBDEAD /* Assets.xcassets */,
 				BBE72A8F2882CE0600CBDEAD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -52,8 +63,11 @@
 			isa = PBXGroup;
 			children = (
 				BBE72A912882CE0600CBDEAD /* NettyApp.swift */,
-				BBE72A932882CE0600CBDEAD /* ContentView.swift */,
-				BBE72A952882CE0800CBDEAD /* Assets.xcassets */,
+				BBE72A9F2882CE3E00CBDEAD /* Utilities */,
+				BBE72AA02882CE5100CBDEAD /* Extensions */,
+				BBE72AA12882CE7100CBDEAD /* Services */,
+				BBE72AA22882CE8C00CBDEAD /* Models */,
+				BBE72AA32882CE9E00CBDEAD /* Core */,
 				BBE72A972882CE0800CBDEAD /* Preview Content */,
 			);
 			path = Netty;
@@ -65,6 +79,79 @@
 				BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		BBE72A9F2882CE3E00CBDEAD /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		BBE72AA02882CE5100CBDEAD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BBE72AB52882ED2200CBDEAD /* Color.swift */,
+				BBA71B942883024A0089D613 /* String.swift */,
+				BBA71B96288307390089D613 /* UIApplication.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		BBE72AA12882CE7100CBDEAD /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		BBE72AA22882CE8C00CBDEAD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BBE72AAF2882DA3800CBDEAD /* UserModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		BBE72AA32882CE9E00CBDEAD /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				BBE72AA62882CED100CBDEAD /* Components */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		BBE72AA62882CED100CBDEAD /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				BBE72AA82882D23E00CBDEAD /* SignIn */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		BBE72AA82882D23E00CBDEAD /* SignIn */ = {
+			isa = PBXGroup;
+			children = (
+				BBE72AA92882D25000CBDEAD /* ViewModels */,
+				BBE72AAA2882D25800CBDEAD /* Views */,
+			);
+			path = SignIn;
+			sourceTree = "<group>";
+		};
+		BBE72AA92882D25000CBDEAD /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		BBE72AAA2882D25800CBDEAD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BBE72AAB2882D27100CBDEAD /* SignUpView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,7 +224,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBE72A942882CE0600CBDEAD /* ContentView.swift in Sources */,
+				BBA71B952883024A0089D613 /* String.swift in Sources */,
+				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
+				BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */,
+				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
+				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
+				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,11 +362,14 @@
 				DEVELOPMENT_TEAM = VFJ7656544;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Netty;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortraitUpsideDown;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -282,6 +377,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = stuffeddanny.Netty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -299,11 +397,14 @@
 				DEVELOPMENT_TEAM = VFJ7656544;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Netty;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortraitUpsideDown;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -311,6 +412,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = stuffeddanny.Netty;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

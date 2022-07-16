@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct NettyApp: App {
+    
+    @State private var userSignedIn: Bool = false
+    @StateObject private var signUpViewModel = SignUpViewModel()
+    
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if userSignedIn {
+//                HomeView()
+            } else {
+                SignUpView()
+                    .environmentObject(signUpViewModel)
+            }
         }
     }
 }
