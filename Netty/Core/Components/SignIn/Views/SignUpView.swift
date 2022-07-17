@@ -66,9 +66,9 @@ extension SignUpView {
                             isLastNameFieldActive = true
                         })
                     
-                    DatePicker("Birthday", selection: $vm.birthDate, in: vm.dateRangeFor18yearsOld, displayedComponents: .date)
-                        .padding()
-                        .background(Color.secondary.opacity(0.3).cornerRadius(15))
+//                    DatePicker("Birthday", selection: $vm.birthDate, in: vm.dateRangeFor18yearsOld, displayedComponents: .date)
+//                        .padding()
+//                        .background(Color.secondary.opacity(0.3).cornerRadius(15))
                 }
                 .padding()
                 
@@ -204,7 +204,6 @@ extension SignUpView {
                         
                         // TextField
                         TextField("Nickname", text: $vm.nicknameTextField)
-                            .disabled(vm.nicknameFieldIsDisabled)
                             .autocorrectionDisabled(true)
                             .focused($isNicknameFieldActive)
                             .padding()
@@ -244,35 +243,17 @@ extension SignUpView {
                     .padding()
                     
                     Spacer()
-                    
-                    // Check button if needed or next if availability test was passed
-                    if !vm.availabilityIsPassed {
-                        Button {
-                            let nickname = vm.nicknameTextField
-                            Task {
-                                await vm.checkAvailability(of: nickname)
-                            }
-                        } label: {
-                            Text("Check Availability")
-                                .padding(.horizontal, 5)
-                                .font(.title3)
-                        }
-                        .disabled(vm.checkButtonIsDisabled)
-                        .buttonStyle(.borderedProminent)
-                        .accentColor(.green)
-                        .padding()
-                    } else {
-                        Button {
-                            vm.moveToTheNextRegistrationLevel()
-                        } label: {
-                            Text("Next")
-                                .padding(.horizontal, 5)
-                                .font(.title3)
-                        }
-                        .disabled(vm.nextButtonIsDisabled)
-                        .buttonStyle(.borderedProminent)
-                        .padding()
+
+                    Button {
+                        vm.moveToTheNextRegistrationLevel()
+                    } label: {
+                        Text("Next")
+                            .padding(.horizontal, 5)
+                            .font(.title3)
                     }
+                    .disabled(vm.nextButtonIsDisabled)
+                    .buttonStyle(.borderedProminent)
+                    .padding()
                 }
             }
             .navigationTitle("Create Nickname")

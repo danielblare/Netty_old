@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BBA71B952883024A0089D613 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B942883024A0089D613 /* String.swift */; };
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
+		BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */; };
 		BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A912882CE0600CBDEAD /* NettyApp.swift */; };
 		BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A952882CE0800CBDEAD /* Assets.xcassets */; };
 		BBE72A992882CE0800CBDEAD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */; };
@@ -22,6 +23,7 @@
 /* Begin PBXFileReference section */
 		BBA71B942883024A0089D613 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCheckManager.swift; sourceTree = "<group>"; };
 		BBE72A8E2882CE0600CBDEAD /* Netty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Netty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
 		BBE72A952882CE0800CBDEAD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 		BBE72AA12882CE7100CBDEAD /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -231,6 +234,7 @@
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */,
+				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
 				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,

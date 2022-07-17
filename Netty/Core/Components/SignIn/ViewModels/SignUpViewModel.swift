@@ -36,9 +36,9 @@ class SignUpViewModel: ObservableObject {
     @Published var nicknameTextField: String = ""
     @Published var nicknameError: NicknameError = .none
     @Published var nicknameIsChecking: Bool = false // Progress view
-    @Published var checkButtonIsDisabled: Bool = true
     @Published var availabilityIsPassed: Bool = false
-    @Published var nicknameFieldIsDisabled: Bool = false
+    private var checkTask = Task{}
+
     
     // Universal values
     @Published var nextButtonIsDisabled: Bool = true
@@ -115,14 +115,15 @@ class SignUpViewModel: ObservableObject {
             // After 0.5 second of inactivity checks whether first and last names are correct
             sharedPublisher
                 .debounce(for: 0.5, scheduler: DispatchQueue.main)
-                .map({ ($0.containsOnlyLetters() && $0.count >= 3) && ($1.containsOnlyLetters() && $1.count >= 3) })
-                .sink { [weak self] receivedValue in
-                    self?.nextButtonIsDisabled = !receivedValue
+                .filter({ ($0.containsOnlyLetters() && $0.count >= 3) && ($1.containsOnlyLetters() && $1.count >= 3) })
+                .sink { [weak self] _ in
+                    self?.nextButtonIsDisabled = false
                 }
                 .store(in: &cancellables)
             
             // Disables next button immidiatly with any field change
             sharedPublisher
+                .filter({ _ in !self.nextButtonIsDisabled })
                 .sink { [weak self] _ in
                     self?.nextButtonIsDisabled = true
                 }
@@ -135,17 +136,18 @@ class SignUpViewModel: ObservableObject {
             
             // After 0.5 second of inactivity checks whether email is correct
             sharedPublisher
+                .removeDuplicates()
                 .debounce(for: 0.5, scheduler: DispatchQueue.main)
-                .map { email in
-                    email.isValidEmail()
-                }
-                .sink { [weak self] receivedValue in
-                    self?.nextButtonIsDisabled = !receivedValue
+                .filter({ $0.isValidEmail() })
+                .sink { [weak self] _ in
+                    self?.nextButtonIsDisabled = false
                 }
                 .store(in: &cancellables)
             
             // Disables next button immidiatly with any field change
             sharedPublisher
+                .removeDuplicates()
+                .filter({ _ in !self.nextButtonIsDisabled })
                 .sink { [weak self] _ in
                     self?.nextButtonIsDisabled = true
                 }
@@ -156,60 +158,57 @@ class SignUpViewModel: ObservableObject {
             let sharedPublisher = $nicknameTextField
                 .share()
             
-            // After 0.5 second of inactivity checks whether nickname is at least 3 symbols long and unlocks check availability button
+            let manager = AvailabilityCheckManager.instance
+            
+            // After 0.5 second of inactivity checks whether nickname is at least 3 symbols long and available
             sharedPublisher
-                .dropFirst(3)
+                .removeDuplicates()
+                .drop(while: { $0.count == 0 })
                 .debounce(for: 0.5, scheduler: DispatchQueue.main)
-                .sink { [weak self] reveivedValue in
-                    if reveivedValue.count < 3 {
-                        self?.nicknameError = NicknameError.length
-                    } else {
-                        if let self = self,
-                           !self.nicknameIsChecking {
-                            self.checkButtonIsDisabled = false
+                .sink { [weak self] returnedValue in
+                    if let self = self {
+                        self.availabilityIsPassed = false
+                        if returnedValue.count < 3 {
+                            self.nicknameError = .length
+                        } else {
+                            self.nicknameIsChecking = true
+                            self.checkTask = Task {
+                                let check = await manager.checkAvailability(for: self.nicknameTextField)
+                                if !self.checkTask.isCancelled {
+                                    await MainActor.run(body: {
+                                        if check {
+                                            self.availabilityIsPassed = true
+                                            HapticManager.instance.notification(of: .success)
+                                            self.nextButtonIsDisabled = false
+                                        } else {
+                                            self.nicknameError = .nameIsUsed
+                                            HapticManager.instance.notification(of: .error)
+                                        }
+                                        self.nicknameIsChecking = false
+                                    })
+                                }
+                            }
                         }
                     }
                 }
                 .store(in: &cancellables)
-
-            // Disables next and check buttons immidiatly with any field change
+            
+            // Disables next button and stops availability checking task immidiatly with any field change
             sharedPublisher
-                .sink { [weak self] _ in
+                .removeDuplicates()
+                .drop(while: { $0.count == 0 })
+                .filter({ _ in !self.checkTask.isCancelled || self.nicknameIsChecking || !self.nextButtonIsDisabled || self.nicknameError != .none || self.availabilityIsPassed })
+                .sink { [weak self] returnedValue in
                     if let self = self {
-                        self.checkButtonIsDisabled = true
+                        self.checkTask.cancel()
+                        self.nicknameIsChecking = false
                         self.nextButtonIsDisabled = true
-                        self.availabilityIsPassed = false
                         self.nicknameError = .none
+                        self.availabilityIsPassed = false
                     }
                 }
                 .store(in: &cancellables)
-
         }
-    }
-    
-    /// Checks availability of the nickname
-    func checkAvailability(of nickname: String) async {
-        await MainActor.run(body: {
-            nicknameFieldIsDisabled = true
-            checkButtonIsDisabled = true
-            nicknameIsChecking = true
-        })
-        
-        try? await Task.sleep(nanoseconds: 2_000_000_000) // Delay simulation
-        
-        await MainActor.run(body: {
-            nicknameFieldIsDisabled = false
-            nicknameIsChecking = false
-
-            if nickname.hasPrefix("stuffed") { // Logic simulation
-                availabilityIsPassed = true
-                HapticManager.instance.notification(of: .success)
-                nextButtonIsDisabled = false
-            } else {
-                nicknameError = NicknameError.nameIsUsed
-                HapticManager.instance.notification(of: .error)
-            }
-        })
     }
     
     /// Returns next registration level
