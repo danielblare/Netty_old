@@ -11,7 +11,7 @@ import Combine
 
 actor AvailabilityCheckManager {
     
-    static let instance = AvailabilityCheckManager()
+    static let instance = AvailabilityCheckManager() // Singleton
     private init() {}
     
     /// Checks availability of the nickname

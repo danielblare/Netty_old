@@ -15,6 +15,7 @@ extension String {
     static let lowercasedLetters = "abcdefghijklmnopqrstuvwxyz"
     static let numbers = "0123456789"
     
+    /// Checks whether string contains only latin letters
     func containsOnlyLetters() -> Bool {
        for chr in self {
           if (!(chr >= "a" && chr <= "z") && !(chr >= "A" && chr <= "Z") ) {
@@ -30,23 +31,25 @@ extension String {
             case tail
         }
 
-        func truncated(limit: Int, position: TruncationPosition = .tail, leader: String = "...") -> String {
-            guard self.count > limit else { return self }
+    /// Returns truncated string
+    func truncated(limit: Int, position: TruncationPosition = .tail, leader: String = "...") -> String {
+        guard self.count > limit else { return self }
 
-            switch position {
-            case .head:
-                return leader + self.suffix(limit)
-            case .middle:
-                let headCharactersCount = Int(ceil(Float(limit - leader.count) / 2.0))
+        switch position {
+        case .head:
+            return leader + self.suffix(limit)
+        case .middle:
+            let headCharactersCount = Int(ceil(Float(limit - leader.count) / 2.0))
 
-                let tailCharactersCount = Int(floor(Float(limit - leader.count) / 2.0))
-                
-                return "\(self.prefix(headCharactersCount))\(leader)\(self.suffix(tailCharactersCount))"
-            case .tail:
-                return self.prefix(limit) + leader
-            }
+            let tailCharactersCount = Int(floor(Float(limit - leader.count) / 2.0))
+            
+            return "\(self.prefix(headCharactersCount))\(leader)\(self.suffix(tailCharactersCount))"
+        case .tail:
+            return self.prefix(limit) + leader
         }
+    }
     
+    /// Checks whether string is valid email adress
     func isValidEmail() -> Bool {
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
 
@@ -54,6 +57,7 @@ extension String {
         return emailPred.evaluate(with: self)
     }
     
+    /// Checks whether string contains unacceptable symbols such as non latin letters or spaces
     func containsUnacceptableSymbols() -> Bool {
         let characterset = CharacterSet(charactersIn: String.specialSymbols + String.capitalLetters + String.lowercasedLetters + String.numbers)
         if self.rangeOfCharacter(from: characterset.inverted) != nil {
@@ -62,6 +66,7 @@ extension String {
         return false
     }
     
+    /// Checks whether string contains special symbols
     func containsSpecialSymbols() -> Bool {
         let characterset = CharacterSet(charactersIn: String.specialSymbols)
         if self.rangeOfCharacter(from: characterset) != nil {
@@ -70,6 +75,7 @@ extension String {
         return false
     }
     
+    /// Checks whether string contains numbers
     func containsNumbers() -> Bool {
         let characterset = CharacterSet(charactersIn: String.numbers)
         if self.rangeOfCharacter(from: characterset) != nil {
@@ -78,6 +84,7 @@ extension String {
         return false
     }
     
+    /// Checks whether string contains capital letters
     func containsCapitalLetters() -> Bool {
         let characterset = CharacterSet(charactersIn: String.capitalLetters)
         if self.rangeOfCharacter(from: characterset) != nil {
@@ -86,6 +93,7 @@ extension String {
         return false
     }
     
+    /// Checks whether string contains lowercased letters
     func containsLowercasedLetters() -> Bool {
         let characterset = CharacterSet(charactersIn: String.lowercasedLetters)
         if self.rangeOfCharacter(from: characterset) != nil {

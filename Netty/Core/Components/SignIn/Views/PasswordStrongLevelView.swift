@@ -46,9 +46,18 @@ struct PasswordStrongLevelView: View {
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 2) {
-                        
+            
             dividers
-                .overlay(overlayView.mask(dividers))
+                .overlay(
+                    GeometryReader { geo in
+                        HStack {
+                            Spacer(minLength: 0)
+                            Rectangle()
+                                .foregroundColor(.gray)
+                                .frame(width: CGFloat(4 - segmentsOpened) / 4 * geo.size.width)
+                        }
+                    }
+                        .mask(dividers))
             
             Text(message.rawValue)
                 .font(.caption)
@@ -59,17 +68,6 @@ struct PasswordStrongLevelView: View {
         .padding(.horizontal, 10)
     }
     
-    private var overlayView: some View {
-        GeometryReader { geo in
-            HStack {
-                Spacer(minLength: 0)
-                Rectangle()
-                    .foregroundColor(.gray)
-                    .frame(width: CGFloat(4 - segmentsOpened) / 4 * geo.size.width)
-
-            }
-        }
-    }
     
     private var dividers: some View {
         HStack {

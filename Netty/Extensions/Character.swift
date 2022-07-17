@@ -9,7 +9,8 @@ import Foundation
 
 extension Character {
     
-    func existsInSet(string: String) -> Bool {
+    /// Checks whether character exists in string which is set of charactes
+    func existsInSet(of string: String) -> Bool {
         let characterset = CharacterSet(charactersIn: string)
         if "\(self)".rangeOfCharacter(from: characterset) != nil {
             return true

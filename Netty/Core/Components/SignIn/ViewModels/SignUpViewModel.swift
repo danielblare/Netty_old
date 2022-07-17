@@ -13,7 +13,7 @@ class SignUpViewModel: ObservableObject {
     
     init() {
         // Starting page
-        registrationLevel = .password
+        registrationLevel = .name
         
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
@@ -24,7 +24,6 @@ class SignUpViewModel: ObservableObject {
         addSubscribers(for: registrationLevel)
     }
 
-    
     /// Registration progress
     enum RegistrationLevel {
         case name, email, nickname, password
@@ -34,6 +33,7 @@ class SignUpViewModel: ObservableObject {
     enum NicknameError: String {
         case nameIsUsed = "Name is already used"
         case length = "Enter 3 or more symbols"
+        case space = "Nickname contains unacceptable characters"
         case none = ""
     }
     
@@ -46,7 +46,6 @@ class SignUpViewModel: ObservableObject {
             }
         }
     }
-    
     @Published var lastNameTextField: String = "" {
         didSet {
             if lastNameTextField.count > nameAndLastNameSymbolsLimit {
@@ -204,6 +203,8 @@ class SignUpViewModel: ObservableObject {
                         self.availabilityIsPassed = false
                         if returnedValue.count < 3 {
                             self.nicknameError = .length
+                        } else if returnedValue.containsUnacceptableSymbols() {
+                            self.nicknameError = .space
                         } else {
                             self.nicknameIsChecking = true
                             self.checkTask = Task {
@@ -257,7 +258,6 @@ class SignUpViewModel: ObservableObject {
                 })
                 .map(mapPasswords)
                 .sink(receiveValue: { [weak self] passed, message in
-                    print("Published value received \(passed.description) \(message.rawValue)")
                     if passed {
                         self?.nextButtonIsDisabled = false
                     }
@@ -276,6 +276,7 @@ class SignUpViewModel: ObservableObject {
         }
     }
     
+    /// Returnes bool and PasswordWarningMessage where bool is true if password passed check and equals confirmation field
     private func mapPasswords(_ password: String, _ confirmation: String) -> (Bool, PasswordWarningMessage) {
         if password.count < 8 { return (false, .short) } else {
             if password.containsUnacceptableSymbols() { return (false, .unacceptableSymbols) } else {
@@ -287,16 +288,16 @@ class SignUpViewModel: ObservableObject {
                 
                 
                 for char in password {
-                    if char.existsInSet(string: String.specialSymbols) {
+                    if char.existsInSet(of: String.specialSymbols) {
                         uniqueSpecialSymbols.append("\(char)")
                     }
-                    if char.existsInSet(string: String.capitalLetters) {
+                    if char.existsInSet(of: String.capitalLetters) {
                         uniqueCapitalLetters.append("\(char)")
                     }
-                    if char.existsInSet(string: String.lowercasedLetters) {
+                    if char.existsInSet(of: String.lowercasedLetters) {
                         uniqueLowercasedLetters.append("\(char)")
                     }
-                    if char.existsInSet(string: String.numbers) {
+                    if char.existsInSet(of: String.numbers) {
                         uniqueNumbers.append("\(char)")
                     }
                 }

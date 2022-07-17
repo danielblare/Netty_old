@@ -34,12 +34,11 @@ struct CreatePasswordPageView: View {
                 
                 Spacer()
                 
-                // Field
+                // Fields
                 VStack(spacing: 10) {
                     
                     Spacer()
                     
-                    // TextField
                     SecureInputView("Password", text: $vm.passwordField) { activeField = .confPass }
                         
                         .textContentType(.newPassword)
@@ -83,6 +82,7 @@ struct CreatePasswordPageView: View {
                     
                     Spacer()
                     
+                    // Next button
                     Button {
                         vm.moveToTheNextRegistrationLevel()
                     } label: {
