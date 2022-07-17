@@ -9,35 +9,11 @@ import Foundation
 import SwiftUI
 import Combine
 
-enum PasswordStrongLevel: Int {
-    case none = 0
-    case weak = 1
-    case medium = 2
-    case strong = 3
-    case veryStrong = 4
-}
-
-
 class SignUpViewModel: ObservableObject {
-    
-    func upgrade() {
-        switch strongLevel {
-        case .none:
-            strongLevel = .weak
-        case .weak:
-            strongLevel = .medium
-        case .medium:
-            strongLevel = .strong
-        case .strong:
-            strongLevel = .veryStrong
-        case .veryStrong:
-            strongLevel = .none
-        }
-    }
     
     init() {
         // Starting page
-        registrationLevel = .nickname
+        registrationLevel = .password
         
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
@@ -62,25 +38,66 @@ class SignUpViewModel: ObservableObject {
     }
     
     // Name page
-    @Published var firstNameTextField: String = ""
-    @Published var lastNameTextField: String = ""
+    private let nameAndLastNameSymbolsLimit: Int = 35
+    @Published var firstNameTextField: String = "" {
+        didSet {
+            if firstNameTextField.count > nameAndLastNameSymbolsLimit {
+                firstNameTextField = firstNameTextField.truncated(limit: nameAndLastNameSymbolsLimit, position: .tail, leader: "")
+            }
+        }
+    }
+    
+    @Published var lastNameTextField: String = "" {
+        didSet {
+            if lastNameTextField.count > nameAndLastNameSymbolsLimit {
+                lastNameTextField = lastNameTextField.truncated(limit: nameAndLastNameSymbolsLimit, position: .tail, leader: "")
+            }
+        }
+    }
     var birthDate: Date
     var dateRangeFor18yearsOld: ClosedRange<Date>
     
     // Email page
-    @Published var emailTextField: String = ""
+    private let emailSymbolsLimit: Int = 64
+    @Published var emailTextField: String = "" {
+        didSet {
+            if emailTextField.count > emailSymbolsLimit {
+                emailTextField = emailTextField.truncated(limit: emailSymbolsLimit, position: .tail, leader: "")
+            }
+        }
+    }
     
     // Nickname page
-    @Published var nicknameTextField: String = ""
+    private let nicknameSymbolsLimit: Int = 20
+    @Published var nicknameTextField: String = "" {
+        didSet {
+            if nicknameTextField.count > nicknameSymbolsLimit {
+                nicknameTextField = nicknameTextField.truncated(limit: nicknameSymbolsLimit, position: .tail, leader: "")
+            }
+        }
+    }
     @Published var nicknameError: NicknameError = .none
     @Published var nicknameIsChecking: Bool = false // Progress view
     @Published var availabilityIsPassed: Bool = false
     private var checkTask = Task{}
 
     // Password page
-    @Published var passwordField: String = ""
-    @Published var passwordConfirmField: String = ""
-    @Published var strongLevel: PasswordStrongLevel = .none
+    private let passwordSymbolsLimit: Int = 23
+    @Published var passwordField: String = "" {
+        didSet {
+            if passwordField.count > passwordSymbolsLimit {
+                passwordField = passwordField.truncated(limit: passwordSymbolsLimit, position: .tail, leader: "")
+            }
+        }
+    }
+    @Published var passwordConfirmField: String = "" {
+        didSet {
+            if passwordConfirmField.count > passwordSymbolsLimit {
+                passwordConfirmField = passwordConfirmField.truncated(limit: passwordSymbolsLimit, position: .tail, leader: "")
+            }
+        }
+    }
+    @Published var passwordMessage: PasswordWarningMessage = .short
     
     
     // Universal values
@@ -228,7 +245,79 @@ class SignUpViewModel: ObservableObject {
             
             
         case .password:
-            break
+            
+            let sharedPublisher = $passwordField
+                .combineLatest($passwordConfirmField)
+                .share()
+            
+            sharedPublisher
+                .debounce(for: 0.7, scheduler: DispatchQueue.main)
+                .filter({ password, _ in
+                    password.count >= 8
+                })
+                .map(mapPasswords)
+                .sink(receiveValue: { [weak self] passed, message in
+                    print("Published value received \(passed.description) \(message.rawValue)")
+                    if passed {
+                        self?.nextButtonIsDisabled = false
+                    }
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        self?.passwordMessage = message
+                    }
+                })
+                .store(in: &cancellables)
+            
+            sharedPublisher
+                .filter( { _, _ in !self.nextButtonIsDisabled })
+                .sink { [weak self] _, _ in
+                    self?.nextButtonIsDisabled = true
+                }
+                .store(in: &cancellables)
+        }
+    }
+    
+    private func mapPasswords(_ password: String, _ confirmation: String) -> (Bool, PasswordWarningMessage) {
+        if password.count < 8 { return (false, .short) } else {
+            if password.containsUnacceptableSymbols() { return (false, .unacceptableSymbols) } else {
+                var uniqueSpecialSymbols: [String] = []
+                var uniqueCapitalLetters: [String] = []
+                var uniqueLowercasedLetters: [String] = []
+                var uniqueNumbers: [String] = []
+                
+                
+                
+                for char in password {
+                    if char.existsInSet(string: String.specialSymbols) {
+                        uniqueSpecialSymbols.append("\(char)")
+                    }
+                    if char.existsInSet(string: String.capitalLetters) {
+                        uniqueCapitalLetters.append("\(char)")
+                    }
+                    if char.existsInSet(string: String.lowercasedLetters) {
+                        uniqueLowercasedLetters.append("\(char)")
+                    }
+                    if char.existsInSet(string: String.numbers) {
+                        uniqueNumbers.append("\(char)")
+                    }
+                }
+                
+                uniqueSpecialSymbols = Array(Set(uniqueSpecialSymbols))
+                uniqueCapitalLetters = Array(Set(uniqueCapitalLetters))
+                uniqueLowercasedLetters = Array(Set(uniqueLowercasedLetters))
+                uniqueNumbers = Array(Set(uniqueNumbers))
+                if password.count > 12 && password.containsLowercasedLetters() && password.containsNumbers() && password.containsCapitalLetters() && password.containsSpecialSymbols() && uniqueSpecialSymbols.count >= 2 &&
+                    (uniqueNumbers.count >= 3 || uniqueLowercasedLetters.count >= 3 || uniqueCapitalLetters.count >= 3) {
+                    return (password == confirmation, .veryStrong)
+                } else if password.count > 10 && password.containsLowercasedLetters() && password.containsNumbers() && (password.containsCapitalLetters() || password.containsSpecialSymbols()) && (uniqueCapitalLetters.count >= 3 || uniqueSpecialSymbols.count >= 2) && (uniqueNumbers.count >= 3 || uniqueLowercasedLetters.count >= 3) {
+                    return (password == confirmation, .strong)
+                } else if password.containsLowercasedLetters() && password.containsNumbers() && password.containsCapitalLetters() && uniqueLowercasedLetters.count >= 2  && (uniqueNumbers.count >= 2 || uniqueCapitalLetters.count >= 2) {
+                    return (password == confirmation, .medium)
+                } else if password.containsNumbers() && (password.containsLowercasedLetters() || password.containsCapitalLetters()) {
+                    return (password == confirmation, .weak)
+                } else {
+                    return (false, .numbersAndLetters)
+                }
+            }
         }
     }
     

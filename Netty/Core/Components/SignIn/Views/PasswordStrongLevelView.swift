@@ -7,30 +7,40 @@
 
 import SwiftUI
 
+enum PasswordWarningMessage: String {
+    case short = "Enter at least 8 symbols"
+    case unacceptableSymbols = "Password contains unacceptable symbols"
+    case numbersAndLetters = "Password should contain letters and numbers"
+    case weak = "Weak"
+    case medium = "Medium"
+    case strong = "Strong"
+    case veryStrong = "Very strong"
+}
+
 struct PasswordStrongLevelView: View {
     
-    @Binding private var level: PasswordStrongLevel
+    @Binding private var message: PasswordWarningMessage
     private let weakColor: Color = .red
     private let mediumColor: Color = .orange
     private let strongColor: Color = .yellow
     private let veryStrongColor: Color = .green
-    private var text: String {
-        switch level {
-        case .none:
-            return ""
+    private var segmentsOpened: Int {
+        switch message {
         case .weak:
-            return "Weak"
+            return 1
         case .medium:
-            return "Medium"
+            return 2
         case .strong:
-            return "Strong"
+            return 3
         case .veryStrong:
-            return "Very strong"
+            return 4
+        default:
+            return 0
         }
     }
-
-    init(level: Binding<PasswordStrongLevel>) {
-        self._level = level
+    
+    init(message: Binding<PasswordWarningMessage>) {
+        self._message = message
     }
     
     
@@ -40,10 +50,10 @@ struct PasswordStrongLevelView: View {
             dividers
                 .overlay(overlayView.mask(dividers))
             
-            Text(text)
+            Text(message.rawValue)
                 .font(.caption)
                 .padding(.trailing, 5)
-                .animation(.none, value: level)
+                .animation(.none, value: message)
         }
         
         .padding(.horizontal, 10)
@@ -55,7 +65,7 @@ struct PasswordStrongLevelView: View {
                 Spacer(minLength: 0)
                 Rectangle()
                     .foregroundColor(.gray)
-                    .frame(width: CGFloat(4 - level.rawValue) / 4 * geo.size.width)
+                    .frame(width: CGFloat(4 - segmentsOpened) / 4 * geo.size.width)
 
             }
         }
@@ -82,10 +92,10 @@ struct PasswordStrongLevelView: View {
 
 struct PasswordStrongLevelView_Previews: PreviewProvider {
     
-    @State private static var level: PasswordStrongLevel = .veryStrong
+    @State private static var message: PasswordWarningMessage = .veryStrong
     
     static var previews: some View {
-        PasswordStrongLevelView(level: $level)
+        PasswordStrongLevelView(message: $message)
             .padding()
             .previewLayout(.sizeThatFits)
     }

@@ -40,7 +40,8 @@ struct CreatePasswordPageView: View {
                     Spacer()
                     
                     // TextField
-                    SecureField("Password", text: $vm.passwordField) { activeField = .confPass }
+                    SecureInputView("Password", text: $vm.passwordField) { activeField = .confPass }
+                        
                         .textContentType(.newPassword)
                         .focused($activeField, equals: .pass)
                         .padding()
@@ -48,9 +49,9 @@ struct CreatePasswordPageView: View {
                             activeField = .pass
                         })
                     
-                    PasswordStrongLevelView(level: $vm.strongLevel)
+                    PasswordStrongLevelView(message: $vm.passwordMessage)
                     
-                    SecureField("Confirm password", text: $vm.passwordConfirmField)
+                    SecureInputView("Confirm password", text: $vm.passwordConfirmField) { !vm.nextButtonIsDisabled ? vm.moveToTheNextRegistrationLevel() : UIApplication.shared.endEditing() }
                         .textContentType(.newPassword)
                         .focused($activeField, equals: .confPass)
                         .padding()

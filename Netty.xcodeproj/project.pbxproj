@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB34BAC728848E3100636BE5 /* SecureInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC628848E3100636BE5 /* SecureInputView.swift */; };
+		BB34BAC92884A52D00636BE5 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC82884A52D00636BE5 /* Character.swift */; };
 		BBA71B952883024A0089D613 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B942883024A0089D613 /* String.swift */; };
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
 		BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */; };
@@ -26,6 +28,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BB34BAC328848B1A00636BE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BB34BAC528848C6E00636BE5 /* Netty.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Netty.entitlements; sourceTree = "<group>"; };
+		BB34BAC628848E3100636BE5 /* SecureInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureInputView.swift; sourceTree = "<group>"; };
+		BB34BAC82884A52D00636BE5 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		BBA71B942883024A0089D613 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCheckManager.swift; sourceTree = "<group>"; };
@@ -59,6 +65,7 @@
 		BBE72A852882CE0600CBDEAD = {
 			isa = PBXGroup;
 			children = (
+				BB34BAC528848C6E00636BE5 /* Netty.entitlements */,
 				BBE72A902882CE0600CBDEAD /* Netty */,
 				BBE72A952882CE0800CBDEAD /* Assets.xcassets */,
 				BBE72A8F2882CE0600CBDEAD /* Products */,
@@ -76,6 +83,7 @@
 		BBE72A902882CE0600CBDEAD /* Netty */ = {
 			isa = PBXGroup;
 			children = (
+				BB34BAC328848B1A00636BE5 /* Info.plist */,
 				BBE72A912882CE0600CBDEAD /* NettyApp.swift */,
 				BBE72A9F2882CE3E00CBDEAD /* Utilities */,
 				BBE72AA02882CE5100CBDEAD /* Extensions */,
@@ -108,6 +116,7 @@
 				BBE72AB52882ED2200CBDEAD /* Color.swift */,
 				BBA71B942883024A0089D613 /* String.swift */,
 				BBA71B96288307390089D613 /* UIApplication.swift */,
+				BB34BAC82884A52D00636BE5 /* Character.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -171,6 +180,7 @@
 				BBBD05AA288455FE00F18140 /* NicknamePageView.swift */,
 				BBBD05AC2884563800F18140 /* CreatePasswordPageView.swift */,
 				BBBD05B0288459B200F18140 /* PasswordStrongLevelView.swift */,
+				BB34BAC628848E3100636BE5 /* SecureInputView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -245,12 +255,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB34BAC728848E3100636BE5 /* SecureInputView.swift in Sources */,
 				BBA71B952883024A0089D613 /* String.swift in Sources */,
 				BBBD05B1288459B200F18140 /* PasswordStrongLevelView.swift in Sources */,
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */,
+				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
@@ -384,12 +396,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Netty/Netty.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Netty/Preview Content\"";
 				DEVELOPMENT_TEAM = VFJ7656544;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Netty/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Netty;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -419,12 +433,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Netty/Netty.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Netty/Preview Content\"";
 				DEVELOPMENT_TEAM = VFJ7656544;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Netty/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Netty;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
