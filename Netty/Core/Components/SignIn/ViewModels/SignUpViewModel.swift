@@ -13,7 +13,7 @@ class SignUpViewModel: ObservableObject {
     
     init() {
         // Starting page
-        registrationLevel = .name
+        registrationLevel = .password
         
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!

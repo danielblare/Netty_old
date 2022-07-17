@@ -47,6 +47,8 @@ struct EmailPageView: View {
                 
                 Spacer()
                 
+                Spacer()
+                
                 // Buttons
                 HStack {
                     Button {

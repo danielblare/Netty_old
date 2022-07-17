@@ -9,10 +9,16 @@ import SwiftUI
 
 struct SecureInputView: View {
     
-    @Binding private var text: String
     @State private var isSecured: Bool = true
+    @Binding private var text: String
     private var title: String
     private let completion: (() -> Void)?
+    
+    enum FocusedValue {
+        case secure, text
+    }
+    
+    @FocusState private var activeField: FocusedValue?
     
     init(_ title: String, text: Binding<String>, completion: (() -> Void)? = nil) {
         self.title = title
@@ -28,27 +34,42 @@ struct SecureInputView: View {
                         guard let completion = completion else { return }
                         completion()
                     }
-                    .autocorrectionDisabled(true)
-                    .textContentType(.newPassword)
+                    .textContentType(.password)
+                    .keyboardType(.asciiCapable)
                     .frame(minHeight: 25)
+                    .padding()
+                    .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
+                        activeField = .secure
+                    })
+
                 } else {
                     TextField(title, text: $text) {
                         guard let completion = completion else { return }
                         completion()
                     }
-                    .autocorrectionDisabled(true)
+                    .textContentType(.password)
                     .textInputAutocapitalization(.never)
-                    .textContentType(.newPassword)
+                    .keyboardType(.asciiCapable)
                     .frame(minHeight: 25)
+                    .padding()
+                    .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
+                        activeField = .text
+                    })
                 }
-            }.padding(.trailing, 32)
-            
-            Button(action: {
-                isSecured.toggle()
-            }) {
-                Image(systemName: self.isSecured ? "eye.slash" : "eye")
-                    .accentColor(.gray)
             }
+            icon
+                .onTapGesture {
+                    withAnimation(.linear(duration: 0.05)) {
+                        isSecured.toggle()
+                    }
+                }
         }
+    }
+    
+    private var icon: some View {
+        Image(systemName: self.isSecured ? "eye.slash" : "eye")
+            .accentColor(.gray)
+            .padding()
+            .background(Color.secondary.opacity(0.0001))
     }
 }

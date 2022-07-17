@@ -66,6 +66,8 @@ struct NamePageView: View {
                 
                 Spacer()
                 
+                Spacer()
+                
                 // Buttons
                 HStack {
                     Spacer()

@@ -36,34 +36,19 @@ struct CreatePasswordPageView: View {
                 
                 // Fields
                 VStack(spacing: 10) {
-                    
-                    Spacer()
-                    
+                                        
                     SecureInputView("Password", text: $vm.passwordField) { activeField = .confPass }
-                        
-                        .textContentType(.newPassword)
                         .focused($activeField, equals: .pass)
-                        .padding()
-                        .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                            activeField = .pass
-                        })
                     
                     PasswordStrongLevelView(message: $vm.passwordMessage)
                     
                     SecureInputView("Confirm password", text: $vm.passwordConfirmField) { !vm.nextButtonIsDisabled ? vm.moveToTheNextRegistrationLevel() : UIApplication.shared.endEditing() }
-                        .textContentType(.newPassword)
                         .focused($activeField, equals: .confPass)
-                        .padding()
-                        .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                            activeField = .confPass
-                        })
-                    
-                    
-                    Spacer()
-                    
                 }
                 .padding()
                 
+                Spacer()
+
                 Spacer()
                 
                 // Buttons

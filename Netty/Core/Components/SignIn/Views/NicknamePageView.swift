@@ -70,6 +70,7 @@ struct NicknamePageView: View {
                         TextField("Nickname", text: $vm.nicknameTextField) { !vm.nextButtonIsDisabled ? vm.moveToTheNextRegistrationLevel() : UIApplication.shared.endEditing() }
                             .autocorrectionDisabled(true)
                             .textContentType(.nickname)
+                            .keyboardType(.asciiCapable)
                             .focused($activeField, equals: .nick)
                             .padding()
                             .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
@@ -90,6 +91,8 @@ struct NicknamePageView: View {
                     
                 }
                 .padding()
+                
+                Spacer()
                 
                 Spacer()
                 
