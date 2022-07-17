@@ -21,26 +21,41 @@ struct SecureTextField: View {
     }
     
     var body: some View {
-        ZStack(alignment: .trailing) {
+        ZStack {
             if !showPassword {
                 SecureField(title, text: $text) {
                     guard let completion = completion else { return }
                     completion()
                 }
+                .padding(.horizontal)
+                .frame(height: 20)
             } else {
                 TextField(title, text: $text) {
                     guard let completion = completion else { return }
                     completion()
                 }
+                .padding(.horizontal)
+                .frame(height: 20)
             }
             
-            Image(systemName: showPassword ? "eye.slash" : "eye")
-                .frame(height: 25)
-                .onTapGesture {
-                    withAnimation(.easeIn(duration: 0.09)) {
-                        showPassword.toggle()
-                    }
+            HStack {
+                Spacer()
+                
+                Image(systemName: showPassword ? "eye.slash" : "eye")
+                    .frame(height: 20)
+                    .padding()
+                    .background(content: {
+                        Rectangle()
+                            .cornerRadius(10)
+                            .foregroundColor(.secondary.opacity(0.00001))
+                    })
+                    .onTapGesture {
+                        withAnimation(.easeIn(duration: 0.09)) {
+                            showPassword.toggle()
+                        }
                 }
+            }
         }
+        
     }
 }

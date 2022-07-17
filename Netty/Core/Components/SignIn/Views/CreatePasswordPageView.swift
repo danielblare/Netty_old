@@ -41,7 +41,6 @@ struct CreatePasswordPageView: View {
                     SecureTextField("Password", text: $vm.passwordField)
                         .autocorrectionDisabled(true)
                         .focused($isPasswordFieldActive)
-                        .padding()
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                             isPasswordFieldActive = true
                         })
@@ -51,21 +50,10 @@ struct CreatePasswordPageView: View {
                     SecureTextField("Confirm password", text: $vm.passwordConfirmField) { !vm.nextButtonIsDisabled ? vm.moveToTheNextRegistrationLevel() : UIApplication.shared.endEditing() }
                         .autocorrectionDisabled(true)
                         .focused($isPasswordConfirmFieldActive)
-                        .padding()
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                             isPasswordConfirmFieldActive = true
                         })
                     
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            vm.upgrade()
-                        }
-                    } label: {
-                        Text("Upgrade")
-                            .padding(.horizontal, 5)
-                            .font(.title3)
-                    }
-                    .padding()
                     
                     Spacer()
                     
