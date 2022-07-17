@@ -36,11 +36,13 @@ struct SecureInputView: View {
                     }
                     .textContentType(.password)
                     .keyboardType(.asciiCapable)
+                    .focused($activeField, equals: .secure)
                     .frame(minHeight: 25)
                     .padding()
                     .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                         activeField = .secure
                     })
+                    .animation(.none, value: isSecured)
 
                 } else {
                     TextField(title, text: $text) {
@@ -50,16 +52,18 @@ struct SecureInputView: View {
                     .textContentType(.password)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.asciiCapable)
+                    .focused($activeField, equals: .text)
                     .frame(minHeight: 25)
                     .padding()
                     .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                         activeField = .text
                     })
+                    .animation(.none, value: isSecured)
                 }
             }
             icon
                 .onTapGesture {
-                    withAnimation(.linear(duration: 0.05)) {
+                    withAnimation(.linear(duration: 0.09)) {
                         isSecured.toggle()
                     }
                 }
