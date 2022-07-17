@@ -16,7 +16,7 @@ actor AvailabilityCheckManager {
     
     /// Checks availability of the nickname
     func checkAvailability(for nickname: String) async -> Bool {
-        try? await Task.sleep(nanoseconds: 2_000_000_000) // Delay simulation
+        try? await Task.sleep(nanoseconds: 500_000_000) // Delay simulation
         
         return nickname.hasPrefix("stuffed")
     }

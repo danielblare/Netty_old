@@ -10,7 +10,6 @@
 		BBA71B952883024A0089D613 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B942883024A0089D613 /* String.swift */; };
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
 		BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */; };
-		BBBD05A52884537E00F18140 /* SecureTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A42884537E00F18140 /* SecureTextField.swift */; };
 		BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A6288454E200F18140 /* NamePageView.swift */; };
 		BBBD05A92884556B00F18140 /* EmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A82884556B00F18140 /* EmailPageView.swift */; };
 		BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05AA288455FE00F18140 /* NicknamePageView.swift */; };
@@ -30,7 +29,6 @@
 		BBA71B942883024A0089D613 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCheckManager.swift; sourceTree = "<group>"; };
-		BBBD05A42884537E00F18140 /* SecureTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureTextField.swift; sourceTree = "<group>"; };
 		BBBD05A6288454E200F18140 /* NamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePageView.swift; sourceTree = "<group>"; };
 		BBBD05A82884556B00F18140 /* EmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPageView.swift; sourceTree = "<group>"; };
 		BBBD05AA288455FE00F18140 /* NicknamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknamePageView.swift; sourceTree = "<group>"; };
@@ -100,8 +98,6 @@
 		BBE72A9F2882CE3E00CBDEAD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				BBBD05A42884537E00F18140 /* SecureTextField.swift */,
-				BBBD05B0288459B200F18140 /* PasswordStrongLevelView.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -174,6 +170,7 @@
 				BBBD05A82884556B00F18140 /* EmailPageView.swift */,
 				BBBD05AA288455FE00F18140 /* NicknamePageView.swift */,
 				BBBD05AC2884563800F18140 /* CreatePasswordPageView.swift */,
+				BBBD05B0288459B200F18140 /* PasswordStrongLevelView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -252,7 +249,6 @@
 				BBBD05B1288459B200F18140 /* PasswordStrongLevelView.swift in Sources */,
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
-				BBBD05A52884537E00F18140 /* SecureTextField.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */,
 				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,

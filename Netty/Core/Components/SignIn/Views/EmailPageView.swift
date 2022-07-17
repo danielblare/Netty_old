@@ -11,7 +11,11 @@ struct EmailPageView: View {
     
     @ObservedObject private var vm: SignUpViewModel
     
-    @FocusState private var isEmailFieldActive: Bool
+    enum FocusedValue {
+        case email
+    }
+    
+    @FocusState private var activeField: FocusedValue?
 
     init(vm: SignUpViewModel) {
         self.vm = vm
@@ -32,11 +36,12 @@ struct EmailPageView: View {
                 // TextField
                 TextField("E-mail", text: $vm.emailTextField) { !vm.nextButtonIsDisabled ? vm.moveToTheNextRegistrationLevel() : UIApplication.shared.endEditing() }
                     .keyboardType(.emailAddress)
+                    .textContentType(.emailAddress)
                     .autocorrectionDisabled(true)
-                    .focused($isEmailFieldActive)
+                    .focused($activeField, equals: .email)
                     .padding()
                     .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                        isEmailFieldActive = true
+                        activeField = .email
                     })
                     .padding()
                 

@@ -9,10 +9,13 @@ import SwiftUI
 
 struct NamePageView: View {
     
+    enum FocusedValue {
+        case name, lastName
+    }
+    
     @ObservedObject private var vm: SignUpViewModel
     
-    @FocusState private var isFirstNameFieldActive: Bool
-    @FocusState private var isLastNameFieldActive: Bool
+    @FocusState private var activeField: FocusedValue?
     
     init(vm: SignUpViewModel) {
         self.vm = vm
@@ -33,21 +36,23 @@ struct NamePageView: View {
                 
                 // Fields
                 VStack(spacing: 15) {
-                    TextField("First name", text: $vm.firstNameTextField)
+                    TextField("First name", text: $vm.firstNameTextField) { activeField = .lastName }
+                        .textContentType(.givenName)
                         .autocorrectionDisabled(true)
-                        .focused($isFirstNameFieldActive)
+                        .focused($activeField, equals: .name)
                         .padding()
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                            isFirstNameFieldActive = true
+                            activeField = .name
                         })
                         
                     
-                    TextField("Last name", text: $vm.lastNameTextField)
+                    TextField("Last name", text: $vm.lastNameTextField) { UIApplication.shared.endEditing() }
+                        .textContentType(.familyName)
                         .autocorrectionDisabled(true)
-                        .focused($isLastNameFieldActive)
+                        .focused($activeField, equals: .lastName)
                         .padding()
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                            isLastNameFieldActive = true
+                            activeField = .lastName
                         })
                 
                     DatePicker("Birthday", selection: $vm.birthDate, in: vm.dateRangeFor18yearsOld, displayedComponents: .date)

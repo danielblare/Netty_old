@@ -11,7 +11,11 @@ struct NicknamePageView: View {
     
     @ObservedObject private var vm: SignUpViewModel
     
-    @FocusState private var isNicknameFieldActive: Bool
+    enum FocusedValue {
+        case nick
+    }
+    
+    @FocusState private var activeField: FocusedValue?
     
     init(vm: SignUpViewModel) {
         self.vm = vm
@@ -65,10 +69,11 @@ struct NicknamePageView: View {
                         // TextField
                         TextField("Nickname", text: $vm.nicknameTextField) { !vm.nextButtonIsDisabled ? vm.moveToTheNextRegistrationLevel() : UIApplication.shared.endEditing() }
                             .autocorrectionDisabled(true)
-                            .focused($isNicknameFieldActive)
+                            .textContentType(.nickname)
+                            .focused($activeField, equals: .nick)
                             .padding()
                             .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                                isNicknameFieldActive = true
+                                activeField = .nick
                             })
                     }
                     

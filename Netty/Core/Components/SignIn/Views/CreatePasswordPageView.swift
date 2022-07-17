@@ -11,9 +11,11 @@ struct CreatePasswordPageView: View {
     
     @ObservedObject private var vm: SignUpViewModel
     
-    @FocusState private var isPasswordFieldActive: Bool
-    @FocusState private var isPasswordConfirmFieldActive: Bool
+    enum FocusedValue {
+        case pass, confPass
+    }
     
+    @FocusState private var activeField: FocusedValue?
     
     init(vm: SignUpViewModel) {
         self.vm = vm
@@ -38,20 +40,22 @@ struct CreatePasswordPageView: View {
                     Spacer()
                     
                     // TextField
-                    SecureTextField("Password", text: $vm.passwordField)
-                        .autocorrectionDisabled(true)
-                        .focused($isPasswordFieldActive)
+                    SecureField("Password", text: $vm.passwordField) { activeField = .confPass }
+                        .textContentType(.newPassword)
+                        .focused($activeField, equals: .pass)
+                        .padding()
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                            isPasswordFieldActive = true
+                            activeField = .pass
                         })
                     
                     PasswordStrongLevelView(level: $vm.strongLevel)
                     
-                    SecureTextField("Confirm password", text: $vm.passwordConfirmField) { !vm.nextButtonIsDisabled ? vm.moveToTheNextRegistrationLevel() : UIApplication.shared.endEditing() }
-                        .autocorrectionDisabled(true)
-                        .focused($isPasswordConfirmFieldActive)
+                    SecureField("Confirm password", text: $vm.passwordConfirmField)
+                        .textContentType(.newPassword)
+                        .focused($activeField, equals: .confPass)
+                        .padding()
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                            isPasswordConfirmFieldActive = true
+                            activeField = .confPass
                         })
                     
                     
