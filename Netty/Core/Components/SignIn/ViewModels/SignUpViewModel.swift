@@ -9,11 +9,49 @@ import Foundation
 import SwiftUI
 import Combine
 
+enum PasswordStrongLevel: Int {
+    case none = 0
+    case weak = 1
+    case medium = 2
+    case strong = 3
+    case veryStrong = 4
+}
+
+
 class SignUpViewModel: ObservableObject {
+    
+    func upgrade() {
+        switch strongLevel {
+        case .none:
+            strongLevel = .weak
+        case .weak:
+            strongLevel = .medium
+        case .medium:
+            strongLevel = .strong
+        case .strong:
+            strongLevel = .veryStrong
+        case .veryStrong:
+            strongLevel = .none
+        }
+    }
+    
+    init() {
+        // Starting page
+        registrationLevel = .password
+        
+        // Checking whether user is more than 18 y.o.
+        let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
+        let endingDate: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date())!
+        birthDate = endingDate
+        dateRangeFor18yearsOld = startingDate...endingDate
+        
+        addSubscribers(for: registrationLevel)
+    }
+
     
     /// Registration progress
     enum RegistrationLevel {
-        case name, email, nickname
+        case name, email, nickname, password
     }
      
     /// Error connected with nickname entering
@@ -23,22 +61,27 @@ class SignUpViewModel: ObservableObject {
         case none = ""
     }
     
-    // First page
+    // Name page
     @Published var firstNameTextField: String = ""
     @Published var lastNameTextField: String = ""
     var birthDate: Date
     var dateRangeFor18yearsOld: ClosedRange<Date>
     
-    // Second page
+    // Email page
     @Published var emailTextField: String = ""
     
-    // Third page
+    // Nickname page
     @Published var nicknameTextField: String = ""
     @Published var nicknameError: NicknameError = .none
     @Published var nicknameIsChecking: Bool = false // Progress view
     @Published var availabilityIsPassed: Bool = false
     private var checkTask = Task{}
 
+    // Password page
+    @Published var passwordField: String = ""
+    @Published var passwordConfirmField: String = ""
+    @Published var strongLevel: PasswordStrongLevel = .none
+    
     
     // Universal values
     @Published var nextButtonIsDisabled: Bool = true
@@ -49,19 +92,6 @@ class SignUpViewModel: ObservableObject {
     
     // Cancellables publishers
     private var cancellables = Set<AnyCancellable>()
-
-    init() {
-        // Starting page
-        registrationLevel = .name
-        
-        // Checking whether user is more than 18 y.o.
-        let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
-        let endingDate: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date())!
-        birthDate = endingDate
-        dateRangeFor18yearsOld = startingDate...endingDate
-        
-        addSubscribers(for: registrationLevel)
-    }
     
     /// Changes registration level forward, controls transition, disables next button, removes all old cancellables and adds new ones
     func moveToTheNextRegistrationLevel() {
@@ -72,12 +102,6 @@ class SignUpViewModel: ObservableObject {
             withAnimation(.easeInOut(duration: 0.5)) {
                 self.registrationLevel = self.nextRegistrationLevel()
                 self.nextButtonIsDisabled = true
-                
-                self.cancellables.forEach { cancellable in
-                    cancellable.cancel()
-                }
-                self.cancellables.removeAll()
-                
                 self.addSubscribers(for: self.registrationLevel)
             }
         }
@@ -91,14 +115,7 @@ class SignUpViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation(.easeInOut(duration: 0.5)) {
                 self.registrationLevel = self.previousRegistrationLevel()
-                self.nextButtonIsDisabled = true
-                
-                self.cancellables.forEach { cancellable in
-                    cancellable.cancel()
-                }
-                self.cancellables.removeAll()
-
-                self.addSubscribers(for: self.registrationLevel)
+                self.nextButtonIsDisabled = false
             }
         }
     }
@@ -208,6 +225,10 @@ class SignUpViewModel: ObservableObject {
                     }
                 }
                 .store(in: &cancellables)
+            
+            
+        case .password:
+            break
         }
     }
     
@@ -219,7 +240,9 @@ class SignUpViewModel: ObservableObject {
         case .email:
             return .nickname
         case .nickname:
-            return .nickname
+            return .password
+        case .password:
+            return .password
         }
     }
 
@@ -232,6 +255,8 @@ class SignUpViewModel: ObservableObject {
             return .name
         case .nickname:
             return .email
+        case .password:
+            return .nickname
         }
     }
 }
