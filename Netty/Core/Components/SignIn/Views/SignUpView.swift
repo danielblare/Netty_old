@@ -65,10 +65,13 @@ extension SignUpView {
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                             isLastNameFieldActive = true
                         })
-                    
-//                    DatePicker("Birthday", selection: $vm.birthDate, in: vm.dateRangeFor18yearsOld, displayedComponents: .date)
-//                        .padding()
-//                        .background(Color.secondary.opacity(0.3).cornerRadius(15))
+                
+                    DatePicker("Birthday", selection: $vm.birthDate, in: vm.dateRangeFor18yearsOld, displayedComponents: .date)
+                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: 55)
+                        .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
+                            UIApplication.shared.endEditing()
+                        })
                 }
                 .padding()
                 
