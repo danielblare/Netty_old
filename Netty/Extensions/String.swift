@@ -66,6 +66,15 @@ extension String {
         return false
     }
     
+    /// Checks whether string contains something except numbers
+    func containsSomethingExceptNumbers() -> Bool {
+        let characterset = CharacterSet(charactersIn: String.numbers)
+        if self.rangeOfCharacter(from: characterset.inverted) != nil {
+            return true
+        }
+        return false
+    }
+    
     /// Checks whether string contains special symbols
     func containsSpecialSymbols() -> Bool {
         let characterset = CharacterSet(charactersIn: String.specialSymbols)

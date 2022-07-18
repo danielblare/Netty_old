@@ -6,13 +6,28 @@
 //
 
 import SwiftUI
+import Combine
 
 struct EmailPageView: View {
     
     @ObservedObject private var vm: SignUpViewModel
+        
+    @State private var timeRemaining: String = ""
+    
+    private func updateTimeRemaining(future date: Date) {
+        let remaining = Calendar.current.dateComponents([.minute, .second], from: Date(), to: date)
+        let minute = remaining.minute ?? 0
+        let second = remaining.second ?? 0
+        if second >= 10 {
+            timeRemaining = "\(minute):\(second)"
+        } else {
+            timeRemaining = "\(minute):0\(second)"
+        }
+    }
+
     
     enum FocusedValue {
-        case email
+        case email, code
     }
     
     @FocusState private var activeField: FocusedValue?
@@ -33,17 +48,89 @@ struct EmailPageView: View {
                 
                 Spacer()
                 
-                // TextField
-                TextField("E-mail", text: $vm.emailTextField) { !vm.nextButtonIsDisabled ? vm.moveToTheNextRegistrationLevel() : UIApplication.shared.endEditing() }
-                    .keyboardType(.emailAddress)
-                    .textContentType(.emailAddress)
-                    .autocorrectionDisabled(true)
-                    .focused($activeField, equals: .email)
-                    .padding()
-                    .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
-                        activeField = .email
-                    })
-                    .padding()
+                VStack(spacing: 30) {
+                    // TextField
+                    VStack(spacing: 0) {
+                        TextField("E-mail", text: $vm.emailTextField) { vm.showCodeTextField ? activeField = .code : UIApplication.shared.endEditing() }
+                            .keyboardType(.emailAddress)
+                            .textContentType(.emailAddress)
+                            .disabled(vm.emailTextFieldIsDisabled)
+                            .autocorrectionDisabled(true)
+                            .focused($activeField, equals: .email)
+                            .overlay(alignment: .trailing) {
+                                if vm.showSuccedStatusIcon {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                }
+                                    
+                            }
+                            .padding()
+                            .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
+                                activeField = .email
+                            })
+                            .padding(.horizontal)
+
+                        
+                        HStack() {
+                            if vm.showTimer {
+                                Text(timeRemaining)
+                                    .padding(.horizontal, 30)
+                                    .foregroundColor(.secondary)
+                                    .font(.subheadline)
+                                    .onAppear {
+                                        timeRemaining = "0:\(vm.timerSeconds)"
+                                        let futureDate: Date = Calendar.current.date(byAdding: .second, value: vm.timerSeconds, to: Date()) ?? Date()
+                                        var cancellables = Set<AnyCancellable>()
+                                        Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+                                            .removeDuplicates()
+                                            .sink(receiveValue: { _ in
+                                                if timeRemaining == "0:00" {
+                                                    cancellables.first?.cancel()
+                                                    vm.showTimer = false
+                                                } else {
+                                                    updateTimeRemaining(future: futureDate)
+                                                }
+                                            })
+                                            .store(in: &cancellables)
+                                    }
+                            }
+                            
+                            Spacer()
+                            
+                            Button(vm.emailButtonText.rawValue) {
+                                vm.emailButtonPressed()
+                            }
+                            .disabled(vm.emailButtonDisabled)
+                            .padding(.horizontal, 25)
+                            .font(.subheadline)
+                            .buttonStyle(.borderless)
+                        .accentColor(.blue)
+                        }
+                        .padding(.vertical, 10)
+                    }
+                    
+                    
+                    
+                    if vm.showCodeTextField {
+                        TextField("Confirmation code", text: $vm.codeTextField) { !vm.confirmButtonDisabeld ? vm.confirmButtonPressed() : UIApplication.shared.endEditing() }
+                            .keyboardType(.numberPad)
+                            .textContentType(.oneTimeCode)
+                            .focused($activeField, equals: .code)
+                            .overlay(alignment: .trailing) {
+                                if vm.showFailStatusIcon {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.red)
+                                }
+                                    
+                            }
+                            .padding()
+                            .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
+                                activeField = .code
+                            })
+                            .padding(.horizontal)
+                            .onAppear { activeField = .code }
+                    }
+                }
                 
                 Spacer()
                 
@@ -64,16 +151,29 @@ struct EmailPageView: View {
                     
                     Spacer()
                     
-                    Button {
-                        vm.moveToTheNextRegistrationLevel()
-                    } label: {
-                        Text("Next")
-                            .padding(.horizontal, 5)
-                            .font(.title3)
+                    if vm.codeCheckPassed {
+                        Button {
+                            vm.moveToTheNextRegistrationLevel()
+                        } label: {
+                            Text("Next")
+                                .padding(.horizontal, 5)
+                                .font(.title3)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding()
+
+                    } else {
+                        Button {
+                            vm.confirmButtonPressed()
+                        } label: {
+                            Text("Confirm")
+                                .padding(.horizontal, 5)
+                                .font(.title3)
+                        }
+                        .disabled(vm.confirmButtonDisabeld)
+                        .buttonStyle(.borderedProminent)
+                        .padding()
                     }
-                    .disabled(vm.nextButtonIsDisabled)
-                    .buttonStyle(.borderedProminent)
-                    .padding()
                 }
                 
             }
@@ -85,3 +185,9 @@ struct EmailPageView: View {
     }
 }
 
+
+struct Previews_EmailPageView_Previews: PreviewProvider {
+    static var previews: some View {
+        EmailPageView(vm: SignUpViewModel())
+    }
+}

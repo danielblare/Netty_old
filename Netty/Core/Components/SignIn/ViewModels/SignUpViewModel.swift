@@ -37,6 +37,12 @@ class SignUpViewModel: ObservableObject {
         case none = ""
     }
     
+    enum EmailButtonText: String {
+        case send = "Send code"
+        case again = "Send again"
+        case verificated = ""
+    }
+    
     // Name page
     private let nameAndLastNameSymbolsLimit: Int = 35
     @Published var firstNameTextField: String = "" {
@@ -65,6 +71,30 @@ class SignUpViewModel: ObservableObject {
             }
         }
     }
+    private var savedEmail: String = ""
+    
+    @Published var emailButtonDisabled: Bool = true
+    @Published var emailButtonText: EmailButtonText = .send
+    @Published var emailTextFieldIsDisabled: Bool = false
+    @Published var showTimer: Bool = false
+    var timerSeconds: Int = 30
+    
+    @Published var codeTextField: String = "" {
+        didSet {
+            if codeTextField.containsSomethingExceptNumbers() && !oldValue.containsSomethingExceptNumbers() {
+                codeTextField = oldValue
+            }
+            if codeTextField.count > 6 {
+                codeTextField = codeTextField.truncated(limit: 6, position: .tail, leader: "")
+            }
+        }
+    }
+    @Published var showCodeTextField: Bool = false
+    @Published var codeCheckPassed: Bool = false
+    @Published var confirmButtonDisabeld: Bool = true
+    @Published var showSuccedStatusIcon: Bool = false
+    @Published var showFailStatusIcon: Bool = false
+    
     
     // Nickname page
     private let nicknameSymbolsLimit: Int = 20
@@ -135,7 +165,54 @@ class SignUpViewModel: ObservableObject {
             }
         }
     }
-
+    
+    func emailButtonPressed() {
+        switch emailButtonText {
+        case .send:
+            savedEmail = emailTextField
+            timerSeconds = 10
+            withAnimation(.easeOut(duration: 0.09)) {
+                self.showTimer = true
+                self.emailButtonDisabled = true
+                self.showCodeTextField = true
+            }
+            emailButtonText = .again
+        case .again:
+            savedEmail = emailTextField
+            timerSeconds = 59
+            withAnimation(.easeOut(duration: 0.09)) {
+                self.showTimer = true
+                self.emailButtonDisabled = true
+            }
+        case .verificated: break
+        }
+    }
+    
+    func confirmButtonPressed() {
+        let checked = codeTextField.hasPrefix("123")
+        withAnimation(.easeInOut(duration: 0.09)) {
+            if checked {
+                showTimer = false
+                emailButtonText = .verificated
+                emailTextField = savedEmail
+                emailTextFieldIsDisabled = true
+                withAnimation(.easeInOut.delay(0.5)) {
+                    codeCheckPassed = true
+                    showCodeTextField = false
+                    nextButtonIsDisabled = false
+                }
+                withAnimation(.easeInOut.delay(1)) {
+                    showSuccedStatusIcon = true
+                    HapticManager.instance.notification(of: .success)
+                }
+            } else {
+                confirmButtonDisabeld = true
+                showFailStatusIcon = true
+                HapticManager.instance.notification(of: .error)
+            }
+        }
+    }
+    
     /// Adding subscribers depending on current registration level
     private func addSubscribers(for level: RegistrationLevel) {
         switch level {
@@ -164,25 +241,44 @@ class SignUpViewModel: ObservableObject {
             
         case .email:
             
-            let sharedPublisher = $emailTextField
+            let sharedEmailPublisher = $emailTextField
+                .share()
+            
+            let sharedCodePublisher = $codeTextField
                 .share()
             
             // After 0.5 second of inactivity checks whether email is correct
-            sharedPublisher
-                .removeDuplicates()
+            sharedEmailPublisher
+                .combineLatest($showTimer)
                 .debounce(for: 0.5, scheduler: DispatchQueue.main)
-                .filter({ $0.isValidEmail() })
+                .filter({ email, _ in email.isValidEmail() && !self.showTimer })
                 .sink { [weak self] _ in
-                    self?.nextButtonIsDisabled = false
+                    self?.emailButtonDisabled = false
                 }
                 .store(in: &cancellables)
             
             // Disables next button immidiatly with any field change
-            sharedPublisher
+            sharedEmailPublisher
                 .removeDuplicates()
-                .filter({ _ in !self.nextButtonIsDisabled })
+                .filter({ _ in !self.emailButtonDisabled })
                 .sink { [weak self] _ in
-                    self?.nextButtonIsDisabled = true
+                    self?.emailButtonDisabled = true
+                }
+                .store(in: &cancellables)
+            
+            sharedCodePublisher
+                .removeDuplicates()
+                .map({ $0.count == 6 })
+                .sink { [weak self] receivedValue in
+                    self?.confirmButtonDisabeld = !receivedValue
+                }
+                .store(in: &cancellables)
+            
+            sharedCodePublisher
+                .removeDuplicates()
+                .filter({ _ in self.showFailStatusIcon })
+                .sink { [weak self] _ in
+                    self?.showFailStatusIcon = false
                 }
                 .store(in: &cancellables)
             
