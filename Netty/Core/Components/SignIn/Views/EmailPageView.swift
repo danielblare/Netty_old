@@ -47,9 +47,6 @@ struct EmailPageView: View {
                                 if vm.showSuccedStatusIcon {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.green)
-                                        .onAppear {
-                                            HapticManager.instance.notification(of: .success)
-                                        }
                                 }
                                 
                             }

@@ -273,6 +273,7 @@ class SignUpViewModel: ObservableObject {
                 }
                 withAnimation(.easeInOut.delay(1)) {
                     showSuccedStatusIcon = true
+                    HapticManager.instance.notification(of: .success)
                 }
             } else {
                 confirmButtonDisabeld = true
