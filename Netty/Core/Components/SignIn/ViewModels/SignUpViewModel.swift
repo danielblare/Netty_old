@@ -79,8 +79,11 @@ class SignUpViewModel: ObservableObject {
     @Published var emailButtonDisabled: Bool = true
     @Published var emailButtonText: EmailButtonText = .send
     @Published var emailTextFieldIsDisabled: Bool = false
+    
+    // Timer
     @Published var showTimer: Bool = false
-    var timerSeconds: Int = 30
+    @Published var timeRemaining: String = ""
+
     
     @Published var codeTextField: String = "" {
         didSet {
@@ -174,9 +177,8 @@ class SignUpViewModel: ObservableObject {
         case .send:
             savedEmail = emailTextField
             await MainActor.run {
-                timerSeconds = 10
                 withAnimation(.easeOut(duration: 0.09)) {
-                    self.showTimer = true
+                    startTimerFor(seconds: 10)
                     self.emailButtonDisabled = true
                     self.showCodeTextField = true
                 }
@@ -185,9 +187,8 @@ class SignUpViewModel: ObservableObject {
         case .again:
             savedEmail = emailTextField
             await MainActor.run {
-                timerSeconds = 59
                 withAnimation(.easeOut(duration: 0.09)) {
-                    self.showTimer = true
+                    startTimerFor(seconds: 59)
                     self.emailButtonDisabled = true
                 }
             }
@@ -200,6 +201,42 @@ class SignUpViewModel: ObservableObject {
             alertError = error
             showAlert = true
         }
+    }
+    
+    private var futureDate = Date()
+    private var cancellablesTimer = Set<AnyCancellable>()
+    
+    private func startTimerFor(seconds: Int) {
+        futureDate = Calendar.current.date(byAdding: .second, value: seconds + 1, to: Date()) ?? Date()
+        let remaining = Calendar.current.dateComponents([.minute, .second], from: Date(), to: self.futureDate)
+        let minute = remaining.minute ?? 0
+        let second = remaining.second ?? 0
+        if second >= 10 {
+            timeRemaining = "\(minute):\(second)"
+        } else {
+            timeRemaining = "\(minute):0\(second)"
+        }
+        showTimer = true
+        Timer.publish(every: 1.0, on: .current, in: .common).autoconnect()
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                let remaining = Calendar.current.dateComponents([.minute, .second], from: Date(), to: self.futureDate)
+                let minute = remaining.minute ?? 0
+                let second = remaining.second ?? 0
+                if second == 0 && minute == 0 {
+                    self.showTimer = false
+                    self.cancellablesTimer.first?.cancel()
+                } else {
+                    if second >= 10 {
+                        self.timeRemaining = "\(minute):\(second)"
+                    } else {
+                        self.timeRemaining = "\(minute):0\(second)"
+                    }
+                }
+            }
+            .store(in: &cancellablesTimer)
+
+
     }
     
     func getAlert() -> Alert {

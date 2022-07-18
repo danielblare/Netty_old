@@ -11,20 +11,6 @@ import Combine
 struct EmailPageView: View {
     
     @ObservedObject private var vm: SignUpViewModel
-        
-    @State private var timeRemaining: String = ""
-    
-    private func updateTimeRemaining(future date: Date) {
-        let remaining = Calendar.current.dateComponents([.minute, .second], from: Date(), to: date)
-        let minute = remaining.minute ?? 0
-        let second = remaining.second ?? 0
-        if second >= 10 {
-            timeRemaining = "\(minute):\(second)"
-        } else {
-            timeRemaining = "\(minute):0\(second)"
-        }
-    }
-
     
     enum FocusedValue {
         case email, code
@@ -76,26 +62,10 @@ struct EmailPageView: View {
                         
                         HStack() {
                             if vm.showTimer {
-                                Text(timeRemaining)
+                                Text(vm.timeRemaining)
                                     .padding(.horizontal, 30)
                                     .foregroundColor(.secondary)
                                     .font(.subheadline)
-                                    .onAppear {
-                                        timeRemaining = "0:\(vm.timerSeconds)"
-                                        let futureDate: Date = Calendar.current.date(byAdding: .second, value: vm.timerSeconds+1, to: Date()) ?? Date()
-                                        var cancellables = Set<AnyCancellable>()
-                                        Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
-                                            .removeDuplicates()
-                                            .sink(receiveValue: { _ in
-                                                if timeRemaining == "0:00" {
-                                                    cancellables.first?.cancel()
-                                                    vm.showTimer = false
-                                                } else {
-                                                    updateTimeRemaining(future: futureDate)
-                                                }
-                                            })
-                                            .store(in: &cancellables)
-                                    }
                             }
                             
                             Spacer()
