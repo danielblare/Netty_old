@@ -17,6 +17,7 @@
 		BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05AA288455FE00F18140 /* NicknamePageView.swift */; };
 		BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05AC2884563800F18140 /* CreatePasswordPageView.swift */; };
 		BBBD05B1288459B200F18140 /* PasswordStrongLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05B0288459B200F18140 /* PasswordStrongLevelView.swift */; };
+		BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */; };
 		BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A912882CE0600CBDEAD /* NettyApp.swift */; };
 		BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A952882CE0800CBDEAD /* Assets.xcassets */; };
 		BBE72A992882CE0800CBDEAD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */; };
@@ -40,6 +41,7 @@
 		BBBD05AA288455FE00F18140 /* NicknamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknamePageView.swift; sourceTree = "<group>"; };
 		BBBD05AC2884563800F18140 /* CreatePasswordPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePasswordPageView.swift; sourceTree = "<group>"; };
 		BBBD05B0288459B200F18140 /* PasswordStrongLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordStrongLevelView.swift; sourceTree = "<group>"; };
+		BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSendManager.swift; sourceTree = "<group>"; };
 		BBE72A8E2882CE0600CBDEAD /* Netty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Netty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
 		BBE72A952882CE0800CBDEAD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 			children = (
 				BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */,
 				BBE9E48D2883626900775325 /* HapticManager.swift */,
+				BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
+				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,

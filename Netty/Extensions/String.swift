@@ -111,4 +111,14 @@ extension String {
         return false
     }
     
+    static func generateOneTimeCode() -> String {
+        var res = ""
+        
+        for _ in 1...6 {
+            res.append("\(Int.random(in: 0...9))")
+        }
+
+        return res
+    }
+    
 }

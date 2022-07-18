@@ -8,12 +8,13 @@
 import Foundation
 import SwiftUI
 import Combine
+import MessageUI
 
 class SignUpViewModel: ObservableObject {
     
     init() {
         // Starting page
-        registrationLevel = .name
+        registrationLevel = .email
         
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
@@ -72,6 +73,9 @@ class SignUpViewModel: ObservableObject {
         }
     }
     private var savedEmail: String = ""
+    private var oneTimePasscode: String? = nil
+    @Published var showAlert: Bool = false
+    @Published var alertError: Error? = nil
     
     @Published var emailButtonDisabled: Bool = true
     @Published var emailButtonText: EmailButtonText = .send
@@ -166,32 +170,63 @@ class SignUpViewModel: ObservableObject {
         }
     }
     
-    func emailButtonPressed() {
+    func emailButtonPressed() async {
         switch emailButtonText {
         case .send:
             savedEmail = emailTextField
-            timerSeconds = 10
-            withAnimation(.easeOut(duration: 0.09)) {
-                self.showTimer = true
-                self.emailButtonDisabled = true
-                self.showCodeTextField = true
+            await MainActor.run {
+                timerSeconds = 10
+                withAnimation(.easeOut(duration: 0.09)) {
+                    self.showTimer = true
+                    self.emailButtonDisabled = true
+                    self.showCodeTextField = true
+                }
+                emailButtonText = .again
             }
-            emailButtonText = .again
         case .again:
             savedEmail = emailTextField
-            timerSeconds = 59
-            withAnimation(.easeOut(duration: 0.09)) {
-                self.showTimer = true
-                self.emailButtonDisabled = true
+            await MainActor.run {
+                timerSeconds = 59
+                withAnimation(.easeOut(duration: 0.09)) {
+                    self.showTimer = true
+                    self.emailButtonDisabled = true
+                }
             }
         case .verificated: break
         }
+        
+        do {
+            try await sendEmail()
+        } catch {
+            alertError = error
+            showAlert = true
+        }
+    }
+    
+    func getAlert() -> Alert {
+        Alert(
+            title: Text("Error sending e-mail"),
+            message: Text(alertError?.localizedDescription ?? ""),
+            dismissButton: .cancel()
+        )
+    }
+    
+    private func sendEmail() async throws {
+        
+        oneTimePasscode = String.generateOneTimeCode()
+        
+        let to = savedEmail
+        let subject = "E-mail Confirmation"
+        let type = "text/plain"
+        let text = "Welcome to Netty!\nYour confirmation code is \(oneTimePasscode ?? "ErRoR")"
+        
+        let result = try await EmailSendManager.instance.sendEmail(to: to, subject: subject, type: type, text: text)
+        print("RESULT:\n\(result)")
     }
     
     func confirmButtonPressed() {
-        let checked = codeTextField.hasPrefix("123")
         withAnimation(.easeInOut(duration: 0.09)) {
-            if checked {
+            if codeTextField == oneTimePasscode {
                 showTimer = false
                 emailButtonText = .verificated
                 emailTextField = savedEmail
@@ -445,4 +480,5 @@ class SignUpViewModel: ObservableObject {
             return .nickname
         }
     }
+ 
 }

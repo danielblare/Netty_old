@@ -98,7 +98,9 @@ struct EmailPageView: View {
                             Spacer()
                             
                             Button(vm.emailButtonText.rawValue) {
-                                vm.emailButtonPressed()
+                                Task {
+                                    await vm.emailButtonPressed()
+                                }
                             }
                             .disabled(vm.emailButtonDisabled)
                             .padding(.horizontal, 25)
@@ -177,6 +179,9 @@ struct EmailPageView: View {
                 }
                 
             }
+            .alert(isPresented: $vm.showAlert, content: {
+                vm.getAlert()
+            })
             .navigationTitle("Create account")
             .background(Color.theme.background.ignoresSafeArea().onTapGesture {
                 UIApplication.shared.endEditing()
