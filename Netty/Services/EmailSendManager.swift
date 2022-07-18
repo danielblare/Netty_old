@@ -36,7 +36,7 @@ actor EmailSendManager {
         
         let headers = [
             "content-type": "application/json",
-            "X-RapidAPI-Key": "76c88755c2mshf47485992b30f1ep1d3f8fjsnc50ea880f906",
+            "X-RapidAPI-Key": "f651d68838msh1df01afcec3c473p1cd121jsn33db27102e12",
             "X-RapidAPI-Host": "rapidprod-sendgrid-v1.p.rapidapi.com"
         ]
         let parameters = [

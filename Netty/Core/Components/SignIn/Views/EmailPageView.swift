@@ -61,8 +61,11 @@ struct EmailPageView: View {
                                 if vm.showSuccedStatusIcon {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.green)
+                                        .onAppear {
+                                            HapticManager.instance.notification(of: .success)
+                                        }
                                 }
-                                    
+                                
                             }
                             .padding()
                             .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
@@ -79,7 +82,7 @@ struct EmailPageView: View {
                                     .font(.subheadline)
                                     .onAppear {
                                         timeRemaining = "0:\(vm.timerSeconds)"
-                                        let futureDate: Date = Calendar.current.date(byAdding: .second, value: vm.timerSeconds, to: Date()) ?? Date()
+                                        let futureDate: Date = Calendar.current.date(byAdding: .second, value: vm.timerSeconds+1, to: Date()) ?? Date()
                                         var cancellables = Set<AnyCancellable>()
                                         Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
                                             .removeDuplicates()

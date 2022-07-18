@@ -14,7 +14,7 @@ class SignUpViewModel: ObservableObject {
     
     init() {
         // Starting page
-        registrationLevel = .email
+        registrationLevel = .name
         
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
@@ -75,8 +75,7 @@ class SignUpViewModel: ObservableObject {
     private var savedEmail: String = ""
     private var oneTimePasscode: String? = nil
     @Published var showAlert: Bool = false
-    @Published var alertError: Error? = nil
-    
+    private var alertError: Error? = nil
     @Published var emailButtonDisabled: Bool = true
     @Published var emailButtonText: EmailButtonText = .send
     @Published var emailTextFieldIsDisabled: Bool = false
@@ -217,11 +216,10 @@ class SignUpViewModel: ObservableObject {
         
         let to = savedEmail
         let subject = "E-mail Confirmation"
-        let type = "text/plain"
-        let text = "Welcome to Netty!\nYour confirmation code is \(oneTimePasscode ?? "ErRoR")"
+        let type = "text/HTML"
+        let text = "<h3>Welcome to Netty, \(firstNameTextField) \(lastNameTextField)!</h3><br /><br />Your confirmation code is <b>\(oneTimePasscode ?? "ErRoR")</b>"
         
-        let result = try await EmailSendManager.instance.sendEmail(to: to, subject: subject, type: type, text: text)
-        print("RESULT:\n\(result)")
+        let _ = try await EmailSendManager.instance.sendEmail(to: to, subject: subject, type: type, text: text)
     }
     
     func confirmButtonPressed() {
@@ -238,7 +236,6 @@ class SignUpViewModel: ObservableObject {
                 }
                 withAnimation(.easeInOut.delay(1)) {
                     showSuccedStatusIcon = true
-                    HapticManager.instance.notification(of: .success)
                 }
             } else {
                 confirmButtonDisabeld = true
