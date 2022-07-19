@@ -114,9 +114,7 @@ struct NicknamePageView: View {
             }
         }
         .navigationTitle("Create Nickname")
-        .background(Color.theme.background.ignoresSafeArea().onTapGesture {
-            UIApplication.shared.endEditing()
-        })
+        .background(Color.theme.background)
     }
     
 }

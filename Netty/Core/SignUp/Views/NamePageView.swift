@@ -80,9 +80,7 @@ struct NamePageView: View {
             }
         }
         .navigationTitle("Personal Data")
-        .background(Color.theme.background.ignoresSafeArea().onTapGesture {
-            UIApplication.shared.endEditing()
-        })
+        .background(Color.theme.background)
     }
 }
 

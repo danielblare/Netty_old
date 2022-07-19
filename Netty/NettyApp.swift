@@ -13,11 +13,20 @@ struct NettyApp: App {
     @State private var userSignedIn: Bool = false // Is signed in logic
     @State private var showLaunchView: Bool = false
     
+    init() {
+        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor : UIColor(.theme.accent)]
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor : UIColor(.theme.accent)]
+        UITableView.appearance().backgroundColor = UIColor.clear
+        UINavigationBar.appearance().backgroundColor = UIColor(.theme.background)
+        
+        
+    }
+    
     var body: some Scene {
         WindowGroup {
             ZStack {
                 if userSignedIn {
-                    //                HomeView()
+//                HomeView()
                 } else {
                     WelcomeView()
                 }

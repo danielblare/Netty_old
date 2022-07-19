@@ -144,9 +144,7 @@ struct EmailPageView: View {
             vm.getAlert()
         })
         .navigationTitle("Create account")
-        .background(Color.theme.background.ignoresSafeArea().onTapGesture {
-            UIApplication.shared.endEditing()
-        })
+        .background(Color.theme.background)
     }
 }
 

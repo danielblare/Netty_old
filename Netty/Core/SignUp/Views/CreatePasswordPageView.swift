@@ -70,9 +70,7 @@ struct CreatePasswordPageView: View {
             }
         }
         .navigationTitle("Create a Password")
-        .background(Color.theme.background.ignoresSafeArea().onTapGesture {
-            UIApplication.shared.endEditing()
-        })
+        .background(Color.theme.background)
     }
 }
 

@@ -10,15 +10,20 @@ import SwiftUI
 struct WelcomeView: View {
     var body: some View {
         NavigationView {
-            VStack(spacing: 40) {
-                NavigationLink("Sign Up") {
-                    NamePageView()
+            ZStack {
+                Color.theme.background.ignoresSafeArea()
+                
+                VStack(spacing: 40) {
+                    NavigationLink("Sign Up") {
+                        NamePageView()
+                    }
+                    NavigationLink("Log In") {
+                        EmptyView()
+                    }
                 }
-                NavigationLink("Log In") {
-                    EmptyView()
-                }
+                .navigationTitle("Welcome to Netty!")
+                .background(Color.theme.background)
             }
-            .navigationTitle("Welcome to Netty!")
         }
     }
 }
