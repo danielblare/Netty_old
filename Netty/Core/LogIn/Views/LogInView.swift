@@ -18,7 +18,7 @@ struct LogInView: View {
     @FocusState private var activeField: FocusedValue?
         
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                              
                 VStack(spacing: 0) {
