@@ -24,7 +24,7 @@ struct LaunchView: View {
                 .scaleEffect(scale)
                 .onAppear {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        withAnimation(.easeInOut(duration: 0.5)) {
+                        withAnimation(.easeIn(duration: 0.4)) {
                             showLaunchView = false
                         }
                     }
@@ -33,6 +33,7 @@ struct LaunchView: View {
                     }
                 }
         }
+        .scaleEffect(showLaunchView ? 1 : 5)
     }
 }
 

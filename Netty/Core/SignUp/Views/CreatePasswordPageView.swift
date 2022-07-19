@@ -24,13 +24,8 @@ struct CreatePasswordPageView: View {
     
     var body: some View {
         VStack() {
-            // Subtitle
-            Text("It's time to create a password")
-                .padding()
-                .font(.title2)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            Spacer()
+
+            Spacer(minLength: 0)
             
             // Fields
             VStack(spacing: 10) {
@@ -45,14 +40,14 @@ struct CreatePasswordPageView: View {
             }
             .padding()
             
-            Spacer()
+            Spacer(minLength: 0)
             
-            Spacer()
+            Spacer(minLength: 0)
             
             // Buttons
             HStack {
                 
-                Spacer()
+                Spacer(minLength: 0)
                 
                 // Next button
                 NavigationLink {

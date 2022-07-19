@@ -24,13 +24,8 @@ struct NicknamePageView: View {
     
     var body: some View {
         VStack() {
-            // Subtitle
-            Text("It's time to create a nickname")
-                .padding()
-                .font(.title2)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            Spacer()
+
+            Spacer(minLength: 0)
             
             // Field
             VStack(spacing: 15) {
@@ -39,7 +34,7 @@ struct NicknamePageView: View {
                     // Progress view
                     if vm.nicknameIsChecking {
                         HStack {
-                            Spacer()
+                            Spacer(minLength: 0)
                             
                             ProgressView().padding()
                         }
@@ -48,7 +43,7 @@ struct NicknamePageView: View {
                     // Checkmark if availability test was succeed
                     if vm.availabilityIsPassed {
                         HStack {
-                            Spacer()
+                            Spacer(minLength: 0)
                             
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
@@ -56,7 +51,7 @@ struct NicknamePageView: View {
                         }
                     } else if vm.nicknameError == .nameIsUsed { // Xmark if name is already used
                         HStack {
-                            Spacer()
+                            Spacer(minLength: 0)
                             
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.red)
@@ -84,20 +79,20 @@ struct NicknamePageView: View {
                         .foregroundColor(.red)
                     
                     
-                    Spacer()
+                    Spacer(minLength: 0)
                 }
                 
             }
             .padding()
             
-            Spacer()
+            Spacer(minLength: 0)
             
-            Spacer()
+            Spacer(minLength: 0)
             
             // Buttons
             HStack {
                 
-                Spacer()
+                Spacer(minLength: 0)
                 
                 NavigationLink {
                     CreatePasswordPageView(vm: vm)
@@ -113,7 +108,7 @@ struct NicknamePageView: View {
                 .padding()
             }
         }
-        .navigationTitle("Create Nickname")
+        .navigationTitle("Create a Nickname")
         .background(Color.theme.background.onTapGesture {
             UIApplication.shared.endEditing()
         })

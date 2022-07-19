@@ -20,12 +20,19 @@ struct LogInView: View {
     var body: some View {
         NavigationView {
             VStack {
-                                    
-                Image("logo_full")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 200)
-                    .padding(.vertical, 70)
+                             
+                VStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    
+                    Image("logo_full")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 200)
+                        .padding(.vertical)
+                    
+                    Spacer(minLength: 0)
+                }
+                .frame(maxHeight: 250)
                 
                 TextField("Username or e-mail", text: $vm.usernameTextField) { activeField = .password }
                     .textContentType(.username)
@@ -61,7 +68,7 @@ struct LogInView: View {
 
                
                 
-                Spacer()
+                Spacer(minLength: 0)
                 
                 Divider()
                 

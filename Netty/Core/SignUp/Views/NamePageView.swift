@@ -19,13 +19,8 @@ struct NamePageView: View {
     
     var body: some View {
         VStack() {
-            // Subtitle
-            Text("Let's add some information about you")
-                .padding()
-                .font(.title2)
-                .frame(maxWidth: .infinity, alignment: .leading)
             
-            Spacer()
+            Spacer(minLength: 0)
             
             // Fields
             VStack(spacing: 15) {
@@ -57,13 +52,13 @@ struct NamePageView: View {
             }
             .padding()
             
-            Spacer()
+            Spacer(minLength: 0)
             
-            Spacer()
+            Spacer(minLength: 0)
             
             // Buttons
             HStack {
-                Spacer()
+                Spacer(minLength: 0)
                 
                 NavigationLink {
                     EmailPageView(vm: vm)
@@ -79,6 +74,7 @@ struct NamePageView: View {
                 .padding()
             }
         }
+        .navigationBarTitleDisplayMode(.large)
         .navigationTitle("Welcome to Netty!")
         .background(Color.theme.background.onTapGesture {
             UIApplication.shared.endEditing()

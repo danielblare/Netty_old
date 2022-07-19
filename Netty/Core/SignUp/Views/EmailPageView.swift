@@ -24,13 +24,8 @@ struct EmailPageView: View {
     
     var body: some View {
         VStack() {
-            // Subtitle
-            Text("Enter your e-mail")
-                .padding()
-                .font(.title2)
-                .frame(maxWidth: .infinity, alignment: .leading)
             
-            Spacer()
+            Spacer(minLength: 0)
             
             VStack(spacing: 30) {
                 // TextField
@@ -63,7 +58,7 @@ struct EmailPageView: View {
                                 .font(.subheadline)
                         }
                         
-                        Spacer()
+                        Spacer(minLength: 0)
                         
                         Button(vm.emailButtonText.rawValue) {
                             Task {
@@ -102,14 +97,14 @@ struct EmailPageView: View {
                 }
             }
             
-            Spacer()
+            Spacer(minLength: 0)
             
-            Spacer()
+            Spacer(minLength: 0)
             
             // Buttons
             HStack {
                 
-                Spacer()
+                Spacer(minLength: 0)
                 
                 if vm.codeCheckPassed {
                     NavigationLink {
@@ -127,7 +122,6 @@ struct EmailPageView: View {
                     
                 } else {
                     Button {
-                        UIApplication.shared.endEditing()
                         vm.confirmButtonPressed()
                     } label: {
                         Text("Confirm")
@@ -144,7 +138,7 @@ struct EmailPageView: View {
         .alert(isPresented: $vm.showAlert, content: {
             vm.getAlert()
         })
-        .navigationTitle("Create account")
+        .navigationTitle("Enter your e-mail")
         .background(Color.theme.background.onTapGesture {
             UIApplication.shared.endEditing()
         })

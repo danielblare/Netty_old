@@ -34,7 +34,6 @@ struct NettyApp: App {
                 ZStack {
                     if showLaunchView {
                         LaunchView(showLaunchView: $showLaunchView)
-                            .transition(.opacity)
                     }
                 }
                 .zIndex(2.0)
