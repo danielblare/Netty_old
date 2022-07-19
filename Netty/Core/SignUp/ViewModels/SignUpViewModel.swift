@@ -13,23 +13,15 @@ import MessageUI
 class SignUpViewModel: ObservableObject {
     
     init() {
-        // Starting page
-        registrationLevel = .name
-        
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
         let endingDate: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date())!
         birthDate = endingDate
         dateRangeFor18yearsOld = startingDate...endingDate
         
-        addSubscribers(for: registrationLevel)
+        addSubscribers()
     }
-
-    /// Registration progress
-    enum RegistrationLevel {
-        case name, email, nickname, password
-    }
-     
+    
     /// Error connected with nickname entering
     enum NicknameError: String {
         case nameIsUsed = "Name is already used"
@@ -62,6 +54,7 @@ class SignUpViewModel: ObservableObject {
     }
     var birthDate: Date
     var dateRangeFor18yearsOld: ClosedRange<Date>
+    @Published var nameNextButtonDisabled: Bool = true
     
     // Email page
     private let emailSymbolsLimit: Int = 64
@@ -79,11 +72,12 @@ class SignUpViewModel: ObservableObject {
     @Published var emailButtonDisabled: Bool = true
     @Published var emailButtonText: EmailButtonText = .send
     @Published var emailTextFieldIsDisabled: Bool = false
+    @Published var emailNextButtonDisabled: Bool = true
     
     // Timer
     @Published var showTimer: Bool = false
     @Published var timeRemaining: String = ""
-
+    
     
     @Published var codeTextField: String = "" {
         didSet {
@@ -115,7 +109,8 @@ class SignUpViewModel: ObservableObject {
     @Published var nicknameIsChecking: Bool = false // Progress view
     @Published var availabilityIsPassed: Bool = false
     private var checkTask = Task{}
-
+    @Published var nicknameNextButtonDisabled: Bool = true
+    
     // Password page
     private let passwordSymbolsLimit: Int = 23
     @Published var passwordField: String = "" {
@@ -133,44 +128,10 @@ class SignUpViewModel: ObservableObject {
         }
     }
     @Published var passwordMessage: PasswordWarningMessage = .short
-    
-    
-    // Universal values
-    @Published var nextButtonIsDisabled: Bool = true
-    var transitionForward: Bool = true
-    
-    // Page number
-    @Published var registrationLevel: RegistrationLevel
+    @Published var passwordNextButtonDisabled: Bool = true
     
     // Cancellables publishers
     private var cancellables = Set<AnyCancellable>()
-    
-    /// Changes registration level forward, controls transition, disables next button, removes all old cancellables and adds new ones
-    func moveToTheNextRegistrationLevel() {
-        transitionForward = true
-        UIApplication.shared.endEditing()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self.registrationLevel = self.nextRegistrationLevel()
-                self.nextButtonIsDisabled = true
-                self.addSubscribers(for: self.registrationLevel)
-            }
-        }
-    }
-    
-    /// Changes registration level backward, controls transition, disables next button, removes all old cancellables and adds new ones
-    func moveToThePreviousRegistrationLevel() {
-        transitionForward = false
-        UIApplication.shared.endEditing()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self.registrationLevel = self.previousRegistrationLevel()
-                self.nextButtonIsDisabled = false
-            }
-        }
-    }
     
     func emailButtonPressed() async {
         switch emailButtonText {
@@ -234,8 +195,8 @@ class SignUpViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellablesTimer)
-
-
+        
+        
     }
     
     func getAlert() -> Alert {
@@ -268,7 +229,7 @@ class SignUpViewModel: ObservableObject {
                 withAnimation(.easeInOut.delay(0.5)) {
                     codeCheckPassed = true
                     showCodeTextField = false
-                    nextButtonIsDisabled = false
+                    emailNextButtonDisabled = false
                 }
                 withAnimation(.easeInOut.delay(1)) {
                     showSuccedStatusIcon = true
@@ -283,162 +244,154 @@ class SignUpViewModel: ObservableObject {
     }
     
     /// Adding subscribers depending on current registration level
-    private func addSubscribers(for level: RegistrationLevel) {
-        switch level {
-        case .name:
-            
-            let sharedPublisher = $firstNameTextField
-                .combineLatest($lastNameTextField)
-                .share()
-            
-            // After 0.5 second of inactivity checks whether first and last names are correct
-            sharedPublisher
-                .debounce(for: 0.5, scheduler: DispatchQueue.main)
-                .filter({ ($0.containsOnlyLetters() && $0.count >= 3) && ($1.containsOnlyLetters() && $1.count >= 3) })
-                .sink { [weak self] _ in
-                    self?.nextButtonIsDisabled = false
-                }
-                .store(in: &cancellables)
-            
-            // Disables next button immidiatly with any field change
-            sharedPublisher
-                .filter({ _ in !self.nextButtonIsDisabled })
-                .sink { [weak self] _ in
-                    self?.nextButtonIsDisabled = true
-                }
-                .store(in: &cancellables)
-            
-        case .email:
-            
-            let sharedEmailPublisher = $emailTextField
-                .share()
-            
-            let sharedCodePublisher = $codeTextField
-                .share()
-            
-            // After 0.5 second of inactivity checks whether email is correct
-            sharedEmailPublisher
-                .combineLatest($showTimer)
-                .debounce(for: 0.5, scheduler: DispatchQueue.main)
-                .filter({ email, _ in email.isValidEmail() && !self.showTimer })
-                .sink { [weak self] _ in
-                    self?.emailButtonDisabled = false
-                }
-                .store(in: &cancellables)
-            
-            // Disables next button immidiatly with any field change
-            sharedEmailPublisher
-                .removeDuplicates()
-                .filter({ _ in !self.emailButtonDisabled })
-                .sink { [weak self] _ in
-                    self?.emailButtonDisabled = true
-                }
-                .store(in: &cancellables)
-            
-            sharedCodePublisher
-                .removeDuplicates()
-                .map({ $0.count == 6 })
-                .sink { [weak self] receivedValue in
-                    self?.confirmButtonDisabeld = !receivedValue
-                }
-                .store(in: &cancellables)
-            
-            sharedCodePublisher
-                .removeDuplicates()
-                .filter({ _ in self.showFailStatusIcon })
-                .sink { [weak self] _ in
-                    self?.showFailStatusIcon = false
-                }
-                .store(in: &cancellables)
-            
-        case .nickname:
-            
-            let sharedPublisher = $nicknameTextField
-                .share()
-            
-            let manager = AvailabilityCheckManager.instance
-            
-            // After 0.5 second of inactivity checks whether nickname is at least 3 symbols long and available
-            sharedPublisher
-                .removeDuplicates()
-                .drop(while: { $0.count == 0 })
-                .debounce(for: 0.5, scheduler: DispatchQueue.main)
-                .sink { [weak self] returnedValue in
-                    if let self = self {
-                        self.availabilityIsPassed = false
-                        if returnedValue.count < 3 {
-                            self.nicknameError = .length
-                        } else if returnedValue.containsUnacceptableSymbols() {
-                            self.nicknameError = .space
-                        } else {
-                            self.nicknameIsChecking = true
-                            self.checkTask = Task {
-                                let check = await manager.checkAvailability(for: self.nicknameTextField)
-                                if !self.checkTask.isCancelled {
-                                    await MainActor.run(body: {
-                                        if check {
-                                            self.availabilityIsPassed = true
-                                            HapticManager.instance.notification(of: .success)
-                                            self.nextButtonIsDisabled = false
-                                        } else {
-                                            self.nicknameError = .nameIsUsed
-                                            HapticManager.instance.notification(of: .error)
-                                        }
-                                        self.nicknameIsChecking = false
-                                    })
-                                }
+    private func addSubscribers() {
+        let sharedFirstNamePublisher = $firstNameTextField
+            .combineLatest($lastNameTextField)
+            .share()
+        
+        // After 0.5 second of inactivity checks whether first and last names are correct
+        sharedFirstNamePublisher
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .filter({ ($0.containsOnlyLetters() && $0.count >= 3) && ($1.containsOnlyLetters() && $1.count >= 3) })
+            .sink { [weak self] _ in
+                self?.nameNextButtonDisabled = false
+            }
+            .store(in: &cancellables)
+        
+        // Disables next button immidiatly with any field change
+        sharedFirstNamePublisher
+            .filter({ _ in !self.nameNextButtonDisabled })
+            .sink { [weak self] _ in
+                self?.nameNextButtonDisabled = true
+            }
+            .store(in: &cancellables)
+        
+        
+        let sharedEmailPublisher = $emailTextField
+            .share()
+        
+        let sharedCodePublisher = $codeTextField
+            .share()
+        
+        // After 0.5 second of inactivity checks whether email is correct
+        sharedEmailPublisher
+            .combineLatest($showTimer)
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .filter({ email, _ in email.isValidEmail() && !self.showTimer })
+            .sink { [weak self] _ in
+                self?.emailButtonDisabled = false
+            }
+            .store(in: &cancellables)
+        
+        // Disables next button immidiatly with any field change
+        sharedEmailPublisher
+            .removeDuplicates()
+            .filter({ _ in !self.emailButtonDisabled })
+            .sink { [weak self] _ in
+                self?.emailButtonDisabled = true
+            }
+            .store(in: &cancellables)
+        
+        sharedCodePublisher
+            .removeDuplicates()
+            .map({ $0.count == 6 })
+            .sink { [weak self] receivedValue in
+                self?.confirmButtonDisabeld = !receivedValue
+            }
+            .store(in: &cancellables)
+        
+        sharedCodePublisher
+            .removeDuplicates()
+            .filter({ _ in self.showFailStatusIcon })
+            .sink { [weak self] _ in
+                self?.showFailStatusIcon = false
+            }
+            .store(in: &cancellables)
+        
+        
+        let sharedNicknamePublisher = $nicknameTextField
+            .share()
+        
+        let manager = AvailabilityCheckManager.instance
+        
+        // After 0.5 second of inactivity checks whether nickname is at least 3 symbols long and available
+        sharedNicknamePublisher
+            .removeDuplicates()
+            .drop(while: { $0.count == 0 })
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .sink { [weak self] returnedValue in
+                if let self = self {
+                    self.availabilityIsPassed = false
+                    if returnedValue.count < 3 {
+                        self.nicknameError = .length
+                    } else if returnedValue.containsUnacceptableSymbols() {
+                        self.nicknameError = .space
+                    } else {
+                        self.nicknameIsChecking = true
+                        self.checkTask = Task {
+                            let check = await manager.checkAvailability(for: self.nicknameTextField)
+                            if !self.checkTask.isCancelled {
+                                await MainActor.run(body: {
+                                    if check {
+                                        self.availabilityIsPassed = true
+                                        HapticManager.instance.notification(of: .success)
+                                        self.nicknameNextButtonDisabled = false
+                                    } else {
+                                        self.nicknameError = .nameIsUsed
+                                        HapticManager.instance.notification(of: .error)
+                                    }
+                                    self.nicknameIsChecking = false
+                                })
                             }
                         }
                     }
                 }
-                .store(in: &cancellables)
-            
-            // Disables next button and stops availability checking task immidiatly with any field change
-            sharedPublisher
-                .removeDuplicates()
-                .drop(while: { $0.count == 0 })
-                .filter({ _ in !self.checkTask.isCancelled || self.nicknameIsChecking || !self.nextButtonIsDisabled || self.nicknameError != .none || self.availabilityIsPassed })
-                .sink { [weak self] returnedValue in
-                    if let self = self {
-                        self.checkTask.cancel()
-                        self.nicknameIsChecking = false
-                        self.nextButtonIsDisabled = true
-                        self.nicknameError = .none
-                        self.availabilityIsPassed = false
-                    }
+            }
+            .store(in: &cancellables)
+        
+        // Disables next button and stops availability checking task immidiatly with any field change
+        sharedNicknamePublisher
+            .removeDuplicates()
+            .drop(while: { $0.count == 0 })
+            .filter({ _ in !self.checkTask.isCancelled || self.nicknameIsChecking || !self.nicknameNextButtonDisabled || self.nicknameError != .none || self.availabilityIsPassed })
+            .sink { [weak self] returnedValue in
+                if let self = self {
+                    self.checkTask.cancel()
+                    self.nicknameIsChecking = false
+                    self.nicknameNextButtonDisabled = true
+                    self.nicknameError = .none
+                    self.availabilityIsPassed = false
                 }
-                .store(in: &cancellables)
-            
-            
-        case .password:
-            
-            let sharedPublisher = $passwordField
-                .combineLatest($passwordConfirmField)
-                .share()
-            
-            sharedPublisher
-                .debounce(for: 0.7, scheduler: DispatchQueue.main)
-                .filter({ password, _ in
-                    password.count >= 8
-                })
-                .map(mapPasswords)
-                .sink(receiveValue: { [weak self] passed, message in
-                    if passed {
-                        self?.nextButtonIsDisabled = false
-                    }
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        self?.passwordMessage = message
-                    }
-                })
-                .store(in: &cancellables)
-            
-            sharedPublisher
-                .filter( { _, _ in !self.nextButtonIsDisabled })
-                .sink { [weak self] _, _ in
-                    self?.nextButtonIsDisabled = true
+            }
+            .store(in: &cancellables)
+        
+        
+        let sharedPasswordPublisher = $passwordField
+            .combineLatest($passwordConfirmField)
+            .share()
+        
+        sharedPasswordPublisher
+            .debounce(for: 0.7, scheduler: DispatchQueue.main)
+            .filter({ password, _ in
+                password.count >= 8
+            })
+            .map(mapPasswords)
+            .sink(receiveValue: { [weak self] passed, message in
+                if passed {
+                    self?.passwordNextButtonDisabled = false
                 }
-                .store(in: &cancellables)
-        }
+                withAnimation(.easeOut(duration: 0.3)) {
+                    self?.passwordMessage = message
+                }
+            })
+            .store(in: &cancellables)
+        
+        sharedPasswordPublisher
+            .filter( { _, _ in !self.passwordNextButtonDisabled })
+            .sink { [weak self] _, _ in
+                self?.passwordNextButtonDisabled = true
+            }
+            .store(in: &cancellables)
     }
     
     /// Returnes bool and PasswordWarningMessage where bool is true if password passed check and equals confirmation field
@@ -487,32 +440,4 @@ class SignUpViewModel: ObservableObject {
         }
     }
     
-    /// Returns next registration level
-    private func nextRegistrationLevel() -> RegistrationLevel {
-        switch registrationLevel {
-        case .name:
-            return .email
-        case .email:
-            return .nickname
-        case .nickname:
-            return .password
-        case .password:
-            return .password
-        }
-    }
-
-    /// Returns previous registration level
-    private func previousRegistrationLevel() -> RegistrationLevel {
-        switch registrationLevel {
-        case .name:
-            return .name
-        case .email:
-            return .name
-        case .nickname:
-            return .email
-        case .password:
-            return .nickname
-        }
-    }
- 
 }

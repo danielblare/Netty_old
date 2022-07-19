@@ -13,6 +13,7 @@
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
 		BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC23288711EF008EDEFA /* LaunchView.swift */; };
 		BBA7CC26288714FD008EDEFA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */; };
+		BBA7CC2A28872EA5008EDEFA /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC2928872EA5008EDEFA /* WelcomeView.swift */; };
 		BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */; };
 		BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A6288454E200F18140 /* NamePageView.swift */; };
 		BBBD05A92884556B00F18140 /* EmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A82884556B00F18140 /* EmailPageView.swift */; };
@@ -23,7 +24,6 @@
 		BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A912882CE0600CBDEAD /* NettyApp.swift */; };
 		BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A952882CE0800CBDEAD /* Assets.xcassets */; };
 		BBE72A992882CE0800CBDEAD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */; };
-		BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AAB2882D27100CBDEAD /* SignUpView.swift */; };
 		BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AAF2882DA3800CBDEAD /* UserModel.swift */; };
 		BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */; };
 		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
@@ -39,6 +39,7 @@
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		BBA7CC23288711EF008EDEFA /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		BBA7CC2928872EA5008EDEFA /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCheckManager.swift; sourceTree = "<group>"; };
 		BBBD05A6288454E200F18140 /* NamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePageView.swift; sourceTree = "<group>"; };
 		BBBD05A82884556B00F18140 /* EmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPageView.swift; sourceTree = "<group>"; };
@@ -50,7 +51,6 @@
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
 		BBE72A952882CE0800CBDEAD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		BBE72AAB2882D27100CBDEAD /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		BBE72AAF2882DA3800CBDEAD /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -68,6 +68,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BBA7CC2728872E08008EDEFA /* WelcomeScreen */ = {
+			isa = PBXGroup;
+			children = (
+				BBA7CC2828872E9C008EDEFA /* Views */,
+			);
+			path = WelcomeScreen;
+			sourceTree = "<group>";
+		};
+		BBA7CC2828872E9C008EDEFA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BBA7CC2928872EA5008EDEFA /* WelcomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		BBE72A852882CE0600CBDEAD = {
 			isa = PBXGroup;
 			children = (
@@ -148,9 +164,10 @@
 		BBE72AA32882CE9E00CBDEAD /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				BBA7CC2728872E08008EDEFA /* WelcomeScreen */,
 				BBEE4E8B28870DC40024B03B /* Launch */,
 				BBE72AA62882CED100CBDEAD /* Components */,
-				BBE72AA82882D23E00CBDEAD /* SignIn */,
+				BBE72AA82882D23E00CBDEAD /* SignUp */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -162,13 +179,13 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		BBE72AA82882D23E00CBDEAD /* SignIn */ = {
+		BBE72AA82882D23E00CBDEAD /* SignUp */ = {
 			isa = PBXGroup;
 			children = (
 				BBE72AA92882D25000CBDEAD /* ViewModels */,
 				BBE72AAA2882D25800CBDEAD /* Views */,
 			);
-			path = SignIn;
+			path = SignUp;
 			sourceTree = "<group>";
 		};
 		BBE72AA92882D25000CBDEAD /* ViewModels */ = {
@@ -182,7 +199,6 @@
 		BBE72AAA2882D25800CBDEAD /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				BBE72AAB2882D27100CBDEAD /* SignUpView.swift */,
 				BBBD05A6288454E200F18140 /* NamePageView.swift */,
 				BBBD05A82884556B00F18140 /* EmailPageView.swift */,
 				BBBD05AA288455FE00F18140 /* NicknamePageView.swift */,
@@ -289,7 +305,6 @@
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
-				BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
@@ -299,6 +314,7 @@
 				BBBD05A92884556B00F18140 /* EmailPageView.swift in Sources */,
 				BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
+				BBA7CC2A28872EA5008EDEFA /* WelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
