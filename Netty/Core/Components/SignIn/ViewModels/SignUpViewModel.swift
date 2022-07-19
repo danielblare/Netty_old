@@ -218,12 +218,11 @@ class SignUpViewModel: ObservableObject {
         }
         showTimer = true
         Timer.publish(every: 1.0, on: .current, in: .common).autoconnect()
-            .receive(on: DispatchQueue.main)
             .sink { _ in
                 let remaining = Calendar.current.dateComponents([.minute, .second], from: Date(), to: self.futureDate)
                 let minute = remaining.minute ?? 0
                 let second = remaining.second ?? 0
-                if second == 0 && minute == 0 {
+                if second <= 0 && minute <= 0 {
                     self.showTimer = false
                     self.cancellablesTimer.first?.cancel()
                 } else {
