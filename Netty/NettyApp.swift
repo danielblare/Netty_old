@@ -11,13 +11,24 @@ import SwiftUI
 struct NettyApp: App {
     
     @State private var userSignedIn: Bool = false // Is signed in logic
+    @State private var showLaunchView: Bool = true
     
     var body: some Scene {
         WindowGroup {
-            if userSignedIn {
-//                HomeView()
-            } else {
-                SignUpView()
+            ZStack {
+                if userSignedIn {
+                    //                HomeView()
+                } else {
+                    SignUpView()
+                }
+                
+                ZStack {
+                    if showLaunchView {
+                        LaunchView(showLaunchView: $showLaunchView)
+                            .transition(.opacity)
+                    }
+                }
+                .zIndex(2.0)
             }
         }
     }

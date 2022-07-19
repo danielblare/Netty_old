@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 
 extension Color {
     
@@ -18,5 +19,8 @@ struct ColorTheme {
     
     let accent = Color("AccentColor")
     let background = Color("BackgroundColor")
+    let gradientDark = Color("GradientDark")
+    let gradientLight = Color("GradientLight")
+    
     
 }

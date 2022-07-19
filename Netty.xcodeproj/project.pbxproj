@@ -11,6 +11,8 @@
 		BB34BAC92884A52D00636BE5 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC82884A52D00636BE5 /* Character.swift */; };
 		BBA71B952883024A0089D613 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B942883024A0089D613 /* String.swift */; };
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
+		BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC23288711EF008EDEFA /* LaunchView.swift */; };
+		BBA7CC26288714FD008EDEFA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */; };
 		BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */; };
 		BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A6288454E200F18140 /* NamePageView.swift */; };
 		BBBD05A92884556B00F18140 /* EmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A82884556B00F18140 /* EmailPageView.swift */; };
@@ -35,6 +37,8 @@
 		BB34BAC82884A52D00636BE5 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		BBA71B942883024A0089D613 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		BBA7CC23288711EF008EDEFA /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
+		BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCheckManager.swift; sourceTree = "<group>"; };
 		BBBD05A6288454E200F18140 /* NamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePageView.swift; sourceTree = "<group>"; };
 		BBBD05A82884556B00F18140 /* EmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPageView.swift; sourceTree = "<group>"; };
@@ -144,7 +148,9 @@
 		BBE72AA32882CE9E00CBDEAD /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				BBEE4E8B28870DC40024B03B /* Launch */,
 				BBE72AA62882CED100CBDEAD /* Components */,
+				BBE72AA82882D23E00CBDEAD /* SignIn */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -152,7 +158,6 @@
 		BBE72AA62882CED100CBDEAD /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				BBE72AA82882D23E00CBDEAD /* SignIn */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -184,6 +189,23 @@
 				BBBD05AC2884563800F18140 /* CreatePasswordPageView.swift */,
 				BBBD05B0288459B200F18140 /* PasswordStrongLevelView.swift */,
 				BB34BAC628848E3100636BE5 /* SecureInputView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BBEE4E8B28870DC40024B03B /* Launch */ = {
+			isa = PBXGroup;
+			children = (
+				BBEE4E8C28870DDA0024B03B /* Views */,
+			);
+			path = Launch;
+			sourceTree = "<group>";
+		};
+		BBEE4E8C28870DDA0024B03B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BBA7CC23288711EF008EDEFA /* LaunchView.swift */,
+				BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -246,6 +268,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBA7CC26288714FD008EDEFA /* LaunchScreen.storyboard in Resources */,
 				BBE72A992882CE0800CBDEAD /* Preview Assets.xcassets in Resources */,
 				BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */,
 			);
@@ -265,6 +288,7 @@
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
+				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
 				BBE72AAC2882D27100CBDEAD /* SignUpView.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,
@@ -400,6 +424,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Netty/Netty.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -413,6 +438,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortraitUpsideDown;
@@ -437,6 +463,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Netty/Netty.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -450,6 +477,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortraitUpsideDown;
