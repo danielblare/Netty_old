@@ -13,7 +13,6 @@
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
 		BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC23288711EF008EDEFA /* LaunchView.swift */; };
 		BBA7CC26288714FD008EDEFA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */; };
-		BBA7CC2A28872EA5008EDEFA /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC2928872EA5008EDEFA /* WelcomeView.swift */; };
 		BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */; };
 		BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A6288454E200F18140 /* NamePageView.swift */; };
 		BBBD05A92884556B00F18140 /* EmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A82884556B00F18140 /* EmailPageView.swift */; };
@@ -28,6 +27,8 @@
 		BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */; };
 		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
 		BBE9E48E2883626900775325 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9E48D2883626900775325 /* HapticManager.swift */; };
+		BBF131CF288745880043A81E /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF131CE288745880043A81E /* LogInView.swift */; };
+		BBF131D12887481E0043A81E /* LogInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF131D02887481E0043A81E /* LogInViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,7 +40,6 @@
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		BBA7CC23288711EF008EDEFA /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		BBA7CC2928872EA5008EDEFA /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCheckManager.swift; sourceTree = "<group>"; };
 		BBBD05A6288454E200F18140 /* NamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePageView.swift; sourceTree = "<group>"; };
 		BBBD05A82884556B00F18140 /* EmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPageView.swift; sourceTree = "<group>"; };
@@ -55,6 +55,8 @@
 		BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		BBE9E48D2883626900775325 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		BBF131CE288745880043A81E /* LogInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
+		BBF131D02887481E0043A81E /* LogInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,18 +70,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BBA7CC2728872E08008EDEFA /* WelcomeScreen */ = {
+		BBA7CC2728872E08008EDEFA /* LogIn */ = {
 			isa = PBXGroup;
 			children = (
+				BBF131CD2887455B0043A81E /* ViewModel */,
 				BBA7CC2828872E9C008EDEFA /* Views */,
 			);
-			path = WelcomeScreen;
+			path = LogIn;
 			sourceTree = "<group>";
 		};
 		BBA7CC2828872E9C008EDEFA /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				BBA7CC2928872EA5008EDEFA /* WelcomeView.swift */,
+				BBF131CE288745880043A81E /* LogInView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -164,7 +167,7 @@
 		BBE72AA32882CE9E00CBDEAD /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				BBA7CC2728872E08008EDEFA /* WelcomeScreen */,
+				BBA7CC2728872E08008EDEFA /* LogIn */,
 				BBEE4E8B28870DC40024B03B /* Launch */,
 				BBE72AA62882CED100CBDEAD /* Components */,
 				BBE72AA82882D23E00CBDEAD /* SignUp */,
@@ -224,6 +227,14 @@
 				BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		BBF131CD2887455B0043A81E /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				BBF131D02887481E0043A81E /* LogInViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -303,10 +314,12 @@
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
+				BBF131CF288745880043A81E /* LogInView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,
+				BBF131D12887481E0043A81E /* LogInViewModel.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,
@@ -314,7 +327,6 @@
 				BBBD05A92884556B00F18140 /* EmailPageView.swift in Sources */,
 				BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
-				BBA7CC2A28872EA5008EDEFA /* WelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

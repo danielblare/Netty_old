@@ -79,19 +79,11 @@ struct NamePageView: View {
                 .padding()
             }
         }
-        .navigationTitle("Personal Data")
-        .background(Color.theme.background)
+        .navigationTitle("Welcome to Netty!")
+        .background(Color.theme.background.onTapGesture {
+            UIApplication.shared.endEditing()
+        })
     }
 }
 
 
-
-struct NamePageView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        NavigationView {
-            NamePageView()
-                .navigationTitle("Welcome to Netty!")
-        }
-    }
-}

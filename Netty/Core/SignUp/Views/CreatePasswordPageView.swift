@@ -70,15 +70,8 @@ struct CreatePasswordPageView: View {
             }
         }
         .navigationTitle("Create a Password")
-        .background(Color.theme.background)
-    }
-}
-
-struct CreatePasswordPageView_Previews: PreviewProvider {
-    static var previews: some View {
-        CreatePasswordPageView(vm: SignUpViewModel())
-            .preferredColorScheme(.light)
-        CreatePasswordPageView(vm: SignUpViewModel())
-            .preferredColorScheme(.dark)
+        .background(Color.theme.background.onTapGesture {
+            UIApplication.shared.endEditing()
+        })
     }
 }

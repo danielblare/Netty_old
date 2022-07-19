@@ -11,7 +11,7 @@ import SwiftUI
 struct NettyApp: App {
     
     @State private var userSignedIn: Bool = false // Is signed in logic
-    @State private var showLaunchView: Bool = false
+    @State private var showLaunchView: Bool = true
     
     init() {
         UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor : UIColor(.theme.accent)]
@@ -28,7 +28,7 @@ struct NettyApp: App {
                 if userSignedIn {
 //                HomeView()
                 } else {
-                    WelcomeView()
+                    LogInView()
                 }
                 
                 ZStack {

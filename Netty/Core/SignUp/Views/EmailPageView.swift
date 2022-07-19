@@ -127,6 +127,7 @@ struct EmailPageView: View {
                     
                 } else {
                     Button {
+                        UIApplication.shared.endEditing()
                         vm.confirmButtonPressed()
                     } label: {
                         Text("Confirm")
@@ -144,13 +145,9 @@ struct EmailPageView: View {
             vm.getAlert()
         })
         .navigationTitle("Create account")
-        .background(Color.theme.background)
+        .background(Color.theme.background.onTapGesture {
+            UIApplication.shared.endEditing()
+        })
     }
 }
 
-
-struct Previews_EmailPageView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmailPageView(vm: SignUpViewModel())
-    }
-}
