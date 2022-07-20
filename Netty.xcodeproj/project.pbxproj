@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		BB34BAC728848E3100636BE5 /* SecureInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC628848E3100636BE5 /* SecureInputView.swift */; };
 		BB34BAC92884A52D00636BE5 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC82884A52D00636BE5 /* Character.swift */; };
+		BB9067FD2888137400962B21 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9067FC2888137400962B21 /* HomeView.swift */; };
+		BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9068002888194A00962B21 /* LogInAndOutManager.swift */; };
+		BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB90680328881A5F00962B21 /* HomeViewModel.swift */; };
 		BBA71B952883024A0089D613 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B942883024A0089D613 /* String.swift */; };
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
 		BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC23288711EF008EDEFA /* LaunchView.swift */; };
@@ -28,7 +31,6 @@
 		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
 		BBE9E48E2883626900775325 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9E48D2883626900775325 /* HapticManager.swift */; };
 		BBF131CF288745880043A81E /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF131CE288745880043A81E /* LogInView.swift */; };
-		BBF131D12887481E0043A81E /* LogInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF131D02887481E0043A81E /* LogInViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,9 @@
 		BB34BAC528848C6E00636BE5 /* Netty.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Netty.entitlements; sourceTree = "<group>"; };
 		BB34BAC628848E3100636BE5 /* SecureInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureInputView.swift; sourceTree = "<group>"; };
 		BB34BAC82884A52D00636BE5 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
+		BB9067FC2888137400962B21 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		BB9068002888194A00962B21 /* LogInAndOutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInAndOutManager.swift; sourceTree = "<group>"; };
+		BB90680328881A5F00962B21 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		BBA71B942883024A0089D613 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		BBA7CC23288711EF008EDEFA /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
@@ -56,7 +61,6 @@
 		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		BBE9E48D2883626900775325 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		BBF131CE288745880043A81E /* LogInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
-		BBF131D02887481E0043A81E /* LogInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,10 +74,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BB9067F92888135700962B21 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				BB90680228881A5100962B21 /* ViewModel */,
+				BB9067FB2888136A00962B21 /* Views */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		BB9067FB2888136A00962B21 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BB9067FC2888137400962B21 /* HomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BB90680228881A5100962B21 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				BB90680328881A5F00962B21 /* HomeViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		BBA7CC2728872E08008EDEFA /* LogIn */ = {
 			isa = PBXGroup;
 			children = (
-				BBF131CD2887455B0043A81E /* ViewModel */,
 				BBA7CC2828872E9C008EDEFA /* Views */,
 			);
 			path = LogIn;
@@ -152,6 +180,7 @@
 				BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */,
 				BBE9E48D2883626900775325 /* HapticManager.swift */,
 				BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */,
+				BB9068002888194A00962B21 /* LogInAndOutManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -167,6 +196,7 @@
 		BBE72AA32882CE9E00CBDEAD /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				BB9067F92888135700962B21 /* Home */,
 				BBA7CC2728872E08008EDEFA /* LogIn */,
 				BBEE4E8B28870DC40024B03B /* Launch */,
 				BBE72AA62882CED100CBDEAD /* Components */,
@@ -227,14 +257,6 @@
 				BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		BBF131CD2887455B0043A81E /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				BBF131D02887481E0043A81E /* LogInViewModel.swift */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -319,13 +341,15 @@
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,
-				BBF131D12887481E0043A81E /* LogInViewModel.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
+				BB9067FD2888137400962B21 /* HomeView.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,
 				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,
+				BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */,
 				BBBD05A92884556B00F18140 /* EmailPageView.swift in Sources */,
 				BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */,
+				BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
