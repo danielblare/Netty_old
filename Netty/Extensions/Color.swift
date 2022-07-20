@@ -21,6 +21,5 @@ struct ColorTheme {
     let background = Color("BackgroundColor")
     let gradientDark = Color("GradientDark")
     let gradientLight = Color("GradientLight")
-    let textOnAccentColor = Color("TextOnAccentColor")
     
 }

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
-import MessageUI
+import CloudKit
 
 class SignUpViewModel: ObservableObject {
     
@@ -217,6 +217,29 @@ class SignUpViewModel: ObservableObject {
         let text = "<h3>Welcome to Netty, \(firstNameTextField) \(lastNameTextField)!</h3><br /><br />Your confirmation code is <b>\(oneTimePasscode ?? "ErRoR")</b>"
         
         let _ = try await EmailSendManager.instance.sendEmail(to: to, subject: subject, type: type, text: text)
+    }
+    
+    func createAccount() {
+        let firstName = firstNameTextField
+        let lastName = lastNameTextField
+        let dateOfBirth = birthDate
+        let nickname = nicknameTextField
+        let email = savedEmail
+        let password = passwordField
+        
+        let newUser = CKRecord(recordType: "PrivateUsers")
+        newUser["firstName"] = firstName
+        newUser["lastName"] = lastName
+        newUser["dateOfBirth"] = dateOfBirth
+        newUser["email"] = email
+        newUser["nickname"] = nickname
+        newUser["password"] = password
+        
+        CKContainer.default().privateCloudDatabase.save(newUser) { returnedRecord, returnedError in
+            print("RECORD: \(String(describing: returnedRecord))")
+            print("ERROR: \(String(describing: returnedError))")
+        }
+        
     }
     
     func confirmButtonPressed() {

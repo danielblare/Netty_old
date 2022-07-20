@@ -25,7 +25,6 @@
 		BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */; };
 		BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A912882CE0600CBDEAD /* NettyApp.swift */; };
 		BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A952882CE0800CBDEAD /* Assets.xcassets */; };
-		BBE72A992882CE0800CBDEAD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */; };
 		BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AAF2882DA3800CBDEAD /* UserModel.swift */; };
 		BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */; };
 		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
@@ -55,7 +54,6 @@
 		BBE72A8E2882CE0600CBDEAD /* Netty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Netty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
 		BBE72A952882CE0800CBDEAD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		BBE72AAF2882DA3800CBDEAD /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -143,22 +141,15 @@
 				BBE72AA12882CE7100CBDEAD /* Services */,
 				BBE72AA22882CE8C00CBDEAD /* Models */,
 				BBE72AA32882CE9E00CBDEAD /* Core */,
-				BBE72A972882CE0800CBDEAD /* Preview Content */,
 			);
 			path = Netty;
-			sourceTree = "<group>";
-		};
-		BBE72A972882CE0800CBDEAD /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				BBE72A982882CE0800CBDEAD /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		BBE72A9F2882CE3E00CBDEAD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				BBBD05B0288459B200F18140 /* PasswordStrongLevelView.swift */,
+				BB34BAC628848E3100636BE5 /* SecureInputView.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -236,8 +227,6 @@
 				BBBD05A82884556B00F18140 /* EmailPageView.swift */,
 				BBBD05AA288455FE00F18140 /* NicknamePageView.swift */,
 				BBBD05AC2884563800F18140 /* CreatePasswordPageView.swift */,
-				BBBD05B0288459B200F18140 /* PasswordStrongLevelView.swift */,
-				BB34BAC628848E3100636BE5 /* SecureInputView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -318,7 +307,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BBA7CC26288714FD008EDEFA /* LaunchScreen.storyboard in Resources */,
-				BBE72A992882CE0800CBDEAD /* Preview Assets.xcassets in Resources */,
 				BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -480,7 +468,7 @@
 				CODE_SIGN_ENTITLEMENTS = Netty/Netty.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Netty/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Netty\"";
 				DEVELOPMENT_TEAM = VFJ7656544;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -519,7 +507,7 @@
 				CODE_SIGN_ENTITLEMENTS = Netty/Netty.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Netty/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Netty\"";
 				DEVELOPMENT_TEAM = VFJ7656544;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

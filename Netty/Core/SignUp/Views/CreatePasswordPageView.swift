@@ -50,16 +50,13 @@ struct CreatePasswordPageView: View {
                 Spacer(minLength: 0)
                 
                 // Next button
-                NavigationLink {
-                    EmptyView()
-                } label: {
-                    HStack {
-                        Text("Next")
-                            .font(.title3)
-                        
-                        Image(systemName: "arrow.forward")
-                    }
-                }
+                Button(action: {
+                    vm.createAccount()
+                }, label: {
+                    Text("Create account")
+                        .font(.title3)
+                })
+                .buttonStyle(.borderedProminent)
                 .disabled(vm.passwordNextButtonDisabled)
                 .padding()
             }
@@ -68,5 +65,11 @@ struct CreatePasswordPageView: View {
         .background(Color.theme.background.onTapGesture {
             UIApplication.shared.endEditing()
         })
+    }
+}
+
+struct Previews_CreatePasswordPageView_Previews: PreviewProvider {
+    static var previews: some View {
+        CreatePasswordPageView(vm: SignUpViewModel())
     }
 }

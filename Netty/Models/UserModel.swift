@@ -8,20 +8,19 @@
 import Foundation
 import SwiftUI
 
-struct UserModel: Codable {
-    let firstName, lastName, email, nickname: String
+struct PublicUserModel: Codable {
+    let firstName, lastName, nickname: String
     let dateOfBirth: Date
     let avatar: UIImage?
     
     enum CodingKeys: String, CodingKey {
-        case firstName, lastName, email, nickname, dateOfBirth, avatar
+        case firstName, lastName, nickname, dateOfBirth, avatar
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.firstName = try container.decode(String.self, forKey: .firstName)
         self.lastName = try container.decode(String.self, forKey: .lastName)
-        self.email = try container.decode(String.self, forKey: .email)
         self.nickname = try container.decode(String.self, forKey: .nickname)
         self.dateOfBirth = try container.decode(Date.self, forKey: .dateOfBirth)
         self.avatar = UIImage(data: try container.decode(Data.self, forKey: .avatar))
@@ -31,7 +30,6 @@ struct UserModel: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(firstName, forKey: .firstName)
         try container.encode(lastName, forKey: .lastName)
-        try container.encode(email, forKey: .email)
         try container.encode(nickname, forKey: .nickname)
         try container.encode(dateOfBirth, forKey: .dateOfBirth)
         if let image = avatar,
@@ -41,3 +39,10 @@ struct UserModel: Codable {
     }
     
 }
+
+struct PrivateUserModel: Codable {
+    let firstName, lastName, email, nickname, password: String
+    let dateOfBirth: Date
+        
+}
+

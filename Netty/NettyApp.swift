@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import CloudKit
 
 class LogInAndOutViewModel: ObservableObject {
     @Published var userSignedIn: Bool // Is signed in logica
@@ -17,8 +18,11 @@ class LogInAndOutViewModel: ObservableObject {
     var alertText: String = ""
     
     private var cancellables = Set<AnyCancellable>()
+    
     init() {
-        userSignedIn = true
+//        getiCloudStatus()
+        
+        userSignedIn = false
     }
     
     func logIn(username: String, password: String) async {
@@ -64,6 +68,25 @@ class LogInAndOutViewModel: ObservableObject {
             .store(in: &cancellables)
 
     }
+    
+//    private func getiCloudStatus() {
+//        CKContainer.default().accountStatus {  returnedStatus, returnedError in
+//            DispatchQueue.main.async {
+//                switch returnedStatus {
+//                case .couldNotDetermine:
+//                    <#code#>
+//                case .available:
+//                    <#code#>
+//                case .restricted:
+//                    <#code#>
+//                case .noAccount:
+//                    <#code#>
+//                case .temporarilyUnavailable:
+//                    <#code#>
+//                }
+//            }
+//        }
+//    }
 }
 
 @main

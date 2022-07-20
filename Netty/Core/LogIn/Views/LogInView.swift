@@ -23,7 +23,7 @@ struct LogInView: View {
     @FocusState private var activeField: FocusedValue?
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ZStack {
                 VStack {
                     VStack(spacing: 0) {
@@ -56,6 +56,18 @@ struct LogInView: View {
                         .focused($activeField, equals: .password)
                         .padding(.horizontal)
                     
+                    HStack {
+                        Spacer(minLength: 0)
+
+                        NavigationLink {
+
+                        } label: {
+                            Text("Forgot password?")
+                                .font(.footnote)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
                     Button {
                         Task {
                             withAnimation {
@@ -66,16 +78,13 @@ struct LogInView: View {
                         }
                     } label: {
                         Text("Log In")
-                            .foregroundColor(.theme.textOnAccentColor)
-                            .padding()
+                            .font(.title3)
+                            .padding(5)
                             .frame(maxWidth: .infinity)
-                            .background(
-                                Rectangle()
-                                    .foregroundColor(.accentColor)
-                                    .cornerRadius(15)
-                            )
-                            .padding()
                     }
+                    .padding(.horizontal)
+                    .padding(.top, 5)
+                    .buttonStyle(.borderedProminent)
                     
                     
                     
