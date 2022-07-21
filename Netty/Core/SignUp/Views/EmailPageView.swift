@@ -135,8 +135,8 @@ struct EmailPageView: View {
             }
             
         }
-        .alert(isPresented: $vm.showAlert, content: {
-            vm.getAlert()
+        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+            Text(vm.alertMessage)
         })
         .navigationTitle("Enter your e-mail")
         .background(Color.theme.background.onTapGesture {

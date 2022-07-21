@@ -24,7 +24,7 @@ class SignUpViewModel: ObservableObject {
     
     /// Error connected with nickname entering
     enum NicknameError: String {
-        case nameIsUsed = "Name is already used"
+        case nameIsUsed = "Nickname is already used"
         case length = "Enter 3 or more symbols"
         case space = "Nickname contains unacceptable characters"
         case none = ""
@@ -67,8 +67,6 @@ class SignUpViewModel: ObservableObject {
     }
     private var savedEmail: String = ""
     private var oneTimePasscode: String? = nil
-    @Published var showAlert: Bool = false
-    private var alertError: Error? = nil
     @Published var emailButtonDisabled: Bool = true
     @Published var emailButtonText: EmailButtonText = .send
     @Published var emailTextFieldIsDisabled: Bool = false
@@ -129,42 +127,69 @@ class SignUpViewModel: ObservableObject {
     }
     @Published var passwordMessage: PasswordWarningMessage = .short
     @Published var passwordNextButtonDisabled: Bool = true
+    @Published var creatingAccountIsLoading: Bool = false
+    
+    var alertTitle: String = ""
+    @Published var showAlert: Bool = false
+    var alertMessage: String = ""
+        
     
     // Cancellables publishers
     private var cancellables = Set<AnyCancellable>()
     
     func emailButtonPressed() async {
-        switch emailButtonText {
-        case .send:
-            savedEmail = emailTextField
-            await MainActor.run {
-                withAnimation(.easeOut(duration: 0.09)) {
-                    startTimerFor(seconds: 10)
-                    self.emailButtonDisabled = true
-                    self.showCodeTextField = true
+        
+        savedEmail = emailTextField.lowercased()
+        
+        let result = await CloudKitManager.instance.doesRecordExistInpPrivateDatabase(inRecordType: "PrivateUsers", withField: "email", equalTo: savedEmail)
+        switch result {
+        case .success(let available):
+            if available {
+                switch self.emailButtonText {
+                case .send:
+                    await MainActor.run {
+                        withAnimation(.easeOut(duration: 0.09)) {
+                            self.startTimerFor(seconds: 10)
+                            self.emailButtonDisabled = true
+                            self.showCodeTextField = true
+                        }
+                        self.emailButtonText = .again
+                    }
+                case .again:
+                    await MainActor.run {
+                        withAnimation(.easeOut(duration: 0.09)) {
+                            self.startTimerFor(seconds: 59)
+                            self.emailButtonDisabled = true
+                        }
+                    }
+                case .verificated: break
                 }
-                emailButtonText = .again
-            }
-        case .again:
-            savedEmail = emailTextField
-            await MainActor.run {
-                withAnimation(.easeOut(duration: 0.09)) {
-                    startTimerFor(seconds: 59)
-                    self.emailButtonDisabled = true
+                
+                do {
+                    try await self.sendEmail()
+                } catch {
+                    self.showAlert(title: "Error while sending e-mail", message: error.localizedDescription)
                 }
+            } else {
+                showAlert(title: "Error", message: "Account with this e-mail already exists")
             }
-        case .verificated: break
+        case .failure(let failure):
+            showAlert(title: "Server error", message: failure.localizedDescription)
         }
         
-        do {
-            try await sendEmail()
-        } catch {
-            alertError = error
-            showAlert = true
+        
+    }
+    
+    private func showAlert(title: String, message: String) {
+        alertTitle = title
+        alertMessage = message
+        DispatchQueue.main.async {
+            self.showAlert = true
         }
     }
     
     private var futureDate = Date()
+    
     private var cancellablesTimer = Set<AnyCancellable>()
     
     private func startTimerFor(seconds: Int) {
@@ -199,14 +224,6 @@ class SignUpViewModel: ObservableObject {
         
     }
     
-    func getAlert() -> Alert {
-        Alert(
-            title: Text("Error sending e-mail"),
-            message: Text(alertError?.localizedDescription ?? ""),
-            dismissButton: .cancel()
-        )
-    }
-    
     private func sendEmail() async throws {
         
         oneTimePasscode = String.generateOneTimeCode()
@@ -219,7 +236,11 @@ class SignUpViewModel: ObservableObject {
         let _ = try await EmailSendManager.instance.sendEmail(to: to, subject: subject, type: type, text: text)
     }
     
-    func createAccount() {
+    func createAccount() async {
+        await MainActor.run(body: {
+            creatingAccountIsLoading = true
+        })
+        
         let firstName = firstNameTextField
         let lastName = lastNameTextField
         let dateOfBirth = birthDate
@@ -235,11 +256,16 @@ class SignUpViewModel: ObservableObject {
         newUser["nickname"] = nickname
         newUser["password"] = password
         
-        CKContainer.default().privateCloudDatabase.save(newUser) { returnedRecord, returnedError in
-            print("RECORD: \(String(describing: returnedRecord))")
-            print("ERROR: \(String(describing: returnedError))")
+        let result = await CloudKitManager.instance.addRecord(newUser)
+        await MainActor.run(body: {
+            creatingAccountIsLoading = false
+        })
+        switch result {
+        case .success(_):
+            UserDefaults.standard.set(true, forKey: "userSignedIn")
+        case .failure(let error):
+            showAlert(title: "Error while creating an account", message: error.localizedDescription)
         }
-        
     }
     
     func confirmButtonPressed() {
@@ -263,6 +289,18 @@ class SignUpViewModel: ObservableObject {
                 showFailStatusIcon = true
                 HapticManager.instance.notification(of: .error)
             }
+        }
+    }
+    
+    func checkAvailability(for nickname: String) async -> Bool {
+        
+        let result = await CloudKitManager.instance.doesRecordExistInpPrivateDatabase(inRecordType: "PrivateUsers", withField: "nickname", equalTo: nickname)
+        switch result {
+        case .success(let available):
+            return available
+        case .failure(let failure):
+            showAlert(title: "Server error", message: failure.localizedDescription)
+            return false
         }
     }
     
@@ -335,8 +373,6 @@ class SignUpViewModel: ObservableObject {
         let sharedNicknamePublisher = $nicknameTextField
             .share()
         
-        let manager = AvailabilityCheckManager.instance
-        
         // After 0.5 second of inactivity checks whether nickname is at least 3 symbols long and available
         sharedNicknamePublisher
             .removeDuplicates()
@@ -352,7 +388,7 @@ class SignUpViewModel: ObservableObject {
                     } else {
                         self.nicknameIsChecking = true
                         self.checkTask = Task {
-                            let check = await manager.checkAvailability(for: self.nicknameTextField)
+                            let check = await self.checkAvailability(for: self.nicknameTextField)
                             if !self.checkTask.isCancelled {
                                 await MainActor.run(body: {
                                     if check {

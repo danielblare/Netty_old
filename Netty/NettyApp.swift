@@ -10,18 +10,16 @@ import Combine
 import CloudKit
 
 class LogInAndOutViewModel: ObservableObject {
-    @Published var userSignedIn: Bool // Is signed in logica
+    @AppStorage("userSignedIn") var userSignedIn: Bool = false // Is signed in logic
     private let manager = LogInAndOutManager.instance
     
     @Published var showAlert: Bool = false
-    var error: Error? = nil
-    var alertText: String = ""
+    var alertTitle: String = ""
+    var alertMessage: String = ""
     
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-//        getiCloudStatus()
-        
         userSignedIn = false
     }
     
@@ -29,12 +27,10 @@ class LogInAndOutViewModel: ObservableObject {
         let result = await manager.logIn(username: username, password: password)
         result.publisher
             .receive(on: DispatchQueue.main)
-            .sink { completion in
+            .sink { [weak self] completion in
                 switch completion {
                 case .failure(let error):
-                    self.error = error
-                    self.alertText = "Error while logging in"
-                    self.showAlert = true
+                    self?.showAlert(title: "Error while logging in", message: error.localizedDescription)
                 case .finished:
                     break
                 }
@@ -47,16 +43,20 @@ class LogInAndOutViewModel: ObservableObject {
 
     }
     
+    private func showAlert(title: String, message: String) {
+        alertTitle = title
+        alertMessage = message
+        showAlert = true
+    }
+    
     func logOut() async {
         let result = await manager.logOut()
         result.publisher
             .receive(on: DispatchQueue.main)
-            .sink { completion in
+            .sink { [weak self] completion in
                 switch completion {
                 case .failure(let error):
-                    self.error = error
-                    self.alertText = "Error while logging out"
-                    self.showAlert = true
+                    self?.showAlert(title: "Error while logging out", message: error.localizedDescription)
                 case .finished:
                     break
                 }
@@ -69,24 +69,26 @@ class LogInAndOutViewModel: ObservableObject {
 
     }
     
-//    private func getiCloudStatus() {
-//        CKContainer.default().accountStatus {  returnedStatus, returnedError in
-//            DispatchQueue.main.async {
-//                switch returnedStatus {
-//                case .couldNotDetermine:
-//                    <#code#>
-//                case .available:
-//                    <#code#>
-//                case .restricted:
-//                    <#code#>
-//                case .noAccount:
-//                    <#code#>
-//                case .temporarilyUnavailable:
-//                    <#code#>
-//                }
-//            }
-//        }
-//    }
+    private func getiCloudStatus() {
+        CKContainer.default().accountStatus {  returnedStatus, returnedError in
+            DispatchQueue.main.async {
+                switch returnedStatus {
+                case .couldNotDetermine:
+                    print("Could not determine")
+                case .available:
+                    print("iCloud is available")
+                case .restricted:
+                    print("iCloud is restricted")
+                case .noAccount:
+                    print("No account")
+                case .temporarilyUnavailable:
+                    print("Temporariry unavailable")
+                @unknown default:
+                    print("iCloud default")
+                }
+            }
+        }
+    }
 }
 
 @main
@@ -122,13 +124,9 @@ struct NettyApp: App {
                 }
                 .zIndex(2.0)
             }
-            .alert(isPresented: $logInAndOutViewModel.showAlert) {
-                Alert(
-                    title: Text(logInAndOutViewModel.alertText),
-                    message: Text(logInAndOutViewModel.error?.localizedDescription ?? ""),
-                    dismissButton: .cancel()
-                )
-            }
+            .alert(Text(logInAndOutViewModel.alertTitle), isPresented: $logInAndOutViewModel.showAlert, actions: {}, message: {
+                Text(logInAndOutViewModel.alertMessage)
+            })
         }
     }
 }

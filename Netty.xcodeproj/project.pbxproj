@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB19A676288967D50042AA65 /* CloudKitManager.swift */; };
 		BB34BAC728848E3100636BE5 /* SecureInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC628848E3100636BE5 /* SecureInputView.swift */; };
 		BB34BAC92884A52D00636BE5 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC82884A52D00636BE5 /* Character.swift */; };
 		BB9067FD2888137400962B21 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9067FC2888137400962B21 /* HomeView.swift */; };
@@ -16,7 +17,6 @@
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
 		BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC23288711EF008EDEFA /* LaunchView.swift */; };
 		BBA7CC26288714FD008EDEFA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */; };
-		BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */; };
 		BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A6288454E200F18140 /* NamePageView.swift */; };
 		BBBD05A92884556B00F18140 /* EmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A82884556B00F18140 /* EmailPageView.swift */; };
 		BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05AA288455FE00F18140 /* NicknamePageView.swift */; };
@@ -33,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BB19A676288967D50042AA65 /* CloudKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitManager.swift; sourceTree = "<group>"; };
 		BB34BAC328848B1A00636BE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BB34BAC528848C6E00636BE5 /* Netty.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Netty.entitlements; sourceTree = "<group>"; };
 		BB34BAC628848E3100636BE5 /* SecureInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureInputView.swift; sourceTree = "<group>"; };
@@ -44,7 +45,6 @@
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		BBA7CC23288711EF008EDEFA /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityCheckManager.swift; sourceTree = "<group>"; };
 		BBBD05A6288454E200F18140 /* NamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePageView.swift; sourceTree = "<group>"; };
 		BBBD05A82884556B00F18140 /* EmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPageView.swift; sourceTree = "<group>"; };
 		BBBD05AA288455FE00F18140 /* NicknamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknamePageView.swift; sourceTree = "<group>"; };
@@ -168,10 +168,10 @@
 		BBE72AA12882CE7100CBDEAD /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				BBBD05992884384300F18140 /* AvailabilityCheckManager.swift */,
 				BBE9E48D2883626900775325 /* HapticManager.swift */,
 				BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */,
 				BB9068002888194A00962B21 /* LogInAndOutManager.swift */,
+				BB19A676288967D50042AA65 /* CloudKitManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -328,8 +328,8 @@
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
-				BBBD059A2884384300F18140 /* AvailabilityCheckManager.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
+				BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */,
 				BB9067FD2888137400962B21 /* HomeView.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,

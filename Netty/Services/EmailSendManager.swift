@@ -17,7 +17,7 @@ extension EmailSendError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .serialization:
-            return NSLocalizedString("Error while serialization data", comment: "Email sending error")
+            return NSLocalizedString("Error while serialization data", comment: "Error while sending e-mail")
         case .url:
             return NSLocalizedString("Error while getting URL", comment: "URL getting error")
         }
