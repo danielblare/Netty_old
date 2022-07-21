@@ -10,7 +10,8 @@ import Combine
 import CloudKit
 
 class LogInAndOutViewModel: ObservableObject {
-    @AppStorage("userSignedIn") var userSignedIn: Bool = false // Is signed in logic
+    
+    @Published var userSignedIn: Bool // Is signed in logic
     private let manager = LogInAndOutManager.instance
     
     @Published var showAlert: Bool = false
@@ -108,12 +109,10 @@ struct NettyApp: App {
         WindowGroup {
             ZStack {
                 if  logInAndOutViewModel.userSignedIn {
-                    HomeView()
-                        .environmentObject(logInAndOutViewModel)
+                    HomeView(logInAndOutViewModel: logInAndOutViewModel)
                         .transition(.opacity)
                 } else {
-                    LogInView()
-                        .environmentObject(logInAndOutViewModel)
+                    LogInView(logInAndOutViewModel: logInAndOutViewModel)
                         .transition(.opacity)
                 }
                 

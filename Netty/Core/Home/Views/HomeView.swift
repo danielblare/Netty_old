@@ -9,7 +9,11 @@ import SwiftUI
 
 struct HomeView: View {
     
-    @EnvironmentObject private var logInAndOutViewModel: LogInAndOutViewModel
+    @ObservedObject private var logInAndOutViewModel: LogInAndOutViewModel
+    
+    init(logInAndOutViewModel: LogInAndOutViewModel) {
+        self.logInAndOutViewModel = logInAndOutViewModel
+    }
     
     @StateObject private var vm = HomeViewModel()
     
@@ -37,11 +41,5 @@ struct HomeView: View {
                 ProgressView()
             }
         }
-    }
-}
-
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
     }
 }

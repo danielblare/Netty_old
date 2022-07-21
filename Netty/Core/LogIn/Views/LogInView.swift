@@ -9,7 +9,11 @@ import SwiftUI
 
 struct LogInView: View {
     
-    @EnvironmentObject private var logInAndOutViewModel: LogInAndOutViewModel
+    @ObservedObject private var logInAndOutViewModel: LogInAndOutViewModel
+    
+    init(logInAndOutViewModel: LogInAndOutViewModel) {
+        self.logInAndOutViewModel = logInAndOutViewModel
+    }
     
     @State private var username: String = ""
     @State private var password: String = ""
@@ -97,7 +101,7 @@ struct LogInView: View {
                             .font(.footnote)
                         
                         NavigationLink {
-                            NamePageView()
+                            NamePageView(userSignedUp: $logInAndOutViewModel.userSignedIn)
                         } label: {
                             Text("Sign Up")
                                 .font(.footnote)
@@ -119,14 +123,5 @@ struct LogInView: View {
                 }
             }
         }
-    }
-}
-
-struct LogInView_Previews: PreviewProvider {
-    static var previews: some View {
-        LogInView()
-            .preferredColorScheme(.light)
-        LogInView()
-            .preferredColorScheme(.dark)
     }
 }

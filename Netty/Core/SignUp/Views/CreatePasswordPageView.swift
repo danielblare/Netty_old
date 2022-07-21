@@ -10,6 +10,7 @@ import SwiftUI
 struct CreatePasswordPageView: View {
     
     @ObservedObject private var vm: SignUpViewModel
+    private let text = "Passwords do not match"
     
     enum FocusedValue {
         case pass, confPass
@@ -39,7 +40,21 @@ struct CreatePasswordPageView: View {
                     SecureInputView("Confirm password", text: $vm.passwordConfirmField) { UIApplication.shared.endEditing() }
                         .focused($activeField, equals: .confPass)
                 }
-                .padding()
+                .padding(.horizontal)
+                
+                if vm.showDontMatchError {
+                    HStack {
+                        
+                        Spacer(minLength: 0)
+                        
+                        Text(text)
+                            .font(.footnote)
+                            .foregroundColor(.red)
+                            .padding(.horizontal, 10)
+                        
+                    }
+                    .padding(.horizontal)
+                }
                 
                 Spacer(minLength: 0)
                 
@@ -81,8 +96,3 @@ struct CreatePasswordPageView: View {
     }
 }
 
-struct Previews_CreatePasswordPageView_Previews: PreviewProvider {
-    static var previews: some View {
-        CreatePasswordPageView(vm: SignUpViewModel())
-    }
-}

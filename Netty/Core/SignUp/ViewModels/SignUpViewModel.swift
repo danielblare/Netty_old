@@ -12,7 +12,9 @@ import CloudKit
 
 class SignUpViewModel: ObservableObject {
     
-    init() {
+    init(userSignedIn: Binding<Bool>) {
+        self._userSignedIn = userSignedIn
+        
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
         let endingDate: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date())!
@@ -21,6 +23,8 @@ class SignUpViewModel: ObservableObject {
         
         addSubscribers()
     }
+    
+    @Binding var userSignedIn: Bool
     
     /// Error connected with nickname entering
     enum NicknameError: String {
@@ -128,6 +132,7 @@ class SignUpViewModel: ObservableObject {
     @Published var passwordMessage: PasswordWarningMessage = .short
     @Published var passwordNextButtonDisabled: Bool = true
     @Published var creatingAccountIsLoading: Bool = false
+    @Published var showDontMatchError: Bool = false
     
     var alertTitle: String = ""
     @Published var showAlert: Bool = false
@@ -259,13 +264,15 @@ class SignUpViewModel: ObservableObject {
         let result = await CloudKitManager.instance.addRecord(newUser)
         await MainActor.run(body: {
             creatingAccountIsLoading = false
+            switch result {
+            case .success(_):
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    userSignedIn = true
+                }
+            case .failure(let error):
+                showAlert(title: "Error while creating an account", message: error.localizedDescription)
+            }
         })
-        switch result {
-        case .success(_):
-            UserDefaults.standard.set(true, forKey: "userSignedIn")
-        case .failure(let error):
-            showAlert(title: "Error while creating an account", message: error.localizedDescription)
-        }
     }
     
     func confirmButtonPressed() {
@@ -430,6 +437,14 @@ class SignUpViewModel: ObservableObject {
             .share()
         
         sharedPasswordPublisher
+            .debounce(for: 2.0, scheduler: DispatchQueue.main)
+            .filter({ $0 != $1 })
+            .sink { [weak self] _, _ in
+                self?.showDontMatchError = true
+            }
+            .store(in: &cancellables)
+        
+        sharedPasswordPublisher
             .debounce(for: 0.7, scheduler: DispatchQueue.main)
             .filter({ password, _ in
                 password.count >= 8
@@ -446,8 +461,9 @@ class SignUpViewModel: ObservableObject {
             .store(in: &cancellables)
         
         sharedPasswordPublisher
-            .filter( { _, _ in !self.passwordNextButtonDisabled })
+            .filter( { _, _ in !self.passwordNextButtonDisabled || self.showDontMatchError })
             .sink { [weak self] _, _ in
+                self?.showDontMatchError = false
                 self?.passwordNextButtonDisabled = true
             }
             .store(in: &cancellables)

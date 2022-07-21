@@ -12,8 +12,12 @@ struct NamePageView: View {
     enum FocusedValue {
         case name, lastName
     }
+        
+    @ObservedObject private var vm: SignUpViewModel
     
-    @StateObject private var vm: SignUpViewModel = SignUpViewModel()
+    init(userSignedUp: Binding<Bool>) {
+        self.vm = SignUpViewModel(userSignedIn: userSignedUp)
+    }
     
     @FocusState private var activeField: FocusedValue?
     
