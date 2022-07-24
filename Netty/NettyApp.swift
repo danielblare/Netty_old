@@ -9,10 +9,20 @@ import SwiftUI
 import Combine
 import CloudKit
 
+enum WarningMessage: String {
+    case usernameIsShort = "Username less than 3 symbols"
+    case passwordIsShort = "Password less than 8 symbols"
+    case none = ""
+}
+
 class LogInAndOutViewModel: ObservableObject {
     
-    @Published var userSignedIn: Bool // Is signed in logic
+    @Published var userSignedIn: Bool
     private let manager = LogInAndOutManager.instance
+    
+    @Published var warningMessage: WarningMessage = .none
+    
+    @Published var isLoading: Bool = false
     
     @Published var showAlert: Bool = false
     var alertTitle: String = ""
@@ -22,32 +32,50 @@ class LogInAndOutViewModel: ObservableObject {
     
     init() {
         userSignedIn = false
+        getiCloudStatus()
     }
     
     func logIn(username: String, password: String) async {
-        let result = await manager.logIn(username: username, password: password)
-        result.publisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                switch completion {
-                case .failure(let error):
-                    self?.showAlert(title: "Error while logging in", message: error.localizedDescription)
-                case .finished:
-                    break
+        if username.count < 3 {
+            await MainActor.run(body: {
+                warningMessage = .usernameIsShort
+            })
+        } else if password.count < 8 {
+            await MainActor.run(body: {
+                warningMessage = .passwordIsShort
+            })
+        } else {
+            await MainActor.run(body: {
+                warningMessage = .none
+                isLoading = true
+            })
+            let result = await manager.logIn(username: username, password: password)
+            switch result {
+            case .success(let correct):
+                if correct {
+                    await MainActor.run(body: {
+                        withAnimation {
+                            userSignedIn = true
+                        }
+                    })
+                } else {
+                    showAlert(title: "Error while logging in", message: "Password is incorrect")
                 }
-            } receiveValue: { _ in
-                withAnimation {
-                    self.userSignedIn = true
-                }
+            case .failure(let error):
+                showAlert(title: "Error", message: error.localizedDescription)
             }
-            .store(in: &cancellables)
-
+            await MainActor.run(body: {
+                isLoading = false
+            })
+        }
     }
     
     private func showAlert(title: String, message: String) {
         alertTitle = title
         alertMessage = message
-        showAlert = true
+        DispatchQueue.main.async {
+            self.showAlert = true
+        }
     }
     
     func logOut() async {

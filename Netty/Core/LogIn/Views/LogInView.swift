@@ -17,9 +17,7 @@ struct LogInView: View {
     
     @State private var username: String = ""
     @State private var password: String = ""
-    
-    @State private var isLoading: Bool = false
-    
+        
     enum FocusedValue {
         case username, password
     }
@@ -61,10 +59,14 @@ struct LogInView: View {
                         .padding(.horizontal)
                     
                     HStack {
+                        Text(logInAndOutViewModel.warningMessage.rawValue)
+                            .font(.footnote)
+                            .foregroundColor(.red)
+                        
                         Spacer(minLength: 0)
-
+                        
                         NavigationLink {
-
+                            
                         } label: {
                             Text("Forgot password?")
                                 .font(.footnote)
@@ -74,11 +76,7 @@ struct LogInView: View {
                     
                     Button {
                         Task {
-                            withAnimation {
-                                isLoading = true
-                            }
                             await logInAndOutViewModel.logIn(username: username, password: password)
-                            isLoading = false
                         }
                     } label: {
                         Text("Log In")
@@ -115,13 +113,19 @@ struct LogInView: View {
                 .background(Color.theme.background.onTapGesture {
                     UIApplication.shared.endEditing()
             })
-                .disabled(isLoading)
+                .disabled(logInAndOutViewModel.isLoading)
                 
                 
-                if isLoading {
+                if logInAndOutViewModel.isLoading {
                     ProgressView()
                 }
             }
         }
+    }
+}
+
+struct LogInView_Previews: PreviewProvider {
+    static var previews: some View {
+        LogInView(logInAndOutViewModel: LogInAndOutViewModel())
     }
 }
