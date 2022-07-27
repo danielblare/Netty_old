@@ -12,8 +12,8 @@ import CloudKit
 
 class SignUpViewModel: ObservableObject {
     
-    init(userSignedIn: Binding<Bool>) {
-        self._userSignedIn = userSignedIn
+    init(userRecordId: Binding<CKRecord.ID?>) {
+        self._userRecordId = userRecordId
         
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
@@ -24,7 +24,7 @@ class SignUpViewModel: ObservableObject {
         addSubscribers()
     }
     
-    @Binding var userSignedIn: Bool
+    @Binding var userRecordId: CKRecord.ID?
     
     /// Error connected with nickname entering
     enum NicknameError: String {
@@ -146,7 +146,7 @@ class SignUpViewModel: ObservableObject {
         
         savedEmail = emailTextField.lowercased()
         
-        let result = await CloudKitManager.instance.doesRecordExistInpPrivateDatabase(inRecordType: "PrivateUsers", withField: "email", equalTo: savedEmail)
+        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: "AllUsers", withField: "email", equalTo: savedEmail)
         switch result {
         case .success(let available):
             if available {
@@ -253,21 +253,22 @@ class SignUpViewModel: ObservableObject {
         let email = savedEmail
         let password = passwordField
         
-        let newUser = CKRecord(recordType: "PrivateUsers")
+        let newUser = CKRecord(recordType: "AllUsers")
         newUser["firstName"] = firstName
         newUser["lastName"] = lastName
         newUser["dateOfBirth"] = dateOfBirth
         newUser["email"] = email
         newUser["nickname"] = nickname
         newUser["password"] = password
+        newUser["avatar"] = nil
         
-        let result = await CloudKitManager.instance.addRecord(newUser)
+        let result = await CloudKitManager.instance.addRecordToPublicDatabase(newUser)
         await MainActor.run(body: {
             creatingAccountIsLoading = false
             switch result {
-            case .success(_):
+            case .success(let returnedRecord):
                 withAnimation(.easeInOut(duration: 0.5)) {
-                    userSignedIn = true
+                    userRecordId = returnedRecord.recordID
                 }
             case .failure(let error):
                 showAlert(title: "Error while creating an account", message: error.localizedDescription)
@@ -301,7 +302,7 @@ class SignUpViewModel: ObservableObject {
     
     func checkAvailability(for nickname: String) async -> Bool {
         
-        let result = await CloudKitManager.instance.doesRecordExistInpPrivateDatabase(inRecordType: "PrivateUsers", withField: "nickname", equalTo: nickname)
+        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: "AllUsers", withField: "nickname", equalTo: nickname)
         switch result {
         case .success(let available):
             return available
@@ -446,9 +447,6 @@ class SignUpViewModel: ObservableObject {
         
         sharedPasswordPublisher
             .debounce(for: 0.7, scheduler: DispatchQueue.main)
-            .filter({ password, _ in
-                password.count >= 8
-            })
             .map(mapPasswords)
             .sink(receiveValue: { [weak self] passed, message in
                 if passed {

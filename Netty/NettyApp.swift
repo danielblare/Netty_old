@@ -17,7 +17,7 @@ enum WarningMessage: String {
 
 class LogInAndOutViewModel: ObservableObject {
     
-    @Published var userSignedIn: Bool
+    @Published var userRecordId: CKRecord.ID? = nil
     private let manager = LogInAndOutManager.instance
     
     @Published var warningMessage: WarningMessage = .none
@@ -27,11 +27,8 @@ class LogInAndOutViewModel: ObservableObject {
     @Published var showAlert: Bool = false
     var alertTitle: String = ""
     var alertMessage: String = ""
-    
-    private var cancellables = Set<AnyCancellable>()
-    
+        
     init() {
-        userSignedIn = false
         getiCloudStatus()
     }
     
@@ -51,11 +48,11 @@ class LogInAndOutViewModel: ObservableObject {
             })
             let result = await manager.logIn(username: username, password: password)
             switch result {
-            case .success(let correct):
-                if correct {
+            case .success(let id):
+                if id != nil {
                     await MainActor.run(body: {
                         withAnimation {
-                            userSignedIn = true
+                            userRecordId = id
                         }
                     })
                 } else {
@@ -80,22 +77,12 @@ class LogInAndOutViewModel: ObservableObject {
     
     func logOut() async {
         let result = await manager.logOut()
-        result.publisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                switch completion {
-                case .failure(let error):
-                    self?.showAlert(title: "Error while logging out", message: error.localizedDescription)
-                case .finished:
-                    break
-                }
-            } receiveValue: { _ in
-                withAnimation {
-                    self.userSignedIn = false
-                }
-            }
-            .store(in: &cancellables)
-
+        switch result {
+        case .success(_):
+            userRecordId = nil
+        case .failure(let error):
+            showAlert(title: "Error while logging out", message: error.localizedDescription)
+        }
     }
     
     private func getiCloudStatus() {
@@ -123,6 +110,11 @@ class LogInAndOutViewModel: ObservableObject {
 @main
 struct NettyApp: App {
     
+    /*
+     make an list of logged in devices in record and fetch it when LogInAndOutViewModel is initializing
+     fix log out func to delete current device from a list of logged in devices
+     make password encrypted
+     */
     @StateObject private var logInAndOutViewModel = LogInAndOutViewModel()
     @State private var showLaunchView: Bool = true
     
@@ -136,8 +128,8 @@ struct NettyApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                if  logInAndOutViewModel.userSignedIn {
-                    HomeView(logInAndOutViewModel: logInAndOutViewModel)
+                if let id = logInAndOutViewModel.userRecordId {
+                    MainScreenView()
                         .transition(.opacity)
                 } else {
                     LogInView(logInAndOutViewModel: logInAndOutViewModel)
@@ -151,6 +143,7 @@ struct NettyApp: App {
                 }
                 .zIndex(2.0)
             }
+            .persistentSystemOverlays(.hidden)
             .alert(Text(logInAndOutViewModel.alertTitle), isPresented: $logInAndOutViewModel.showAlert, actions: {}, message: {
                 Text(logInAndOutViewModel.alertMessage)
             })

@@ -10,6 +10,9 @@
 		BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB19A676288967D50042AA65 /* CloudKitManager.swift */; };
 		BB34BAC728848E3100636BE5 /* SecureInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC628848E3100636BE5 /* SecureInputView.swift */; };
 		BB34BAC92884A52D00636BE5 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC82884A52D00636BE5 /* Character.swift */; };
+		BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAAD28915606003407FB /* MainScreenView.swift */; };
+		BB4AFAB328915889003407FB /* DirectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB228915889003407FB /* DirectView.swift */; };
+		BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB7289158AE003407FB /* ProfileView.swift */; };
 		BB9067FD2888137400962B21 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9067FC2888137400962B21 /* HomeView.swift */; };
 		BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9068002888194A00962B21 /* LogInAndOutManager.swift */; };
 		BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB90680328881A5F00962B21 /* HomeViewModel.swift */; };
@@ -38,6 +41,9 @@
 		BB34BAC528848C6E00636BE5 /* Netty.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Netty.entitlements; sourceTree = "<group>"; };
 		BB34BAC628848E3100636BE5 /* SecureInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureInputView.swift; sourceTree = "<group>"; };
 		BB34BAC82884A52D00636BE5 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
+		BB4AFAAD28915606003407FB /* MainScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenView.swift; sourceTree = "<group>"; };
+		BB4AFAB228915889003407FB /* DirectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectView.swift; sourceTree = "<group>"; };
+		BB4AFAB7289158AE003407FB /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		BB9067FC2888137400962B21 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		BB9068002888194A00962B21 /* LogInAndOutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInAndOutManager.swift; sourceTree = "<group>"; };
 		BB90680328881A5F00962B21 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -72,6 +78,62 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BB4AFAAC289155D3003407FB /* MainScreen */ = {
+			isa = PBXGroup;
+			children = (
+				BB4AFAAD28915606003407FB /* MainScreenView.swift */,
+			);
+			path = MainScreen;
+			sourceTree = "<group>";
+		};
+		BB4AFAAF2891586A003407FB /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				BB4AFAB12891587E003407FB /* Views */,
+				BB4AFAB028915878003407FB /* ViewModel */,
+			);
+			path = Messages;
+			sourceTree = "<group>";
+		};
+		BB4AFAB028915878003407FB /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		BB4AFAB12891587E003407FB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BB4AFAB228915889003407FB /* DirectView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BB4AFAB428915897003407FB /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				BB4AFAB6289158A3003407FB /* Views */,
+				BB4AFAB52891589C003407FB /* ViewModel */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		BB4AFAB52891589C003407FB /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		BB4AFAB6289158A3003407FB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BB4AFAB7289158AE003407FB /* ProfileView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		BB9067F92888135700962B21 /* Home */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,6 +249,9 @@
 		BBE72AA32882CE9E00CBDEAD /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				BB4AFAB428915897003407FB /* Profile */,
+				BB4AFAAF2891586A003407FB /* Messages */,
+				BB4AFAAC289155D3003407FB /* MainScreen */,
 				BB9067F92888135700962B21 /* Home */,
 				BBA7CC2728872E08008EDEFA /* LogIn */,
 				BBEE4E8B28870DC40024B03B /* Launch */,
@@ -324,7 +389,9 @@
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
+				BB4AFAB328915889003407FB /* DirectView.swift in Sources */,
 				BBF131CF288745880043A81E /* LogInView.swift in Sources */,
+				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
@@ -332,6 +399,7 @@
 				BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */,
 				BB9067FD2888137400962B21 /* HomeView.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
+				BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */,
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,
 				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,
 				BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */,

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CloudKit
 
 struct NamePageView: View {
     
@@ -15,14 +16,14 @@ struct NamePageView: View {
         
     @ObservedObject private var vm: SignUpViewModel
     
-    init(userSignedUp: Binding<Bool>) {
-        self.vm = SignUpViewModel(userSignedIn: userSignedUp)
+    init(userRecordId: Binding<CKRecord.ID?>) {
+        self.vm = SignUpViewModel(userRecordId: userRecordId)
     }
     
     @FocusState private var activeField: FocusedValue?
     
     var body: some View {
-        VStack() {
+        VStack {
             
             Spacer(minLength: 0)
             

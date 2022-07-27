@@ -27,46 +27,44 @@ actor LogInAndOutManager {
     private init() {}
     static let instance = LogInAndOutManager()
     
-    func logIn(username: String, password: String) async -> Result<Bool, Error> {
+    func logIn(username: String, password: String) async -> Result<CKRecord.ID?, Error> {
         await withCheckedContinuation { continuation in
             let predicate = NSPredicate(format: "nickname == %@", username)
-            let query = CKQuery(recordType: "PrivateUsers", predicate: predicate)
-            CKContainer.default().privateCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
+            let query = CKQuery(recordType: "AllUsers", predicate: predicate)
+            CKContainer.default().publicCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
                 switch completion {
                 case .success(let success):
                     if success.matchResults.count > 0 {
-                        let result = success.matchResults.first!.1.map { result in
-                            result.value(forKey: "password") as? String == password
-                        }
-                        switch result {
-                        case .success(let correct):
-                            if correct {
-                                continuation.resume(returning: .success(true))
+                        let id: Result<CKRecord.ID?, Error> = success.matchResults.first!.1.map { result in
+                            if result.value(forKey: "password") as? String == password {
+                                return result.recordID
                             } else {
-                                continuation.resume(returning: .success(false))
+                                return nil
                             }
+                        }
+                        switch id {
+                        case .success(let recordId):
+                            continuation.resume(returning: .success(recordId))
                         case .failure(let error):
                             continuation.resume(returning: .failure(error))
                         }
                     } else {
-                        
-                        
                         let predicate = NSPredicate(format: "email == %@", username)
-                        let query = CKQuery(recordType: "PrivateUsers", predicate: predicate)
-                        CKContainer.default().privateCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
+                        let query = CKQuery(recordType: "AllUsers", predicate: predicate)
+                        CKContainer.default().publicCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
                             switch completion {
                             case .success(let success):
                                 if success.matchResults.count > 0 {
-                                    let result = success.matchResults.first!.1.map { result in
-                                        result.value(forKey: "password") as? String == password
-                                    }
-                                    switch result {
-                                    case .success(let correct):
-                                        if correct {
-                                            continuation.resume(returning: .success(true))
+                                    let id: Result<CKRecord.ID?, Error> = success.matchResults.first!.1.map { result in
+                                        if result.value(forKey: "password") as? String == password {
+                                            return result.recordID
                                         } else {
-                                            continuation.resume(returning: .success(false))
+                                            return nil
                                         }
+                                    }
+                                    switch id {
+                                    case .success(let recordId):
+                                        continuation.resume(returning: .success(recordId))
                                     case .failure(let error):
                                         continuation.resume(returning: .failure(error))
                                     }
@@ -79,8 +77,6 @@ actor LogInAndOutManager {
                         }
                     }
                     
-                    
-                    
                 case .failure(let error):
                     continuation.resume(returning: .failure(error))
                 }
@@ -90,7 +86,9 @@ actor LogInAndOutManager {
     
     func logOut() async -> Result<Void, Error> {
         try? await Task.sleep(nanoseconds: 100_000_000)
-        return .success(())
+        return await withCheckedContinuation { continuation in
+            continuation.resume(returning: .success(()))
+        }
     }
 }
 
