@@ -17,7 +17,20 @@ enum WarningMessage: String {
 
 class LogInAndOutViewModel: ObservableObject {
     
-    @Published var userRecordId: CKRecord.ID? = nil
+    @Published var userRecordId: CKRecord.ID? = nil {
+        didSet {
+            if let id = userRecordId {
+                Task {
+                    await LogInAndOutManager.instance.addLoggedInDevice(for: id)
+                }
+            } else if let id = oldValue {
+                Task {
+                    await LogInAndOutManager.instance.removeLoggedInDevice(for: id)
+                }
+            }
+        }
+    }
+    
     private let manager = LogInAndOutManager.instance
     
     @Published var warningMessage: WarningMessage = .none
@@ -29,6 +42,7 @@ class LogInAndOutViewModel: ObservableObject {
     var alertMessage: String = ""
         
     init() {
+        
         getiCloudStatus()
     }
     
@@ -111,8 +125,7 @@ class LogInAndOutViewModel: ObservableObject {
 struct NettyApp: App {
     
     /*
-     make an list of logged in devices in record and fetch it when LogInAndOutViewModel is initializing
-     fix log out func to delete current device from a list of logged in devices
+    fetch logged in device when LogInAndOutViewModel is initializing
      make password encrypted
      */
     @StateObject private var logInAndOutViewModel = LogInAndOutViewModel()

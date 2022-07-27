@@ -84,6 +84,31 @@ actor LogInAndOutManager {
         }
     }
     
+    func addLoggedInDevice(for recordID: CKRecord.ID) {
+        CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordID) { returnedRecord, error in
+            if error == nil,
+            let record = returnedRecord {
+                CKContainer.default().fetchUserRecordID { returnedRecord, error in
+                    if error == nil,
+                       let id = returnedRecord?.recordName {
+                        record["loggedInDevice"] = "\(id)"
+                        CKContainer.default().publicCloudDatabase.save(record) { _, _ in }
+                    }
+                }
+            }
+        }
+    }
+    
+    func removeLoggedInDevice(for recordID: CKRecord.ID) {
+        CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordID) { returnedRecord, error in
+            if error == nil,
+            let record = returnedRecord {
+            record["loggedInDevice"] = ""
+            CKContainer.default().publicCloudDatabase.save(record) { _, _ in }
+            }
+        }
+    }
+    
     func logOut() async -> Result<Void, Error> {
         try? await Task.sleep(nanoseconds: 100_000_000)
         return await withCheckedContinuation { continuation in

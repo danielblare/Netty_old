@@ -261,6 +261,7 @@ class SignUpViewModel: ObservableObject {
         newUser["nickname"] = nickname
         newUser["password"] = password
         newUser["avatar"] = nil
+        newUser["loggedInDevice"] = ""
         
         let result = await CloudKitManager.instance.addRecordToPublicDatabase(newUser)
         await MainActor.run(body: {
