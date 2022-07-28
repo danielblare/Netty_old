@@ -130,10 +130,6 @@ class LogInAndOutViewModel: ObservableObject {
 @main
 struct NettyApp: App {
     
-    /*
-    fetch logged in device when LogInAndOutViewModel is initializing
-     make password encrypted
-     */
     @StateObject private var logInAndOutViewModel = LogInAndOutViewModel()
     @State private var showLaunchView: Bool = true
     

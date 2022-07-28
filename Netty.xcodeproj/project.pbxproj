@@ -14,8 +14,9 @@
 		BB4AFAB328915889003407FB /* DirectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB228915889003407FB /* DirectView.swift */; };
 		BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB7289158AE003407FB /* ProfileView.swift */; };
 		BB7346372892BBFA00E07487 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7346362892BBFA00E07487 /* ProfileViewModel.swift */; };
-		BB73463C2892C09200E07487 /* AvatarImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB73463B2892C09200E07487 /* AvatarImageView.swift */; };
 		BB73463E2892C23000E07487 /* AvatarImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB73463D2892C23000E07487 /* AvatarImageService.swift */; };
+		BB7346402893054500E07487 /* PhotoModelCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB73463F2893054500E07487 /* PhotoModelCacheManager.swift */; };
+		BB7346422893066400E07487 /* PhotoModelFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7346412893066400E07487 /* PhotoModelFileManager.swift */; };
 		BB9067FD2888137400962B21 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9067FC2888137400962B21 /* HomeView.swift */; };
 		BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9068002888194A00962B21 /* LogInAndOutManager.swift */; };
 		BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB90680328881A5F00962B21 /* HomeViewModel.swift */; };
@@ -48,8 +49,9 @@
 		BB4AFAB228915889003407FB /* DirectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectView.swift; sourceTree = "<group>"; };
 		BB4AFAB7289158AE003407FB /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		BB7346362892BBFA00E07487 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
-		BB73463B2892C09200E07487 /* AvatarImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageView.swift; sourceTree = "<group>"; };
 		BB73463D2892C23000E07487 /* AvatarImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageService.swift; sourceTree = "<group>"; };
+		BB73463F2893054500E07487 /* PhotoModelCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoModelCacheManager.swift; sourceTree = "<group>"; };
+		BB7346412893066400E07487 /* PhotoModelFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoModelFileManager.swift; sourceTree = "<group>"; };
 		BB9067FC2888137400962B21 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		BB9068002888194A00962B21 /* LogInAndOutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInAndOutManager.swift; sourceTree = "<group>"; };
 		BB90680328881A5F00962B21 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -139,14 +141,6 @@
 				BB4AFAB7289158AE003407FB /* ProfileView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		BB7346382892BFF500E07487 /* AvatarImage */ = {
-			isa = PBXGroup;
-			children = (
-				BB73463B2892C09200E07487 /* AvatarImageView.swift */,
-			);
-			path = AvatarImage;
 			sourceTree = "<group>";
 		};
 		BB7346392892C00400E07487 /* PasswordStrongness */ = {
@@ -241,6 +235,8 @@
 		BBE72A9F2882CE3E00CBDEAD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				BB73463F2893054500E07487 /* PhotoModelCacheManager.swift */,
+				BB7346412893066400E07487 /* PhotoModelFileManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -296,7 +292,6 @@
 			children = (
 				BB73463A2892C01800E07487 /* SecureInput */,
 				BB7346392892C00400E07487 /* PasswordStrongness */,
-				BB7346382892BFF500E07487 /* AvatarImage */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -423,6 +418,7 @@
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BB4AFAB328915889003407FB /* DirectView.swift in Sources */,
+				BB7346402893054500E07487 /* PhotoModelCacheManager.swift in Sources */,
 				BBF131CF288745880043A81E /* LogInView.swift in Sources */,
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
@@ -435,6 +431,7 @@
 				BB73463E2892C23000E07487 /* AvatarImageService.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
 				BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */,
+				BB7346422893066400E07487 /* PhotoModelFileManager.swift in Sources */,
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,
 				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,
 				BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */,
@@ -442,7 +439,6 @@
 				BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */,
 				BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
-				BB73463C2892C09200E07487 /* AvatarImageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

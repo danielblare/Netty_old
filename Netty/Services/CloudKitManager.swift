@@ -32,7 +32,7 @@ actor CloudKitManager {
         }
     }
 
-    func addRecordToPublicDatabase(_ record: CKRecord) async -> Result<CKRecord, Error> {
+    func saveRecordToPublicDatabase(_ record: CKRecord) async -> Result<CKRecord, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.save(record) { returnedRecord, error in
                 if let error = error {

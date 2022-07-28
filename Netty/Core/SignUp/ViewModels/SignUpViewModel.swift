@@ -263,7 +263,7 @@ class SignUpViewModel: ObservableObject {
         newUser[.avatarRecordField] = nil
         newUser[.loggedInDeviceRecordField] = ""
         
-        let result = await CloudKitManager.instance.addRecordToPublicDatabase(newUser)
+        let result = await CloudKitManager.instance.saveRecordToPublicDatabase(newUser)
         await MainActor.run(body: {
             creatingAccountIsLoading = false
             switch result {
