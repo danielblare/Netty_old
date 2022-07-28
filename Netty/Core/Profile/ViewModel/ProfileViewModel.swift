@@ -37,7 +37,7 @@ class ProfileViewModel: ObservableObject {
                         let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
                         self.image = image
                         self.isLoading = false
-                        PhotoModelFileManager.instance.add(key: "avatar", value: image)
+                        PhotoModelFileManager.instance.add(key: "\(id)_avatar", value: image)
                     }
                 } catch {
                     print(error.localizedDescription)
@@ -49,14 +49,11 @@ class ProfileViewModel: ObservableObject {
     }
     
     func getImage(for id: CKRecord.ID?) {
-        if let savedImage = PhotoModelFileManager.instance.get(key: "avatar") {
+        guard let id = id else { return }
+        if let savedImage = PhotoModelFileManager.instance.get(key: "\(id)_avatar") {
             image = savedImage
         } else {
             isLoading = true
-            guard let id = id else {
-                isLoading = false
-                return
-            }
             Task {
                 let result = await AvatarImageService.instance.fetchAvatarForUser(with: id)
                 switch result {
@@ -65,7 +62,7 @@ class ProfileViewModel: ObservableObject {
                         isLoading = false
                         self.image = returnedValue
                         if let image = returnedValue {
-                            PhotoModelFileManager.instance.add(key: "avatar", value: image)
+                            PhotoModelFileManager.instance.add(key: "\(id)_avatar", value: image)
                         }
                     })
                 case .failure(let error):
