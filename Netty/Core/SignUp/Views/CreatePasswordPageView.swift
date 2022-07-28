@@ -35,7 +35,7 @@ struct CreatePasswordPageView: View {
                     SecureInputView("Password", text: $vm.passwordField) { activeField = .confPass }
                         .focused($activeField, equals: .pass)
                     
-                    PasswordStrongLevelView(message: $vm.passwordMessage)
+                    PasswordStrongnessView(message: $vm.passwordMessage)
                     
                     SecureInputView("Confirm password", text: $vm.passwordConfirmField) { UIApplication.shared.endEditing() }
                         .focused($activeField, equals: .confPass)

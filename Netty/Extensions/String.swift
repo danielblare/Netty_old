@@ -14,6 +14,17 @@ extension String {
     static let capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     static let lowercasedLetters = "abcdefghijklmnopqrstuvwxyz"
     static let numbers = "0123456789"
+    static let allUsersRecordType = "AllUsers"
+    static let emailRecordField = "email"
+    static let avatarRecordField = "avatar"
+    static let nicknameRecordField = "nickname"
+    static let loggedInDeviceRecordField = "loggedInDevice"
+    static let passwordRecordField = "password"
+    static let firstNameRecordField = "firstName"
+    static let lastNameRecordField = "lastName"
+    static let dateOfBirthRecordField = "dateOfBirth"
+    
+
     
     /// Checks whether string contains only latin letters
     func containsOnlyLetters() -> Bool {

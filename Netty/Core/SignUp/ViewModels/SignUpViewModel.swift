@@ -146,7 +146,7 @@ class SignUpViewModel: ObservableObject {
         
         savedEmail = emailTextField.lowercased()
         
-        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: "AllUsers", withField: "email", equalTo: savedEmail)
+        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .allUsersRecordType, withField: .emailRecordField, equalTo: savedEmail)
         switch result {
         case .success(let available):
             if available {
@@ -253,21 +253,24 @@ class SignUpViewModel: ObservableObject {
         let email = savedEmail
         let password = passwordField
         
-        let newUser = CKRecord(recordType: "AllUsers")
-        newUser["firstName"] = firstName
-        newUser["lastName"] = lastName
-        newUser["dateOfBirth"] = dateOfBirth
-        newUser["email"] = email
-        newUser["nickname"] = nickname
-        newUser["password"] = password
-        newUser["avatar"] = nil
-        newUser["loggedInDevice"] = ""
+        let newUser = CKRecord(recordType: .allUsersRecordType)
+        newUser[.firstNameRecordField] = firstName
+        newUser[.lastNameRecordField] = lastName
+        newUser[.dateOfBirthRecordField] = dateOfBirth
+        newUser[.emailRecordField] = email
+        newUser[.nicknameRecordField] = nickname
+        newUser[.passwordRecordField] = password
+        newUser[.avatarRecordField] = nil
+        newUser[.loggedInDeviceRecordField] = ""
         
         let result = await CloudKitManager.instance.addRecordToPublicDatabase(newUser)
         await MainActor.run(body: {
             creatingAccountIsLoading = false
             switch result {
             case .success(let returnedRecord):
+                Task {
+                    await LogInAndOutManager.instance.addLoggedInDevice(for: returnedRecord.recordID)
+                }
                 withAnimation(.easeInOut(duration: 0.5)) {
                     userRecordId = returnedRecord.recordID
                 }
@@ -303,7 +306,7 @@ class SignUpViewModel: ObservableObject {
     
     func checkAvailability(for nickname: String) async -> Bool {
         
-        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: "AllUsers", withField: "nickname", equalTo: nickname)
+        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .allUsersRecordType, withField: .nicknameRecordField, equalTo: nickname)
         switch result {
         case .success(let available):
             return available

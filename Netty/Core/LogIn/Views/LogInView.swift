@@ -9,11 +9,7 @@ import SwiftUI
 
 struct LogInView: View {
     
-    @ObservedObject private var logInAndOutViewModel: LogInAndOutViewModel
-    
-    init(logInAndOutViewModel: LogInAndOutViewModel) {
-        self.logInAndOutViewModel = logInAndOutViewModel
-    }
+    @EnvironmentObject private var logInAndOutViewModel: LogInAndOutViewModel
     
     @State private var username: String = ""
     @State private var password: String = ""
@@ -126,6 +122,6 @@ struct LogInView: View {
 
 struct LogInView_Previews: PreviewProvider {
     static var previews: some View {
-        LogInView(logInAndOutViewModel: LogInAndOutViewModel())
+        LogInView()
     }
 }

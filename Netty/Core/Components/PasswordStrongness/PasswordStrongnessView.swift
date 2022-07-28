@@ -1,5 +1,5 @@
 //
-//  PasswordStrongLevelView.swift
+//  PasswordStrongnessView.swift
 //  Netty
 //
 //  Created by Danny on 17/07/2022.
@@ -17,7 +17,7 @@ enum PasswordWarningMessage: String {
     case veryStrong = "Very strong"
 }
 
-struct PasswordStrongLevelView: View {
+struct PasswordStrongnessView: View {
     
     @Binding private var message: PasswordWarningMessage
     private let weakColor: Color = .red
@@ -88,12 +88,12 @@ struct PasswordStrongLevelView: View {
 
 }
 
-struct PasswordStrongLevelView_Previews: PreviewProvider {
+struct PasswordStrongnessView_Previews: PreviewProvider {
     
     @State private static var message: PasswordWarningMessage = .veryStrong
     
     static var previews: some View {
-        PasswordStrongLevelView(message: $message)
+        PasswordStrongnessView(message: $message)
             .padding()
             .previewLayout(.sizeThatFits)
     }

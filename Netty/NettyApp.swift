@@ -17,19 +17,7 @@ enum WarningMessage: String {
 
 class LogInAndOutViewModel: ObservableObject {
     
-    @Published var userRecordId: CKRecord.ID? = nil {
-        didSet {
-            if let id = userRecordId {
-                Task {
-                    await LogInAndOutManager.instance.addLoggedInDevice(for: id)
-                }
-            } else if let id = oldValue {
-                Task {
-                    await LogInAndOutManager.instance.removeLoggedInDevice(for: id)
-                }
-            }
-        }
-    }
+    @Published var userRecordId: CKRecord.ID? = nil
     
     private let manager = LogInAndOutManager.instance
     
@@ -42,7 +30,17 @@ class LogInAndOutViewModel: ObservableObject {
     var alertMessage: String = ""
         
     init() {
-        
+        Task {
+            let result = await manager.checkLoggedInDevise()
+            await MainActor.run(body: {
+                switch result {
+                case .success(let id):
+                    userRecordId = id
+                case .failure(_):
+                    userRecordId = nil
+                }
+            })
+        }
         getiCloudStatus()
     }
     
@@ -63,12 +61,13 @@ class LogInAndOutViewModel: ObservableObject {
             let result = await manager.logIn(username: username, password: password)
             switch result {
             case .success(let id):
-                if id != nil {
+                if let id = id {
                     await MainActor.run(body: {
                         withAnimation {
                             userRecordId = id
                         }
                     })
+                    await manager.addLoggedInDevice(for: id)
                 } else {
                     showAlert(title: "Error while logging in", message: "Password is incorrect")
                 }
@@ -93,7 +92,14 @@ class LogInAndOutViewModel: ObservableObject {
         let result = await manager.logOut()
         switch result {
         case .success(_):
-            userRecordId = nil
+            if let id = userRecordId {
+                await manager.removeLoggedInDevice(for: id)
+            }
+            await MainActor.run(body: {
+                withAnimation {
+                    userRecordId = nil
+                }
+            })
         case .failure(let error):
             showAlert(title: "Error while logging out", message: error.localizedDescription)
         }
@@ -141,13 +147,14 @@ struct NettyApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                if let id = logInAndOutViewModel.userRecordId {
+                if logInAndOutViewModel.userRecordId != nil {
                     MainScreenView()
                         .transition(.opacity)
                 } else {
-                    LogInView(logInAndOutViewModel: logInAndOutViewModel)
+                    LogInView()
                         .transition(.opacity)
                 }
+                    
                 
                 ZStack {
                     if showLaunchView {
@@ -156,6 +163,7 @@ struct NettyApp: App {
                 }
                 .zIndex(2.0)
             }
+            .environmentObject(logInAndOutViewModel)
             .persistentSystemOverlays(.hidden)
             .alert(Text(logInAndOutViewModel.alertTitle), isPresented: $logInAndOutViewModel.showAlert, actions: {}, message: {
                 Text(logInAndOutViewModel.alertMessage)
