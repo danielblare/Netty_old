@@ -60,4 +60,9 @@ class PhotoModelFileManager {
             FileManager.default.fileExists(atPath: url.path()) else { return nil }
         return UIImage(contentsOfFile: url.path())
     }
+    
+    func delete(key: String) {
+        guard let url = getImagePath(key: key) else { return }
+        try? FileManager.default.removeItem(at: url)
+    }
 }

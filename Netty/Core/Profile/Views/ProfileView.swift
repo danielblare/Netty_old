@@ -17,14 +17,13 @@ struct ProfileView: View {
     @StateObject private var vm: ProfileViewModel = ProfileViewModel()
     
     @EnvironmentObject private var logInAndOutViewModel: LogInAndOutViewModel
-            
+    
     var body: some View {
         ZStack {
             ZStack {
-                
                 VStack {
                     HStack {
-                        
+                        // Image
                         ZStack {
                             if let image = vm.image {
                                 Image(uiImage: image)
@@ -45,16 +44,21 @@ struct ProfileView: View {
                                     }
                             }
                         }
-                        .onAppear {
-                            vm.getImage(for: logInAndOutViewModel.userRecordId)
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                        .padding()
+                        .onTapGesture {
+                            showSheet = true
                         }
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            .padding()
-                            .onTapGesture {
-                                showSheet = true
-                            }
-
+                        
+                        if let fullName = vm.fullName {
+                            Text(fullName)
+                                .lineLimit(1)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                        } else {
+                            LoadingAnimation()
+                        }
                         
                         Spacer(minLength: 0)
                     }
@@ -76,9 +80,6 @@ struct ProfileView: View {
                     }
                     .buttonStyle(.bordered)
                 }
-                
-                
-                
             }
             .disabled(isLoading)
             .sheet(isPresented: $showSheet) {
@@ -104,6 +105,9 @@ struct ProfileView: View {
             if isLoading {
                 ProgressView()
             }
+        }
+        .onAppear {
+            vm.sync(for: logInAndOutViewModel.userRecordId)
         }
     }
 }

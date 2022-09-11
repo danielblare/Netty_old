@@ -14,10 +14,38 @@ class ProfileViewModel: ObservableObject {
     
     @Published var image: UIImage? = nil
     @Published var isLoading: Bool = false
+    @Published var fullName: String? = nil
 
         
     init() {
         
+    }
+    
+    func sync(for id: CKRecord.ID?) {
+        getImage(for: id)
+        getFullName(for: id)
+    }
+    
+    private func getFullName(for id: CKRecord.ID?) {
+        guard let id = id else { return }
+        if let savedName = CacheManager.instance.getText(key: "fullName") as? String {
+            fullName = savedName
+        } else {
+            Task {
+                let result = await UserInfoService.instance.fetchFullNameForUser(with: id)
+                switch result {
+                case .success(let returnedValue):
+                    await MainActor.run(body: {
+                        self.fullName = returnedValue
+                        if let fullName = returnedValue {
+                            CacheManager.instance.add(key: "fullName", value: NSString(string: fullName))
+                        }
+                    })
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        }
     }
     
     func uploadImage(_ image: UIImage, for id: CKRecord.ID?) {
@@ -37,7 +65,7 @@ class ProfileViewModel: ObservableObject {
                         let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
                         self.image = image
                         self.isLoading = false
-                        PhotoModelFileManager.instance.add(key: "\(id)_avatar", value: image)
+                        CacheManager.instance.add(key: "avatar", value: image)
                     }
                 } catch {
                     print(error.localizedDescription)
@@ -48,9 +76,9 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    func getImage(for id: CKRecord.ID?) {
+    private func getImage(for id: CKRecord.ID?) {
         guard let id = id else { return }
-        if let savedImage = PhotoModelFileManager.instance.get(key: "\(id)_avatar") {
+        if let savedImage = CacheManager.instance.getImage(key: "avatar") {
             image = savedImage
         } else {
             isLoading = true
@@ -62,7 +90,7 @@ class ProfileViewModel: ObservableObject {
                         isLoading = false
                         self.image = returnedValue
                         if let image = returnedValue {
-                            PhotoModelFileManager.instance.add(key: "\(id)_avatar", value: image)
+                            CacheManager.instance.add(key: "avatar", value: image)
                         }
                     })
                 case .failure(let error):
