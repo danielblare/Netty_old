@@ -29,6 +29,11 @@ class CacheManager {
         return cache
     }()
     
+    func crean() {
+        photoCache.removeAllObjects()
+        textCache.removeAllObjects()
+    }
+    
     func add(key: String, value: UIImage) {
         photoCache.setObject(value, forKey: key as NSString)
     }

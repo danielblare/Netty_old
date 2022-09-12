@@ -9,6 +9,14 @@ import SwiftUI
 import CloudKit
 import PhotosUI
 
+
+/*
+ Transfer id and logOut func throug views as a variable
+ Maybe make LogInAndOutViewModel a manager and use its instance
+ */
+
+
+
 struct ProfileView: View {
     
     @State private var showSheet: Bool = false
@@ -101,6 +109,7 @@ struct ProfileView: View {
             }
         }
     }
+    
 }
 
 
