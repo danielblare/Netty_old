@@ -68,22 +68,8 @@ struct ProfileView: View {
                 Spacer(minLength: 0)
             }
             .sheet(isPresented: $showSheet) {
-                PhotoPicker() { pickedElements in
-                    if let pickedElements = pickedElements {
-                        let provider = pickedElements[0].itemProvider
-                        if provider.canLoadObject(ofClass: UIImage.self) {
-                            provider.loadObject(ofClass: UIImage.self) { object, error in
-                                if let error = error {
-                                    print(error.localizedDescription)
-                                }
-                                
-                                if let image = object as? UIImage {
-                                    vm.uploadImage(image, for: logInAndOutViewModel.userRecordId)
-                                }
-                            }
-                        }
-                    }
-                    showSheet = false
+                ImagePicker { image in
+                    vm.uploadImage(image, for: logInAndOutViewModel.userRecordId)
                 }
             }
             .toolbar {

@@ -7,41 +7,40 @@
 
 import SwiftUI
 import PhotosUI
+import CloudKit
 
-struct PhotoPicker: UIViewControllerRepresentable {
+struct ImagePicker: UIViewControllerRepresentable {
     
-    var pickedElements: (_ pickedElements: [PHPickerResult]?) -> Void
+    let uploadImage: (_ image: UIImage) -> ()
     
-    func makeUIViewController(context: Context) -> PHPickerViewController {
-        var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
-        configuration.filter = .any(of: [.images, .livePhotos, .screenshots])
-        configuration.selectionLimit = 1
-        
-        let controller = PHPickerViewController(configuration: configuration)
-        controller.delegate = context.coordinator
-        return controller
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.delegate = context.coordinator
+        picker.allowsEditing = true
+        return picker
     }
     
-    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) { }
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) { }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(imagePicker: self, uploadImage: uploadImage)
     }
     
-    // Use a Coordinator to act as your PHPickerViewControllerDelegate
-    class Coordinator: PHPickerViewControllerDelegate {
-      
-        private let parent: PhotoPicker
+    final class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         
-        init(_ parent: PhotoPicker) {
-            self.parent = parent
+        let imagePicker: ImagePicker
+        let uploadImage: (_ image: UIImage) -> ()
+        
+        init(imagePicker: ImagePicker, uploadImage: @escaping (_: UIImage) -> Void) {
+            self.imagePicker = imagePicker
+            self.uploadImage = uploadImage
         }
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            if results.isEmpty {
-                parent.pickedElements(nil)
-            } else {
-                parent.pickedElements(results)
+        
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let image = info[.editedImage] as? UIImage {
+                uploadImage(image)
             }
+            picker.dismiss(animated: true)
         }
     }
 }

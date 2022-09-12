@@ -80,17 +80,17 @@ class ProfileViewModel: ObservableObject {
         }
         CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { record, error in
             if let record = record,
-               let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathExtension("avatar.jpg") {
-                let data = image.jpegData(compressionQuality: 0.5)
-                
+               let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathExtension("avatar.jpg"),
+               let data = image.jpegData(compressionQuality: 0.2) {
+                print("\(data.count)")
                 do {
-                    try data?.write(to: url)
+                    try data.write(to: url)
                     let asset = CKAsset(fileURL: url)
                     record[.avatarRecordField] = asset
                     Task {
                         let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
                         await MainActor.run {
-                            self.image = image
+                            self.image = UIImage(data: data)
                             self.isLoading = false
                         }
                         CacheManager.instance.add(key: "\(id.recordName)_avatar", value: image)
