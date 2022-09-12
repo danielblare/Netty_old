@@ -32,4 +32,20 @@ actor UserInfoService {
             }
         }
     }
+    
+    func fetchNicknameForUser(with id: CKRecord.ID) async -> Result<String?, Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
+                if let returnedRecord = returnedRecord {
+                    if let nickname = returnedRecord[.nicknameRecordField] as? String {
+                        continuation.resume(returning: .success(nickname))
+                    } else {
+                        continuation.resume(returning: .success(nil))
+                    }
+                } else if let error = error {
+                    continuation.resume(returning: .failure(error))
+                }
+            }
+        }
+    }
 }

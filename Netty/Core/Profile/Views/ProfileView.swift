@@ -11,7 +11,6 @@ import PhotosUI
 
 struct ProfileView: View {
     
-    @State private var isLoading: Bool = false
     @State private var showSheet: Bool = false
     
     @StateObject private var vm: ProfileViewModel = ProfileViewModel()
@@ -19,69 +18,55 @@ struct ProfileView: View {
     @EnvironmentObject private var logInAndOutViewModel: LogInAndOutViewModel
     
     var body: some View {
-        ZStack {
-            ZStack {
-                VStack {
-                    HStack {
-                        // Image
-                        ZStack {
-                            if let image = vm.image {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            } else if vm.isLoading {
-                                Rectangle()
-                                    .foregroundColor(.secondary.opacity(0.3))
-                                    .overlay {
-                                        ProgressView()
-                                    }
-                            } else {
-                                Rectangle()
-                                    .foregroundColor(.secondary.opacity(0.3))
-                                    .overlay {
-                                        Image(systemName: "questionmark")
-                                            .foregroundColor(.secondary)
-                                    }
-                            }
-                        }
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .padding()
-                        .onTapGesture {
-                            showSheet = true
-                        }
-                        
-                        if let fullName = vm.fullName {
-                            Text(fullName)
-                                .lineLimit(1)
-                                .font(.title2)
-                                .fontWeight(.semibold)
+        NavigationView {
+            VStack {
+                
+                // Image and full name
+                HStack {
+                    
+                    // Image
+                    ZStack {
+                        if let image = vm.image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } else if vm.isLoading {
+                            Rectangle()
+                                .foregroundColor(.secondary.opacity(0.3))
+                                .overlay {
+                                    ProgressView()
+                                }
                         } else {
-                            LoadingAnimation()
+                            Rectangle()
+                                .foregroundColor(.secondary.opacity(0.3))
+                                .overlay {
+                                    Image(systemName: "questionmark")
+                                        .foregroundColor(.secondary)
+                                }
                         }
-                        
-                        Spacer(minLength: 0)
+                    }
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                    .padding()
+                    .onTapGesture {
+                        showSheet = true
                     }
                     
+                    if let fullName = vm.fullName {
+                        Text(fullName)
+                            .lineLimit(1)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                    } else {
+                        LoadingAnimation()
+                    }
                     
                     Spacer(minLength: 0)
-                    
-                    
-                    Button {
-                        Task {
-                            isLoading = true
-                            await logInAndOutViewModel.logOut()
-                            isLoading = false
-                        }
-                    } label: {
-                        Text("Log out")
-                            .font(.title2)
-                            .padding(.horizontal)
-                    }
-                    .buttonStyle(.bordered)
                 }
+                
+                
+                Spacer(minLength: 0)
             }
-            .disabled(isLoading)
             .sheet(isPresented: $showSheet) {
                 PhotoPicker() { pickedElements in
                     if let pickedElements = pickedElements {
@@ -101,55 +86,44 @@ struct ProfileView: View {
                     showSheet = false
                 }
             }
-            
-            if isLoading {
-                ProgressView()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink {
+                        ProfileSettingsView()
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if let nickname = vm.nickname {
+                        HStack {
+                            Text(nickname)
+                                .foregroundColor(.primary)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                            
+                            Spacer(minLength: 70)
+                        }
+                    } else {
+                        LoadingAnimation()
+                    }
+                }
             }
-        }
-        .onAppear {
-            vm.sync(for: logInAndOutViewModel.userRecordId)
+            .onAppear {
+                vm.sync(for: logInAndOutViewModel.userRecordId)
+            }
         }
     }
 }
 
 
-struct PhotoPicker: UIViewControllerRepresentable {
-    
-    var pickedElements: (_ pickedElements: [PHPickerResult]?) -> Void
-    
-    func makeUIViewController(context: Context) -> PHPickerViewController {
-        var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
-        configuration.filter = .any(of: [.images, .livePhotos, .screenshots])
-        configuration.selectionLimit = 1
-        
-        let controller = PHPickerViewController(configuration: configuration)
-        controller.delegate = context.coordinator
-        return controller
-    }
-    
-    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) { }
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-    
-    // Use a Coordinator to act as your PHPickerViewControllerDelegate
-    class Coordinator: PHPickerViewControllerDelegate {
-      
-        private let parent: PhotoPicker
-        
-        init(_ parent: PhotoPicker) {
-            self.parent = parent
-        }
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            if results.isEmpty {
-                parent.pickedElements(nil)
-            } else {
-                parent.pickedElements(results)
-            }
-        }
-    }
-}
+
+
+
+
+
+
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {

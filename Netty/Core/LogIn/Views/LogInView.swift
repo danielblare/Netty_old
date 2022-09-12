@@ -73,6 +73,8 @@ struct LogInView: View {
                     Button {
                         Task {
                             await logInAndOutViewModel.logIn(username: username, password: password)
+                            username = ""
+                            password = ""
                         }
                     } label: {
                         Text("Log In")

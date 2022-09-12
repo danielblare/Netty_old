@@ -13,6 +13,8 @@
 		BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAAD28915606003407FB /* MainScreenView.swift */; };
 		BB4AFAB328915889003407FB /* DirectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB228915889003407FB /* DirectView.swift */; };
 		BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB7289158AE003407FB /* ProfileView.swift */; };
+		BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */; };
+		BB6F2D4528CF549000B901BE /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6F2D4428CF549000B901BE /* PhotoPicker.swift */; };
 		BB7346372892BBFA00E07487 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7346362892BBFA00E07487 /* ProfileViewModel.swift */; };
 		BB73463E2892C23000E07487 /* AvatarImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB73463D2892C23000E07487 /* AvatarImageService.swift */; };
 		BB7346402893054500E07487 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB73463F2893054500E07487 /* CacheManager.swift */; };
@@ -50,6 +52,8 @@
 		BB4AFAAD28915606003407FB /* MainScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenView.swift; sourceTree = "<group>"; };
 		BB4AFAB228915889003407FB /* DirectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectView.swift; sourceTree = "<group>"; };
 		BB4AFAB7289158AE003407FB /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
+		BB6F2D4428CF549000B901BE /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		BB7346362892BBFA00E07487 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		BB73463D2892C23000E07487 /* AvatarImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageService.swift; sourceTree = "<group>"; };
 		BB73463F2893054500E07487 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
@@ -144,8 +148,17 @@
 			children = (
 				BB4AFAB7289158AE003407FB /* ProfileView.swift */,
 				BB81459128CE0D1300B35A5D /* LoadingAnimation.swift */,
+				BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		BB6F2D4328CF548000B901BE /* PhotoPicker */ = {
+			isa = PBXGroup;
+			children = (
+				BB6F2D4428CF549000B901BE /* PhotoPicker.swift */,
+			);
+			path = PhotoPicker;
 			sourceTree = "<group>";
 		};
 		BB7346392892C00400E07487 /* PasswordStrongness */ = {
@@ -240,6 +253,10 @@
 		BBE72A9F2882CE3E00CBDEAD /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				BB19A676288967D50042AA65 /* CloudKitManager.swift */,
+				BBE9E48D2883626900775325 /* HapticManager.swift */,
+				BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */,
+				BB9068002888194A00962B21 /* LogInAndOutManager.swift */,
 				BB73463F2893054500E07487 /* CacheManager.swift */,
 				BB7346412893066400E07487 /* FileManager.swift */,
 			);
@@ -260,10 +277,6 @@
 		BBE72AA12882CE7100CBDEAD /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				BBE9E48D2883626900775325 /* HapticManager.swift */,
-				BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */,
-				BB9068002888194A00962B21 /* LogInAndOutManager.swift */,
-				BB19A676288967D50042AA65 /* CloudKitManager.swift */,
 				BB73463D2892C23000E07487 /* AvatarImageService.swift */,
 				BB81458F28CE09FF00B35A5D /* UserInfoService.swift */,
 			);
@@ -296,6 +309,7 @@
 		BBE72AA62882CED100CBDEAD /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				BB6F2D4328CF548000B901BE /* PhotoPicker */,
 				BB73463A2892C01800E07487 /* SecureInput */,
 				BB7346392892C00400E07487 /* PasswordStrongness */,
 			);
@@ -429,6 +443,7 @@
 				BBF131CF288745880043A81E /* LogInView.swift in Sources */,
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
+				BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
@@ -436,6 +451,7 @@
 				BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */,
 				BB7346372892BBFA00E07487 /* ProfileViewModel.swift in Sources */,
 				BB9067FD2888137400962B21 /* HomeView.swift in Sources */,
+				BB6F2D4528CF549000B901BE /* PhotoPicker.swift in Sources */,
 				BB73463E2892C23000E07487 /* AvatarImageService.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
 				BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */,
