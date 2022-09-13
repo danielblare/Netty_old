@@ -80,7 +80,7 @@ class LogInAndOutViewModel: ObservableObject {
         }
     }
     
-    private func showAlert(title: String, message: String) {
+    func showAlert(title: String, message: String) {
         alertTitle = title
         alertMessage = message
         DispatchQueue.main.async {

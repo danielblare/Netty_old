@@ -1,5 +1,5 @@
 //
-//  PhotoPicker.swift
+//  ImagePicker.swift
 //  Netty
 //
 //  Created by Danny on 9/12/22.

@@ -104,6 +104,10 @@ struct ForgotPasswordCreatePasswordPageView: View {
 
 struct ForgotPasswordCreatePasswordPageView_Previews: PreviewProvider {
     static var previews: some View {
-        ForgotPasswordCreatePasswordPageView(vm: ForgotPasswordViewModel(path: .constant(NavigationPath())))
+        ForgotPasswordCreatePasswordPageView(vm: ForgotPasswordViewModel(path: .constant(NavigationPath()), showAlertOnLogInScreen: lol))
+    }
+    
+    static func lol(_ dawda: String, _ dawd: String) {
+        
     }
 }

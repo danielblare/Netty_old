@@ -16,8 +16,8 @@ struct ForgotPasswordEmailPageView: View {
         case email, code
     }
     
-    init(path: Binding<NavigationPath>) {
-        vm = ForgotPasswordViewModel(path: path)
+    init(path: Binding<NavigationPath>, showAlertOnLogInScreen: @escaping (_ title: String, _ message: String) -> ()) {
+        vm = ForgotPasswordViewModel(path: path, showAlertOnLogInScreen: showAlertOnLogInScreen)
     }
     
     @FocusState private var activeField: FocusedValue?
@@ -153,8 +153,12 @@ struct ForgotPasswordEmailPageView: View {
 
 struct ForgotPasswordEmailPageView_Previews: PreviewProvider {
     static var previews: some View {
-        ForgotPasswordEmailPageView(path: .constant(.init()))
-        ForgotPasswordEmailPageView(path: .constant(.init()))
+        ForgotPasswordEmailPageView(path: .constant(.init()), showAlertOnLogInScreen: lol)
+        ForgotPasswordEmailPageView(path: .constant(.init()), showAlertOnLogInScreen: lol)
+    }
+    
+    static func lol(_ dawda: String, _ dawd: String) {
+        
     }
 }
 

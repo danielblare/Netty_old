@@ -14,7 +14,7 @@
 		BB4AFAB328915889003407FB /* DirectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB228915889003407FB /* DirectView.swift */; };
 		BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB7289158AE003407FB /* ProfileView.swift */; };
 		BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */; };
-		BB6F2D4528CF549000B901BE /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6F2D4428CF549000B901BE /* PhotoPicker.swift */; };
+		BB6F2D4528CF549000B901BE /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6F2D4428CF549000B901BE /* ImagePicker.swift */; };
 		BB7346372892BBFA00E07487 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7346362892BBFA00E07487 /* ProfileViewModel.swift */; };
 		BB73463E2892C23000E07487 /* AvatarImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB73463D2892C23000E07487 /* AvatarImageService.swift */; };
 		BB7346402893054500E07487 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB73463F2893054500E07487 /* CacheManager.swift */; };
@@ -56,7 +56,7 @@
 		BB4AFAB228915889003407FB /* DirectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectView.swift; sourceTree = "<group>"; };
 		BB4AFAB7289158AE003407FB /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
-		BB6F2D4428CF549000B901BE /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
+		BB6F2D4428CF549000B901BE /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		BB7346362892BBFA00E07487 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		BB73463D2892C23000E07487 /* AvatarImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageService.swift; sourceTree = "<group>"; };
 		BB73463F2893054500E07487 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
@@ -159,12 +159,12 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		BB6F2D4328CF548000B901BE /* PhotoPicker */ = {
+		BB6F2D4328CF548000B901BE /* ImagePicker */ = {
 			isa = PBXGroup;
 			children = (
-				BB6F2D4428CF549000B901BE /* PhotoPicker.swift */,
+				BB6F2D4428CF549000B901BE /* ImagePicker.swift */,
 			);
-			path = PhotoPicker;
+			path = ImagePicker;
 			sourceTree = "<group>";
 		};
 		BB7346392892C00400E07487 /* PasswordStrongness */ = {
@@ -342,7 +342,7 @@
 		BBE72AA62882CED100CBDEAD /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				BB6F2D4328CF548000B901BE /* PhotoPicker */,
+				BB6F2D4328CF548000B901BE /* ImagePicker */,
 				BB73463A2892C01800E07487 /* SecureInput */,
 				BB7346392892C00400E07487 /* PasswordStrongness */,
 			);
@@ -485,7 +485,7 @@
 				BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */,
 				BB7346372892BBFA00E07487 /* ProfileViewModel.swift in Sources */,
 				BB9067FD2888137400962B21 /* HomeView.swift in Sources */,
-				BB6F2D4528CF549000B901BE /* PhotoPicker.swift in Sources */,
+				BB6F2D4528CF549000B901BE /* ImagePicker.swift in Sources */,
 				BB73463E2892C23000E07487 /* AvatarImageService.swift in Sources */,
 				BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */,
 				BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */,

@@ -76,7 +76,7 @@ struct LogInView: View {
                         
                     }
                     .navigationDestination(for: DataObject.self) { _ in
-                        ForgotPasswordEmailPageView(path: $path)
+                        ForgotPasswordEmailPageView(path: $path, showAlertOnLogInScreen: vm.showAlert)
                     }
                     .padding(.horizontal)
                     

@@ -12,10 +12,13 @@ import Combine
 
 class ForgotPasswordViewModel: ObservableObject {
     
+    private let showAlertOnLogInScreen: (_ title: String, _ message: String) -> ()
+    
     @Binding var path: NavigationPath
     
-    init(path: Binding<NavigationPath>) {
+    init(path: Binding<NavigationPath>, showAlertOnLogInScreen: @escaping (String, String) -> ()) {
         self._path = path
+        self.showAlertOnLogInScreen = showAlertOnLogInScreen
         addSubscribers()
     }
             
@@ -234,6 +237,7 @@ class ForgotPasswordViewModel: ObservableObject {
                         withAnimation {
                             path = NavigationPath()
                         }
+                        showAlertOnLogInScreen("Password reset", "Your password was successfully changes")
                     case .failure(let error):
                         showAlert(title: "Error while updating password", message: error.localizedDescription)
                     }
