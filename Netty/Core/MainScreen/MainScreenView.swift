@@ -10,6 +10,9 @@ import CloudKit
 
 struct MainScreenView: View {
     
+    let userRecordId: CKRecord.ID?
+    let logOutFunc: () async -> ()
+    
     var body: some View {
         TabView {
             HomeView()
@@ -22,7 +25,7 @@ struct MainScreenView: View {
                     Image(systemName: "ellipsis.bubble")
                 }
                 .tag(1)
-            ProfileView()
+            ProfileView(userRecordId: userRecordId, logOutFunc: logOutFunc)
                 .tabItem {
                     Image(systemName: "person")
                 }
@@ -40,9 +43,9 @@ struct MainScreenView: View {
 
 struct MainScreenView_Previews: PreviewProvider {
     static var previews: some View {
-        MainScreenView()
+        MainScreenView(userRecordId: LogInAndOutViewModel().userRecordId, logOutFunc: LogInAndOutViewModel().logOut)
             .preferredColorScheme(.dark)
-        MainScreenView()
+        MainScreenView(userRecordId: LogInAndOutViewModel().userRecordId, logOutFunc: LogInAndOutViewModel().logOut)
             .preferredColorScheme(.light)
     }
 }

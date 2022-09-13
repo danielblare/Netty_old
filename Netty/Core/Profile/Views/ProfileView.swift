@@ -12,7 +12,6 @@ import PhotosUI
 
 /*
  Transfer id and logOut func throug views as a variable
- Maybe make LogInAndOutViewModel a manager and use its instance
  */
 
 
@@ -21,10 +20,11 @@ struct ProfileView: View {
     
     @State private var showSheet: Bool = false
     
+    let userRecordId: CKRecord.ID?
+    let logOutFunc: () async -> ()
+
     @StateObject private var vm: ProfileViewModel = ProfileViewModel()
-    
-    @EnvironmentObject private var logInAndOutViewModel: LogInAndOutViewModel
-    
+        
     var body: some View {
         NavigationView {
             VStack {
@@ -77,13 +77,13 @@ struct ProfileView: View {
             }
             .sheet(isPresented: $showSheet) {
                 ImagePicker { image in
-                    vm.uploadImage(image, for: logInAndOutViewModel.userRecordId)
+                    vm.uploadImage(image, for: userRecordId)
                 }
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        ProfileSettingsView()
+                        ProfileSettingsView(logOutFunc: logOutFunc)
                     } label: {
                         Image(systemName: "gearshape")
                     }
@@ -105,7 +105,7 @@ struct ProfileView: View {
                 }
             }
             .onAppear {
-                vm.sync(for: logInAndOutViewModel.userRecordId)
+                vm.sync(for: userRecordId)
             }
         }
     }
@@ -122,11 +122,9 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView()
-            .environmentObject(LogInAndOutViewModel())
+        ProfileView(userRecordId: LogInAndOutViewModel().userRecordId, logOutFunc: LogInAndOutViewModel().logOut)
             .preferredColorScheme(.light)
-        ProfileView()
-            .environmentObject(LogInAndOutViewModel())
+        ProfileView(userRecordId: LogInAndOutViewModel().userRecordId, logOutFunc: LogInAndOutViewModel().logOut)
             .preferredColorScheme(.dark)
     }
 }

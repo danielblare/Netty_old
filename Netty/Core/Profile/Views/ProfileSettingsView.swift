@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ProfileSettingsView: View {
     
-    @EnvironmentObject private var logInAndOutViewModel: LogInAndOutViewModel
-    
+    let logOutFunc: () async -> ()
+        
     @State private var isLoading: Bool = false
     
     var body: some View {
@@ -114,7 +114,7 @@ struct ProfileSettingsView: View {
                     Button(role: .destructive, action: {
                         Task {
                             isLoading = true
-                            await logInAndOutViewModel.logOut()
+                            await logOutFunc()
                             isLoading = false
                         }
                     }) {
@@ -133,7 +133,7 @@ struct ProfileSettingsView: View {
 
 struct ProfileSettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileSettingsView()
-        ProfileSettingsView()
+        ProfileSettingsView(logOutFunc: LogInAndOutViewModel().logOut)
+        ProfileSettingsView(logOutFunc: LogInAndOutViewModel().logOut)
     }
 }

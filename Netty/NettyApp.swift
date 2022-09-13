@@ -144,10 +144,10 @@ struct NettyApp: App {
         WindowGroup {
             ZStack {
                 if logInAndOutViewModel.userRecordId != nil {
-                    MainScreenView()
+                    MainScreenView(userRecordId: logInAndOutViewModel.userRecordId, logOutFunc: logInAndOutViewModel.logOut)
                         .transition(.opacity)
                 } else {
-                    LogInView()
+                    LogInView(warningMessage: logInAndOutViewModel.warningMessage.rawValue, logInFunc: logInAndOutViewModel.logIn, isLoading: logInAndOutViewModel.isLoading, userRecordId: $logInAndOutViewModel.userRecordId)
                         .transition(.opacity)
                 }
                     
@@ -159,7 +159,6 @@ struct NettyApp: App {
                 }
                 .zIndex(2.0)
             }
-            .environmentObject(logInAndOutViewModel)
             .persistentSystemOverlays(.hidden)
             .alert(Text(logInAndOutViewModel.alertTitle), isPresented: $logInAndOutViewModel.showAlert, actions: {}, message: {
                 Text(logInAndOutViewModel.alertMessage)

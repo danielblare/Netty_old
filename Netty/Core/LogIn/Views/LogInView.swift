@@ -6,11 +6,15 @@
 //
 
 import SwiftUI
+import CloudKit
 
 struct LogInView: View {
     
-    @EnvironmentObject private var logInAndOutViewModel: LogInAndOutViewModel
-    
+    let warningMessage: String
+    let logInFunc: (String, String) async -> ()
+    let isLoading: Bool
+    @Binding var userRecordId: CKRecord.ID?
+
     @State private var username: String = ""
     @State private var password: String = ""
         
@@ -55,7 +59,7 @@ struct LogInView: View {
                         .padding(.horizontal)
                     
                     HStack {
-                        Text(logInAndOutViewModel.warningMessage.rawValue)
+                        Text(warningMessage)
                             .font(.footnote)
                             .foregroundColor(.red)
                         
@@ -72,9 +76,7 @@ struct LogInView: View {
                     
                     Button {
                         Task {
-                            await logInAndOutViewModel.logIn(username: username, password: password)
-                            username = ""
-                            password = ""
+                            await logInFunc(username, password)
                         }
                     } label: {
                         Text("Log In")
@@ -97,7 +99,7 @@ struct LogInView: View {
                             .font(.footnote)
                         
                         NavigationLink {
-                            NamePageView(userRecordId: $logInAndOutViewModel.userRecordId)
+                            NamePageView(userRecordId: $userRecordId)
                         } label: {
                             Text("Sign Up")
                                 .font(.footnote)
@@ -111,10 +113,10 @@ struct LogInView: View {
                 .background(Color.theme.background.onTapGesture {
                     UIApplication.shared.endEditing()
             })
-                .disabled(logInAndOutViewModel.isLoading)
+                .disabled(isLoading)
                 
                 
-                if logInAndOutViewModel.isLoading {
+                if isLoading {
                     ProgressView()
                 }
             }
@@ -123,7 +125,9 @@ struct LogInView: View {
 }
 
 struct LogInView_Previews: PreviewProvider {
+    @StateObject static var vm = LogInAndOutViewModel()
+    
     static var previews: some View {
-        LogInView()
+        LogInView(warningMessage: vm.warningMessage.rawValue, logInFunc: vm.logIn, isLoading: vm.isLoading, userRecordId: $vm.userRecordId)
     }
 }
