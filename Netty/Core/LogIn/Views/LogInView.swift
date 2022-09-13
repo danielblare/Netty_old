@@ -8,15 +8,19 @@
 import SwiftUI
 import CloudKit
 
+struct DataObject: Identifiable, Hashable {
+    let id = UUID()
+}
+
+
 struct LogInView: View {
     
-    let warningMessage: String
-    let logInFunc: (String, String) async -> ()
-    let isLoading: Bool
-    @Binding var userRecordId: CKRecord.ID?
-
+    @EnvironmentObject private var vm: LogInAndOutViewModel
+    
     @State private var username: String = ""
     @State private var password: String = ""
+    
+    @State private var path = NavigationPath()
         
     enum FocusedValue {
         case username, password
@@ -25,7 +29,7 @@ struct LogInView: View {
     @FocusState private var activeField: FocusedValue?
     
     var body: some View {
-        NavigationView {
+        NavigationStack(path: $path) {
             ZStack {
                 VStack {
                     VStack(spacing: 0) {
@@ -59,24 +63,26 @@ struct LogInView: View {
                         .padding(.horizontal)
                     
                     HStack {
-                        Text(warningMessage)
+                        Text(vm.warningMessage.rawValue)
                             .font(.footnote)
                             .foregroundColor(.red)
                         
                         Spacer(minLength: 0)
                         
-                        NavigationLink {
-                            
-                        } label: {
+                        NavigationLink(value: DataObject.init()) {
                             Text("Forgot password?")
                                 .font(.footnote)
                         }
+                        
+                    }
+                    .navigationDestination(for: DataObject.self) { _ in
+                        ForgotPasswordEmailPageView(path: $path)
                     }
                     .padding(.horizontal)
                     
                     Button {
                         Task {
-                            await logInFunc(username, password)
+                            await vm.logIn(username: username, password: password)
                         }
                     } label: {
                         Text("Log In")
@@ -99,7 +105,7 @@ struct LogInView: View {
                             .font(.footnote)
                         
                         NavigationLink {
-                            NamePageView(userRecordId: $userRecordId)
+                            NamePageView(userRecordId: $vm.userRecordId, path: $path)
                         } label: {
                             Text("Sign Up")
                                 .font(.footnote)
@@ -113,12 +119,16 @@ struct LogInView: View {
                 .background(Color.theme.background.onTapGesture {
                     UIApplication.shared.endEditing()
             })
-                .disabled(isLoading)
+                .disabled(vm.isLoading)
                 
                 
-                if isLoading {
+                if vm.isLoading {
                     ProgressView()
                 }
+            }
+            .onAppear {
+                username = ""
+                password = "" 
             }
         }
     }
@@ -128,6 +138,9 @@ struct LogInView_Previews: PreviewProvider {
     @StateObject static var vm = LogInAndOutViewModel()
     
     static var previews: some View {
-        LogInView(warningMessage: vm.warningMessage.rawValue, logInFunc: vm.logIn, isLoading: vm.isLoading, userRecordId: $vm.userRecordId)
+        LogInView()
+            .environmentObject(LogInAndOutViewModel())
+        LogInView()
+            .environmentObject(LogInAndOutViewModel())
     }
 }

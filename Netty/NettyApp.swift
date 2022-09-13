@@ -147,7 +147,8 @@ struct NettyApp: App {
                     MainScreenView(userRecordId: logInAndOutViewModel.userRecordId, logOutFunc: logInAndOutViewModel.logOut)
                         .transition(.opacity)
                 } else {
-                    LogInView(warningMessage: logInAndOutViewModel.warningMessage.rawValue, logInFunc: logInAndOutViewModel.logIn, isLoading: logInAndOutViewModel.isLoading, userRecordId: $logInAndOutViewModel.userRecordId)
+                    LogInView()
+                        .environmentObject(logInAndOutViewModel)
                         .transition(.opacity)
                 }
                     

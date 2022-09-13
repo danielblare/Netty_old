@@ -1,66 +1,29 @@
 //
-//  SignUpViewModel.swift
+//  ForgotPasswordViewModel.swift
 //  Netty
 //
-//  Created by Danny on 16/07/2022.
+//  Created by Danny on 9/13/22.
 //
 
-import Foundation
 import SwiftUI
-import Combine
 import CloudKit
+import Combine
 
-class SignUpViewModel: ObservableObject {
-    
-    init(userRecordId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
-        self._userRecordId = userRecordId
-        self._path = path
-        
-        // Checking whether user is more than 18 y.o.
-        let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
-        let endingDate: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date())!
-        birthDate = endingDate
-        dateRangeFor18yearsOld = startingDate...endingDate
-        
-        addSubscribers()
-    }
+
+class ForgotPasswordViewModel: ObservableObject {
     
     @Binding var path: NavigationPath
-    @Binding var userRecordId: CKRecord.ID?
     
-    /// Error connected with nickname entering
-    enum NicknameError: String {
-        case nameIsUsed = "Nickname is already used"
-        case length = "Enter 3 or more symbols"
-        case space = "Nickname contains unacceptable characters"
-        case none = ""
+    init(path: Binding<NavigationPath>) {
+        self._path = path
+        addSubscribers()
     }
-    
+            
     enum EmailButtonText: String {
         case send = "Send code"
         case again = "Send again"
         case verificated = ""
     }
-    
-    // Name page
-    private let nameAndLastNameSymbolsLimit: Int = 35
-    @Published var firstNameTextField: String = "" {
-        didSet {
-            if firstNameTextField.count > nameAndLastNameSymbolsLimit {
-                firstNameTextField = firstNameTextField.truncated(limit: nameAndLastNameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
-    @Published var lastNameTextField: String = "" {
-        didSet {
-            if lastNameTextField.count > nameAndLastNameSymbolsLimit {
-                lastNameTextField = lastNameTextField.truncated(limit: nameAndLastNameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
-    var birthDate: Date
-    var dateRangeFor18yearsOld: ClosedRange<Date>
-    @Published var nameNextButtonDisabled: Bool = true
     
     // Email page
     private let emailSymbolsLimit: Int = 64
@@ -100,21 +63,6 @@ class SignUpViewModel: ObservableObject {
     @Published var showFailStatusIcon: Bool = false
     
     
-    // Nickname page
-    private let nicknameSymbolsLimit: Int = 20
-    @Published var nicknameTextField: String = "" {
-        didSet {
-            if nicknameTextField.count > nicknameSymbolsLimit {
-                nicknameTextField = nicknameTextField.truncated(limit: nicknameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
-    @Published var nicknameError: NicknameError = .none
-    @Published var nicknameIsChecking: Bool = false // Progress view
-    @Published var availabilityIsPassed: Bool = false
-    private var checkTask = Task{}
-    @Published var nicknameNextButtonDisabled: Bool = true
-    
     // Password page
     private let passwordSymbolsLimit: Int = 23
     @Published var passwordField: String = "" {
@@ -133,7 +81,7 @@ class SignUpViewModel: ObservableObject {
     }
     @Published var passwordMessage: PasswordWarningMessage = .short
     @Published var passwordNextButtonDisabled: Bool = true
-    @Published var creatingAccountIsLoading: Bool = false
+    @Published var changingPasswordIsLoading: Bool = false
     @Published var showDontMatchError: Bool = false
     
     var alertTitle: String = ""
@@ -151,7 +99,7 @@ class SignUpViewModel: ObservableObject {
         let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .allUsersRecordType, withField: .emailRecordField, equalTo: savedEmail)
         switch result {
         case .success(let exist):
-            if !exist {
+            if exist {
                 switch self.emailButtonText {
                 case .send:
                     await MainActor.run {
@@ -178,7 +126,7 @@ class SignUpViewModel: ObservableObject {
                     self.showAlert(title: "Error while sending e-mail", message: error.localizedDescription)
                 }
             } else {
-                showAlert(title: "Error", message: "Account with this e-mail already exists")
+                showAlert(title: "Error", message: "Account with this e-mail does not exist")
             }
         case .failure(let failure):
             showAlert(title: "Server error", message: failure.localizedDescription)
@@ -236,57 +184,13 @@ class SignUpViewModel: ObservableObject {
         oneTimePasscode = String.generateOneTimeCode()
         
         let to = savedEmail
-        let subject = "E-mail Confirmation"
+        let subject = "E-mail Verification"
         let type = "text/HTML"
-        let text = "<h3>Welcome to Netty, \(firstNameTextField) \(lastNameTextField)!</h3><br /><br />Your confirmation code is <b>\(oneTimePasscode ?? "ErRoR")</b>"
+        let text = "<h3>Password reset</h3><br /><br />Your confirmation code is <b>\(oneTimePasscode ?? "ErRoR")</b>"
         
         let _ = try await EmailSendManager.instance.sendEmail(to: to, subject: subject, type: type, text: text)
     }
-    
-    func createAccount() async {
-        await MainActor.run(body: {
-            creatingAccountIsLoading = true
-        })
         
-        let firstName = firstNameTextField
-        let lastName = lastNameTextField
-        let dateOfBirth = birthDate
-        let nickname = nicknameTextField
-        let email = savedEmail
-        let password = passwordField
-        
-        let newUser = CKRecord(recordType: .allUsersRecordType)
-        newUser[.firstNameRecordField] = firstName
-        newUser[.lastNameRecordField] = lastName
-        newUser[.dateOfBirthRecordField] = dateOfBirth
-        newUser[.emailRecordField] = email
-        newUser[.nicknameRecordField] = nickname
-        newUser[.passwordRecordField] = password
-        newUser[.avatarRecordField] = nil
-        newUser[.loggedInDeviceRecordField] = ""
-        
-        let result = await CloudKitManager.instance.saveRecordToPublicDatabase(newUser)
-        await MainActor.run(body: {
-            creatingAccountIsLoading = false
-            switch result {
-            case .success(let returnedRecord):
-                Task {
-                    await LogInAndOutManager.instance.addLoggedInDevice(for: returnedRecord.recordID)
-                }
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    path = NavigationPath()
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    withAnimation {
-                        self.userRecordId = returnedRecord.recordID
-                    }
-                }
-            case .failure(let error):
-                showAlert(title: "Error while creating an account", message: error.localizedDescription)
-            }
-        })
-    }
-    
     func confirmButtonPressed() {
         withAnimation(.easeInOut(duration: 0.09)) {
             if codeTextField == oneTimePasscode {
@@ -311,42 +215,41 @@ class SignUpViewModel: ObservableObject {
         }
     }
     
-    func checkAvailability(for nickname: String) async -> Bool {
+    func changePassword() async {
+        await MainActor.run(body: {
+            changingPasswordIsLoading = true
+        })
         
-        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .allUsersRecordType, withField: .nicknameRecordField, equalTo: nickname)
+        let newPassword = passwordField
+        
+        let result = await CloudKitManager.instance.recordIdOfUser(withField: .emailRecordField, inRecordType: .allUsersRecordType, equalTo: savedEmail)
         switch result {
-        case .success(let exist):
-            return !exist
-        case .failure(let failure):
-            showAlert(title: "Server error", message: failure.localizedDescription)
-            return false
+        case .success(let recordId):
+            if let recordId = recordId {
+                let result = await CloudKitManager.instance.updatePasswordForUserWith(recordId: recordId, newPassword: newPassword)
+                await MainActor.run {
+                    changingPasswordIsLoading = false
+                    switch result {
+                    case .success(_):
+                        withAnimation {
+                            path = NavigationPath()
+                        }
+                    case .failure(let error):
+                        showAlert(title: "Error while updating password", message: error.localizedDescription)
+                    }
+                }
+            }
+        case .failure(let error):
+            await MainActor.run {
+                changingPasswordIsLoading = false
+                showAlert(title: "Error while finding user with this e-mail", message: error.localizedDescription)
+            }
         }
+
     }
-    
+            
     /// Adding subscribers depending on current registration level
     private func addSubscribers() {
-        let sharedFirstNamePublisher = $firstNameTextField
-            .combineLatest($lastNameTextField)
-            .share()
-        
-        // After 0.5 second of inactivity checks whether first and last names are correct
-        sharedFirstNamePublisher
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .filter({ ($0.containsOnlyLetters() && $0.count >= 3) && ($1.containsOnlyLetters() && $1.count >= 3) })
-            .sink { [weak self] _ in
-                self?.nameNextButtonDisabled = false
-            }
-            .store(in: &cancellables)
-        
-        // Disables next button immidiatly with any field change
-        sharedFirstNamePublisher
-            .filter({ _ in !self.nameNextButtonDisabled })
-            .sink { [weak self] _ in
-                self?.nameNextButtonDisabled = true
-            }
-            .store(in: &cancellables)
-        
-        
         let sharedEmailPublisher = $emailTextField
             .share()
         
@@ -387,62 +290,6 @@ class SignUpViewModel: ObservableObject {
                 self?.showFailStatusIcon = false
             }
             .store(in: &cancellables)
-        
-        
-        let sharedNicknamePublisher = $nicknameTextField
-            .share()
-        
-        // After 0.5 second of inactivity checks whether nickname is at least 3 symbols long and available
-        sharedNicknamePublisher
-            .removeDuplicates()
-            .drop(while: { $0.count == 0 })
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .sink { [weak self] returnedValue in
-                if let self = self {
-                    self.availabilityIsPassed = false
-                    if returnedValue.count < 3 {
-                        self.nicknameError = .length
-                    } else if returnedValue.containsUnacceptableSymbols() {
-                        self.nicknameError = .space
-                    } else {
-                        self.nicknameIsChecking = true
-                        self.checkTask = Task {
-                            let check = await self.checkAvailability(for: self.nicknameTextField)
-                            if !self.checkTask.isCancelled {
-                                await MainActor.run(body: {
-                                    if check {
-                                        self.availabilityIsPassed = true
-                                        HapticManager.instance.notification(of: .success)
-                                        self.nicknameNextButtonDisabled = false
-                                    } else {
-                                        self.nicknameError = .nameIsUsed
-                                        HapticManager.instance.notification(of: .error)
-                                    }
-                                    self.nicknameIsChecking = false
-                                })
-                            }
-                        }
-                    }
-                }
-            }
-            .store(in: &cancellables)
-        
-        // Disables next button and stops availability checking task immidiatly with any field change
-        sharedNicknamePublisher
-            .removeDuplicates()
-            .drop(while: { $0.count == 0 })
-            .filter({ _ in !self.checkTask.isCancelled || self.nicknameIsChecking || !self.nicknameNextButtonDisabled || self.nicknameError != .none || self.availabilityIsPassed })
-            .sink { [weak self] returnedValue in
-                if let self = self {
-                    self.checkTask.cancel()
-                    self.nicknameIsChecking = false
-                    self.nicknameNextButtonDisabled = true
-                    self.nicknameError = .none
-                    self.availabilityIsPassed = false
-                }
-            }
-            .store(in: &cancellables)
-        
         
         let sharedPasswordPublisher = $passwordField
             .combineLatest($passwordConfirmField)

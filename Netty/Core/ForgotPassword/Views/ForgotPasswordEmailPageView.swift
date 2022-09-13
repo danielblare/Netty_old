@@ -1,31 +1,38 @@
 //
-//  EmailPageView.swift
+//  ForgotPasswordEmailPageView.swift
 //  Netty
 //
-//  Created by Danny on 17/07/2022.
+//  Created by Danny on 9/13/22.
 //
 
 import SwiftUI
-import Combine
+import CloudKit
 
-struct EmailPageView: View {
+struct ForgotPasswordEmailPageView: View {
     
-    @ObservedObject private var vm: SignUpViewModel
+    @ObservedObject private var vm: ForgotPasswordViewModel
     
     enum FocusedValue {
         case email, code
     }
     
-    @FocusState private var activeField: FocusedValue?
-    
-    init(vm: SignUpViewModel) {
-        self.vm = vm
+    init(path: Binding<NavigationPath>) {
+        vm = ForgotPasswordViewModel(path: path)
     }
     
+    @FocusState private var activeField: FocusedValue?
+    
     var body: some View {
-        VStack() {
+        VStack {
             
             Spacer(minLength: 0)
+
+            Text("Enter e-mail that is connected to your account:")
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+
+            
             
             VStack(spacing: 30) {
                 // TextField
@@ -108,7 +115,7 @@ struct EmailPageView: View {
                 
                 if vm.codeCheckPassed {
                     NavigationLink {
-                        NicknamePageView(vm: vm)
+                        ForgotPasswordCreatePasswordPageView(vm: vm)
                     } label: {
                         HStack {
                             Text("Next")
@@ -138,10 +145,16 @@ struct EmailPageView: View {
         .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
             Text(vm.alertMessage)
         })
-        .navigationTitle("Enter your e-mail")
-        .background(Color.theme.background.onTapGesture {
-            UIApplication.shared.endEditing()
-        })
+        .navigationTitle("E-mail verification")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+
+struct ForgotPasswordEmailPageView_Previews: PreviewProvider {
+    static var previews: some View {
+        ForgotPasswordEmailPageView(path: .constant(.init()))
+        ForgotPasswordEmailPageView(path: .constant(.init()))
     }
 }
 

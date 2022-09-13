@@ -16,8 +16,8 @@ struct NamePageView: View {
         
     @ObservedObject private var vm: SignUpViewModel
     
-    init(userRecordId: Binding<CKRecord.ID?>) {
-        self.vm = SignUpViewModel(userRecordId: userRecordId)
+    init(userRecordId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
+        self.vm = SignUpViewModel(userRecordId: userRecordId, path: path)
     }
     
     @FocusState private var activeField: FocusedValue?
@@ -66,7 +66,7 @@ struct NamePageView: View {
                 Spacer(minLength: 0)
                 
                 NavigationLink {
-                    EmailPageView(vm: vm)
+                    SignUpEmailPageView(vm: vm)
                 } label: {
                     HStack {
                         Text("Next")

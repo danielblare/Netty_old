@@ -26,7 +26,7 @@ struct ProfileView: View {
     @StateObject private var vm: ProfileViewModel = ProfileViewModel()
         
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 
                 // Image and full name
