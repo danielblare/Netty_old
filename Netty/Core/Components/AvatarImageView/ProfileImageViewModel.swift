@@ -31,8 +31,10 @@ class ProfileImageViewModel: ObservableObject {
                 switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
                 case .success(let returnedValue):
                     await MainActor.run(body: {
-                        isLoading = false
-                        self.image = returnedValue
+                        withAnimation {
+                            isLoading = false
+                            self.image = returnedValue
+                        }
                         if let image = returnedValue {
                             CacheManager.instance.addToDirectPhotoCache(key: "\(id.recordName)_avatar", value: image)
                         }
