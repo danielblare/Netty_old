@@ -99,8 +99,7 @@ class ForgotPasswordViewModel: ObservableObject {
         
         savedEmail = emailTextField.lowercased()
         
-        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .allUsersRecordType, withField: .emailRecordField, equalTo: savedEmail)
-        switch result {
+        switch await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .usersRecordType, withField: .emailRecordField, equalTo: savedEmail) {
         case .success(let exist):
             if exist {
                 switch self.emailButtonText {
@@ -225,8 +224,7 @@ class ForgotPasswordViewModel: ObservableObject {
         
         let newPassword = passwordField
         
-        let result = await CloudKitManager.instance.recordIdOfUser(withField: .emailRecordField, inRecordType: .allUsersRecordType, equalTo: savedEmail)
-        switch result {
+        switch await CloudKitManager.instance.recordIdOfUser(withField: .emailRecordField, inRecordType: .usersRecordType, equalTo: savedEmail) {
         case .success(let recordId):
             if let recordId = recordId {
                 let result = await CloudKitManager.instance.updatePasswordForUserWith(recordId: recordId, newPassword: newPassword)
@@ -237,7 +235,7 @@ class ForgotPasswordViewModel: ObservableObject {
                         withAnimation {
                             path = NavigationPath()
                         }
-                        showAlertOnLogInScreen("Password reset", "Your password was successfully changes")
+                        showAlertOnLogInScreen("Password reset", "Your password has been successfully changed")
                     case .failure(let error):
                         showAlert(title: "Error while updating password", message: error.localizedDescription)
                     }

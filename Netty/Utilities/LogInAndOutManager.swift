@@ -30,7 +30,7 @@ actor LogInAndOutManager {
     func logIn(username: String, password: String) async -> Result<CKRecord.ID?, Error> {
         await withCheckedContinuation { continuation in
             let predicate = NSPredicate(format: "\(String.nicknameRecordField) == %@", username)
-            let query = CKQuery(recordType: .allUsersRecordType, predicate: predicate)
+            let query = CKQuery(recordType: .usersRecordType, predicate: predicate)
             CKContainer.default().publicCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
                 switch completion {
                 case .success(let success):
@@ -50,7 +50,7 @@ actor LogInAndOutManager {
                         }
                     } else {
                         let predicate = NSPredicate(format: "\(String.emailRecordField) == %@", username)
-                        let query = CKQuery(recordType: .allUsersRecordType, predicate: predicate)
+                        let query = CKQuery(recordType: .usersRecordType, predicate: predicate)
                         CKContainer.default().publicCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
                             switch completion {
                             case .success(let success):
@@ -97,11 +97,21 @@ actor LogInAndOutManager {
         }
     }
     
-    func removeLoggedInDevice(for recordID: CKRecord.ID) {
-        CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordID) { returnedRecord, error in
-            if let record = returnedRecord {
-                record[.loggedInDeviceRecordField] = ""
-            CKContainer.default().publicCloudDatabase.save(record) { _, _ in }
+    private func removeLoggedInDevice(for recordID: CKRecord.ID) async -> Result<Void, Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordID) { returnedRecord, error in
+                if let record = returnedRecord {
+                    record[.loggedInDeviceRecordField] = ""
+                    CKContainer.default().publicCloudDatabase.save(record) { returnedRecord, error in
+                        if let _  = returnedRecord {
+                            continuation.resume(returning: .success(()))
+                        } else if let error = error {
+                            continuation.resume(returning: .failure(error))
+                        }
+                    }
+                } else if let error = error {
+                    continuation.resume(returning: .failure(error))
+                }
             }
         }
     }
@@ -111,7 +121,7 @@ actor LogInAndOutManager {
             CKContainer.default().fetchUserRecordID { returnedRecord, error in
                 if let record = returnedRecord {
                     let predicate = NSPredicate(format: "\(String.loggedInDeviceRecordField) == %@", "\(record.recordName)")
-                    let query = CKQuery(recordType: .allUsersRecordType, predicate: predicate)
+                    let query = CKQuery(recordType: .usersRecordType, predicate: predicate)
                     CKContainer.default().publicCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
                         switch completion {
                         case .success(let success):
@@ -127,16 +137,15 @@ actor LogInAndOutManager {
                         }
                     }
                     
+                } else if let error = error {
+                    print("AMIGO \(error.localizedDescription)")
                 }
             }
         }
     }
     
-    func logOut() async -> Result<Void, Error> {
-        try? await Task.sleep(nanoseconds: 100_000_000)
-        return await withCheckedContinuation { continuation in
-            continuation.resume(returning: .success(()))
-        }
+    func logOut(for id: CKRecord.ID) async -> Result<Void, Error> {
+         await removeLoggedInDevice(for: id)
     }
 }
 

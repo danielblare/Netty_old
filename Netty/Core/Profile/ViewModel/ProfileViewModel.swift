@@ -34,8 +34,7 @@ class ProfileViewModel: ObservableObject {
             nickname = savedNickname
         } else {
             Task {
-                let result = await UserInfoService.instance.fetchNicknameForUser(with: id)
-                switch result {
+                switch await UserInfoService.instance.fetchNicknameForUser(with: id) {
                 case .success(let returnedValue):
                     await MainActor.run(body: {
                         self.nickname = returnedValue
@@ -56,8 +55,7 @@ class ProfileViewModel: ObservableObject {
             fullName = savedName
         } else {
             Task {
-                let result = await UserInfoService.instance.fetchFullNameForUser(with: id)
-                switch result {
+                switch await UserInfoService.instance.fetchFullNameForUser(with: id) {
                 case .success(let returnedValue):
                     await MainActor.run(body: {
                         self.fullName = returnedValue
@@ -111,8 +109,7 @@ class ProfileViewModel: ObservableObject {
         } else {
             isLoading = true
             Task {
-                let result = await AvatarImageService.instance.fetchAvatarForUser(with: id)
-                switch result {
+                switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
                 case .success(let returnedValue):
                     await MainActor.run(body: {
                         isLoading = false

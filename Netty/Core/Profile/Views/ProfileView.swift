@@ -10,12 +10,6 @@ import CloudKit
 import PhotosUI
 
 
-/*
- Transfer id and logOut func throug views as a variable
- */
-
-
-
 struct ProfileView: View {
     
     @State private var showSheet: Bool = false
@@ -55,22 +49,32 @@ struct ProfileView: View {
                     }
                     .frame(width: 100, height: 100)
                     .clipShape(Circle())
-                    .padding()
+                    .padding(.horizontal)
                     .onTapGesture {
                         showSheet = true
                     }
                     
-                    if let fullName = vm.fullName {
-                        Text(fullName)
-                            .lineLimit(1)
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                    } else {
-                        LoadingAnimation()
+                    VStack {
+                        
+                        // Name
+                        if let fullName = vm.fullName {
+                            Text(fullName)
+                                .lineLimit(1)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                        } else {
+                            LoadingAnimation()
+                        }
+                        
+                        Spacer(minLength: 0)
                     }
+                    .padding(.vertical)
+                    .frame(height: 100)
                     
                     Spacer(minLength: 0)
+                        
                 }
+                .padding(.vertical)
                 
                 
                 Spacer(minLength: 0)

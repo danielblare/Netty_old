@@ -20,7 +20,7 @@ struct MainScreenView: View {
                     Image(systemName: "photo.on.rectangle")
                 }
                 .tag(0)
-            DirectView()
+            DirectView(userRecordId: userRecordId)
                 .tabItem {
                     Image(systemName: "ellipsis.bubble")
                 }

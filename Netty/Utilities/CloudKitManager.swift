@@ -15,8 +15,7 @@ actor CloudKitManager {
     private init() {}
     
     static let instance = CloudKitManager()
-    
-    
+        
     func doesRecordExistInPublicDatabase(inRecordType: String, withField: String, equalTo: String) async -> Result<Bool, Error> {
         await withCheckedContinuation { continuation in
             let predicate = NSPredicate(format: "\(withField) == %@", equalTo.lowercased())

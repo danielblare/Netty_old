@@ -148,8 +148,7 @@ class SignUpViewModel: ObservableObject {
         
         savedEmail = emailTextField.lowercased()
         
-        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .allUsersRecordType, withField: .emailRecordField, equalTo: savedEmail)
-        switch result {
+        switch await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .usersRecordType, withField: .emailRecordField, equalTo: savedEmail) {
         case .success(let exist):
             if !exist {
                 switch self.emailButtonText {
@@ -255,7 +254,7 @@ class SignUpViewModel: ObservableObject {
         let email = savedEmail
         let password = passwordField
         
-        let newUser = CKRecord(recordType: .allUsersRecordType)
+        let newUser = CKRecord(recordType: .usersRecordType)
         newUser[.firstNameRecordField] = firstName
         newUser[.lastNameRecordField] = lastName
         newUser[.dateOfBirthRecordField] = dateOfBirth
@@ -313,8 +312,7 @@ class SignUpViewModel: ObservableObject {
     
     func checkAvailability(for nickname: String) async -> Bool {
         
-        let result = await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .allUsersRecordType, withField: .nicknameRecordField, equalTo: nickname)
-        switch result {
+        switch await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .usersRecordType, withField: .nicknameRecordField, equalTo: nickname) {
         case .success(let exist):
             return !exist
         case .failure(let failure):

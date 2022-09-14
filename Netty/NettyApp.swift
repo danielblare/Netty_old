@@ -58,8 +58,7 @@ class LogInAndOutViewModel: ObservableObject {
                 warningMessage = .none
                 isLoading = true
             })
-            let result = await manager.logIn(username: username, password: password)
-            switch result {
+            switch await manager.logIn(username: username, password: password) {
             case .success(let id):
                 if let id = id {
                     await MainActor.run(body: {
@@ -89,19 +88,17 @@ class LogInAndOutViewModel: ObservableObject {
     }
     
     func logOut() async {
-        let result = await manager.logOut()
-        switch result {
-        case .success(_):
-            if let id = userRecordId {
-                await manager.removeLoggedInDevice(for: id)
+        if let id = userRecordId {
+            switch await manager.logOut(for: id) {
+            case .success(_):
+                await MainActor.run(body: {
+                    withAnimation {
+                        userRecordId = nil
+                    }
+                })
+            case .failure(let error):
+                showAlert(title: "Error while logging out", message: error.localizedDescription)
             }
-            await MainActor.run(body: {
-                withAnimation {
-                    userRecordId = nil
-                }
-            })
-        case .failure(let error):
-            showAlert(title: "Error while logging out", message: error.localizedDescription)
         }
     }
     
