@@ -54,16 +54,9 @@ class ChatModelService {
                 
                 if let record = returnedRecord,
                     let nickname = record[.nicknameRecordField] as? String {
-                    var avatar: UIImage? = nil
                     
-                    if let imageAsset = record[.avatarRecordField] as? CKAsset,
-                        let imageURL = imageAsset.fileURL,
-                        let data = try? Data(contentsOf: imageURL),
-                        let image = UIImage(data: data) {
-                        avatar = image
-                    }
+                    continuation.resume(returning: .success(ChatModel(id: otherParticipant.recordID, userName: nickname, lastMessage: nil)))
                     
-                    continuation.resume(returning: .success(ChatModel(id: otherParticipant.recordID, userName: nickname, profileImage: avatar, lastMessage: nil)))
                 } else if let error = error {
                     continuation.resume(returning: .failure(error))
                 }

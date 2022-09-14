@@ -16,56 +16,70 @@ class ProfileViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var fullName: String? = nil
     @Published var nickname: String? = nil
-
-        
-    init() {
-        
+    
+    private var userRecordId: CKRecord.ID?
+    
+    init(id: CKRecord.ID?) {
+        userRecordId = id
+        Task {
+            await sync()
+        }
     }
     
-    func sync(for id: CKRecord.ID?) {
-        getImage(for: id)
-        getFullName(for: id)
-        getNickname(for: id)
+    func sync() async {
+        await getImage()
+        await getFullName()
+        await getNickname()
     }
     
-    private func getNickname(for id: CKRecord.ID?) {
-        guard let id = id else { return }
-        if let savedNickname = CacheManager.instance.getText(key: "\(id.recordName)_nickname") as? String {
-            nickname = savedNickname
+    func fullSync() async {
+        await MainActor.run(body: {
+            CacheManager.instance.cleanProfileTextCache()
+            CacheManager.instance.cleanProfilePhotoCache()
+        })
+        await getImage()
+        await getFullName()
+        await getNickname()
+    }
+    
+    private func getNickname() async {
+        guard let id = userRecordId else { return }
+        if let savedNickname = CacheManager.instance.getTextFromProfileTextCache(key: "\(id.recordName)_nickname") as? String {
+            await MainActor.run {
+                nickname = savedNickname
+            }
         } else {
-            Task {
-                switch await UserInfoService.instance.fetchNicknameForUser(with: id) {
-                case .success(let returnedValue):
-                    await MainActor.run(body: {
-                        self.nickname = returnedValue
-                        if let nickname = returnedValue {
-                            CacheManager.instance.add(key: "\(id.recordName)_nickname", value: NSString(string: nickname))
-                        }
-                    })
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+            switch await UserInfoService.instance.fetchNicknameForUser(with: id) {
+            case .success(let returnedValue):
+                await MainActor.run(body: {
+                    self.nickname = returnedValue
+                    if let nickname = returnedValue {
+                        CacheManager.instance.addToProfileTextCache(key: "\(id.recordName)_nickname", value: NSString(string: nickname))
+                    }
+                })
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
     }
-
-    private func getFullName(for id: CKRecord.ID?) {
-        guard let id = id else { return }
-        if let savedName = CacheManager.instance.getText(key: "\(id.recordName)_fullName") as? String {
-            fullName = savedName
+    
+    private func getFullName() async {
+        guard let id = userRecordId else { return }
+        if let savedName = CacheManager.instance.getTextFromProfileTextCache(key: "\(id.recordName)_fullName") as? String {
+            await MainActor.run {
+                fullName = savedName
+            }
         } else {
-            Task {
-                switch await UserInfoService.instance.fetchFullNameForUser(with: id) {
-                case .success(let returnedValue):
-                    await MainActor.run(body: {
-                        self.fullName = returnedValue
-                        if let fullName = returnedValue {
-                            CacheManager.instance.add(key: "\(id.recordName)_fullName", value: NSString(string: fullName))
-                        }
-                    })
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+            switch await UserInfoService.instance.fetchFullNameForUser(with: id) {
+            case .success(let returnedValue):
+                await MainActor.run(body: {
+                    self.fullName = returnedValue
+                    if let fullName = returnedValue {
+                        CacheManager.instance.addToProfileTextCache(key: "\(id.recordName)_fullName", value: NSString(string: fullName))
+                    }
+                })
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
     }
@@ -91,37 +105,45 @@ class ProfileViewModel: ObservableObject {
                             self.image = UIImage(data: data)
                             self.isLoading = false
                         }
-                        CacheManager.instance.add(key: "\(id.recordName)_avatar", value: image)
+                        CacheManager.instance.addToProfilePhotoCache(key: "\(id.recordName)_avatar", value: image)
                     }
                 } catch {
                     print(error.localizedDescription)
                 }
             } else {
-                self.getImage(for: id)
-            }
-        }
-    }
-    
-    private func getImage(for id: CKRecord.ID?) {
-        guard let id = id else { return }
-        if let savedImage = CacheManager.instance.getImage(key: "\(id.recordName)_avatar") {
-            image = savedImage
-        } else {
-            isLoading = true
-            Task {
-                switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
-                case .success(let returnedValue):
-                    await MainActor.run(body: {
-                        isLoading = false
-                        self.image = returnedValue
-                        if let image = returnedValue {
-                            CacheManager.instance.add(key: "\(id.recordName)_avatar", value: image)
-                        }
-                    })
-                case .failure(let error):
-                    print(error.localizedDescription)
+                Task {
+                    await self.getImage()
                 }
             }
         }
     }
-}
+    
+    private func getImage() async {
+        guard let id = userRecordId else { return }
+        if let savedImage = CacheManager.instance.getImageFromProfilePhotoCache(key: "\(id.recordName)_avatar") {
+            await MainActor.run(body: {
+                withAnimation {
+                    image = savedImage
+                }
+            })
+        } else {
+            await MainActor.run {
+                withAnimation {
+                    image = nil
+                    isLoading = true
+                }
+            }
+            switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
+            case .success(let returnedValue):
+                await MainActor.run(body: {
+                    isLoading = false
+                    self.image = returnedValue
+                    if let image = returnedValue {
+                        CacheManager.instance.addToProfilePhotoCache(key: "\(id.recordName)_avatar", value: image)
+                    }
+                })
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }}

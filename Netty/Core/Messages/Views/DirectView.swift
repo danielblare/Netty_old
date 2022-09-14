@@ -19,72 +19,72 @@ struct DirectView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
+            GeometryReader { geo in
                 ZStack {
-                    if vm.chatsArray.isEmpty && !vm.isLoading {
-                        VStack {
-                            Image(systemName: "xmark.bin")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80)
-                            
-                            Text("You don't have any chats yet")
-                                .font(.title3)
-                                .padding()
-                        }
-                        .foregroundColor(.secondary)
-                        
-                    } else {
-                        List {
-                            ForEach(vm.chatsArray) { chat in
+                    
+                    ZStack {
+                        if vm.chatsArray.isEmpty && !vm.isLoading && !vm.isRefreshing {
+                            VStack {
+                                Image(systemName: "xmark.bin")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80)
+                                
+                                Text("You don't have any chats yet")
+                                    .font(.title3)
+                                    .padding()
+                            }
+                            .foregroundColor(.secondary)
+                        } else {
+                            List(vm.chatsArray) { chat in
                                 HStack {
-                                    // Image
-                                    ZStack {
-                                        if let image = chat.profileImage {
-                                            Image(uiImage: image)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                        } else {
-                                            Rectangle()
-                                                .foregroundColor(.secondary.opacity(0.3))
-                                                .overlay {
-                                                    Image(systemName: "questionmark")
-                                                        .foregroundColor(.secondary)
-                                                }
-                                        }
+                                    ProfileImageView(for: chat.id)
+                                        .frame(width: 70, height: 70)
+                                        .padding(.trailing, 5)
+
+                                    VStack(alignment: .leading) {
+                                        Text(chat.userName)
+                                            .lineLimit(1)
+                                            .fontWeight(.semibold)
+                                            .padding(.top)
+                                            .frame(width: geo.size.width * 0.5, alignment: .leading)
+                                        
+                                        Spacer(minLength: 0)
+                                        
+                                        Text(chat.lastMessage ?? "...")
+                                            .lineLimit(1)
+                                            .foregroundColor(.secondary)
+                                            .font(.callout)
+                                            .padding(.bottom)
+                                            .frame(width: geo.size.width * 0.6, alignment: .leading)
                                     }
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(Circle())
-                                    .padding(.horizontal)
-                                    
-                                    Text(chat.userName)
                                 }
                             }
-                            
+                            .padding(.top)
+                            .listStyle(.inset)
                         }
                     }
-                    VStack {
-                        Spacer()
-                        
-                        Button("sync") {
-                            Task {
-                                await vm.sync()
-                            }
-                        }
-                        .buttonStyle(.borderedProminent)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .disabled(vm.isLoading)
+                    
+                    if vm.isLoading {
+                        ProgressView()
                     }
                 }
-                .disabled(vm.isLoading)
-                
-                if vm.isLoading {
-                    ProgressView()
+                .refreshable {
+                    Task {
+                        await vm.fullSync()
+                    }
                 }
+                .navigationTitle("Messages")
             }
-            .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
-                Text(vm.alertMessage)
-            })
         }
+        
     }
+    
+    
+    
+    
 }
 
 

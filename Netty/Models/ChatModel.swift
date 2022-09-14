@@ -14,6 +14,5 @@ struct ChatModel: Identifiable {
     var id: CKRecord.ID
     
     let userName: String
-    let profileImage: UIImage?
     let lastMessage: String?
 }

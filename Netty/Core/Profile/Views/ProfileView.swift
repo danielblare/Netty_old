@@ -17,67 +17,75 @@ struct ProfileView: View {
     let userRecordId: CKRecord.ID?
     let logOutFunc: () async -> ()
 
-    @StateObject private var vm: ProfileViewModel = ProfileViewModel()
+    @ObservedObject private var vm: ProfileViewModel
+    
+    init(userRecordId: CKRecord.ID?, logOutFunc: @escaping () async -> ()) {
+        self.userRecordId = userRecordId
+        self.logOutFunc = logOutFunc
+        self.vm = ProfileViewModel(id: userRecordId)
+    }
         
     var body: some View {
         NavigationStack {
-            VStack {
-                
-                // Image and full name
-                HStack {
+            ScrollView {
+                VStack {
                     
-                    // Image
-                    ZStack {
-                        if let image = vm.image {
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        } else if vm.isLoading {
-                            Rectangle()
-                                .foregroundColor(.secondary.opacity(0.3))
-                                .overlay {
-                                    ProgressView()
-                                }
-                        } else {
-                            Rectangle()
-                                .foregroundColor(.secondary.opacity(0.3))
-                                .overlay {
-                                    Image(systemName: "questionmark")
-                                        .foregroundColor(.secondary)
-                                }
-                        }
-                    }
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
-                    .padding(.horizontal)
-                    .onTapGesture {
-                        showSheet = true
-                    }
-                    
-                    VStack {
+                    // Image and full name
+                    HStack {
                         
-                        // Name
-                        if let fullName = vm.fullName {
-                            Text(fullName)
-                                .lineLimit(1)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                        } else {
-                            LoadingAnimation()
+                        // Image
+                        ZStack {
+                            if let image = vm.image {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                            } else if vm.isLoading {
+                                Rectangle()
+                                    .foregroundColor(.secondary.opacity(0.3))
+                                    .overlay {
+                                        ProgressView()
+                                    }
+                            } else {
+                                Rectangle()
+                                    .foregroundColor(.secondary.opacity(0.3))
+                                    .overlay {
+                                        Image(systemName: "questionmark")
+                                            .foregroundColor(.secondary)
+                                    }
+                            }
                         }
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                        .padding(.horizontal)
+                        .onTapGesture {
+                            showSheet = true
+                        }
+                        
+                        VStack {
+                            
+                            // Name
+                            if let fullName = vm.fullName {
+                                Text(fullName)
+                                    .lineLimit(1)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                            } else {
+                                LoadingAnimation()
+                            }
+                            
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.vertical)
+                        .frame(height: 100)
                         
                         Spacer(minLength: 0)
+                        
                     }
                     .padding(.vertical)
-                    .frame(height: 100)
+                    
                     
                     Spacer(minLength: 0)
-                        
                 }
-                .padding(.vertical)
-                
-                
-                Spacer(minLength: 0)
             }
             .sheet(isPresented: $showSheet) {
                 ImagePicker { image in
@@ -108,8 +116,10 @@ struct ProfileView: View {
                     }
                 }
             }
-            .onAppear {
-                vm.sync(for: userRecordId)
+            .refreshable {
+                Task {
+                    await vm.fullSync()
+                }
             }
         }
     }

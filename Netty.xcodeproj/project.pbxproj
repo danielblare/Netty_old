@@ -39,6 +39,8 @@
 		BBC36EE228D0DD2E008D983B /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC36EE128D0DD2E008D983B /* ForgotPasswordViewModel.swift */; };
 		BBC36EE428D0E810008D983B /* ForgotPasswordEmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC36EE328D0E810008D983B /* ForgotPasswordEmailPageView.swift */; };
 		BBC36EE628D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC36EE528D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift */; };
+		BBCD2B4628D2645F00C7E32A /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBCD2B4528D2645F00C7E32A /* ProfileImageView.swift */; };
+		BBCD2B4828D2646A00C7E32A /* ProfileImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBCD2B4728D2646A00C7E32A /* ProfileImageViewModel.swift */; };
 		BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */; };
 		BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A912882CE0600CBDEAD /* NettyApp.swift */; };
 		BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A952882CE0800CBDEAD /* Assets.xcassets */; };
@@ -84,6 +86,8 @@
 		BBC36EE128D0DD2E008D983B /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewModel.swift; sourceTree = "<group>"; };
 		BBC36EE328D0E810008D983B /* ForgotPasswordEmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordEmailPageView.swift; sourceTree = "<group>"; };
 		BBC36EE528D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordCreatePasswordPageView.swift; sourceTree = "<group>"; };
+		BBCD2B4528D2645F00C7E32A /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
+		BBCD2B4728D2646A00C7E32A /* ProfileImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageViewModel.swift; sourceTree = "<group>"; };
 		BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSendManager.swift; sourceTree = "<group>"; };
 		BBE72A8E2882CE0600CBDEAD /* Netty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Netty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
@@ -257,6 +261,15 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		BBCD2B4428D2644F00C7E32A /* AvatarImageView */ = {
+			isa = PBXGroup;
+			children = (
+				BBCD2B4528D2645F00C7E32A /* ProfileImageView.swift */,
+				BBCD2B4728D2646A00C7E32A /* ProfileImageViewModel.swift */,
+			);
+			path = AvatarImageView;
+			sourceTree = "<group>";
+		};
 		BBE72A852882CE0600CBDEAD = {
 			isa = PBXGroup;
 			children = (
@@ -351,6 +364,7 @@
 		BBE72AA62882CED100CBDEAD /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				BBCD2B4428D2644F00C7E32A /* AvatarImageView */,
 				BB6F2D4328CF548000B901BE /* ImagePicker */,
 				BB73463A2892C01800E07487 /* SecureInput */,
 				BB7346392892C00400E07487 /* PasswordStrongness */,
@@ -485,12 +499,14 @@
 				BB4AFAB328915889003407FB /* DirectView.swift in Sources */,
 				BB7346402893054500E07487 /* CacheManager.swift in Sources */,
 				BBF131CF288745880043A81E /* LogInView.swift in Sources */,
+				BBCD2B4628D2645F00C7E32A /* ProfileImageView.swift in Sources */,
 				BBBBF0B028D202B500FF7C65 /* ChatModel.swift in Sources */,
 				BBC36EE228D0DD2E008D983B /* ForgotPasswordViewModel.swift in Sources */,
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
+				BBCD2B4828D2646A00C7E32A /* ProfileImageViewModel.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
 				BB81459228CE0D1300B35A5D /* LoadingAnimation.swift in Sources */,

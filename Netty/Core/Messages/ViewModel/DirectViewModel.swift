@@ -15,6 +15,7 @@ class DirectViewModel: ObservableObject {
     
     @Published var chatsArray: [ChatModel] = []
     @Published var isLoading: Bool = false
+    @Published var isRefreshing: Bool = false
     
     
     @Published var showAlert: Bool = false
@@ -27,18 +28,28 @@ class DirectViewModel: ObservableObject {
     init(userRecordId: CKRecord.ID?) {
         self.userRecordId = userRecordId
         Task {
+            isLoading = true
             await sync()
+            isLoading = false
         }
     }
     
     func sync() async {
-        await MainActor.run(body: {
-            withAnimation {
-                chatsArray = []
-                isLoading = true
-            }
-        })
+       await downloadData()
+    }
+    
+    func fullSync() async {
+        CacheManager.instance.cleanDirectPhotoCache()
+        await downloadData()
+    }
+    
+    func downloadData() async {
         if let id = userRecordId {
+            await MainActor.run(body: {
+                withAnimation {
+                    isRefreshing = true
+                }
+            })
             switch await dataService.getChatsIDsListForUser(with: id) {
             case .success(let IDs):
                 switch await dataService.getChats(with: IDs) {
@@ -71,7 +82,7 @@ class DirectViewModel: ObservableObject {
         }
         await MainActor.run(body: {
             withAnimation {
-                isLoading = false
+                isRefreshing = false
             }
         })
     }

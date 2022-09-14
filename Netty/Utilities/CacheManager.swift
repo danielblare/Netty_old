@@ -13,7 +13,7 @@ class CacheManager {
     static let instance = CacheManager()
     private init() { }
     
-    var photoCache: NSCache<NSString, UIImage> = {
+    var profilePhotoCache: NSCache<NSString, UIImage> = {
         
         var cache = NSCache<NSString, UIImage>()
         cache.countLimit = 200
@@ -21,7 +21,15 @@ class CacheManager {
         return cache
     }()
     
-    var textCache: NSCache<NSString, NSString> = {
+    var directPhotoCache: NSCache<NSString, UIImage> = {
+        
+        var cache = NSCache<NSString, UIImage>()
+        cache.countLimit = 200
+        cache.totalCostLimit = 1024 * 1024 * 200
+        return cache
+    }()
+    
+    var profileTextCache: NSCache<NSString, NSString> = {
         
         var cache = NSCache<NSString, NSString>()
         cache.countLimit = 200
@@ -29,24 +37,39 @@ class CacheManager {
         return cache
     }()
     
-    func crean() {
-        photoCache.removeAllObjects()
-        textCache.removeAllObjects()
+    func cleanProfilePhotoCache() {
+        profilePhotoCache.removeAllObjects()
     }
     
-    func add(key: String, value: UIImage) {
-        photoCache.setObject(value, forKey: key as NSString)
+    func cleanProfileTextCache() {
+        profileTextCache.removeAllObjects()
     }
     
-    func add(key: String, value: NSString) {
-        textCache.setObject(value, forKey: key as NSString)
+    func cleanDirectPhotoCache() {
+        directPhotoCache.removeAllObjects()
     }
     
-    func getImage(key: String) -> UIImage? {
-        photoCache.object(forKey: key as NSString)
+    func addToProfilePhotoCache(key: String, value: UIImage) {
+        profilePhotoCache.setObject(value, forKey: key as NSString)
     }
     
-    func getText(key: String) -> NSString? {
-        textCache.object(forKey: key as NSString)
+    func addToDirectPhotoCache(key: String, value: UIImage) {
+        directPhotoCache.setObject(value, forKey: key as NSString)
+    }
+    
+    func addToProfileTextCache(key: String, value: NSString) {
+        profileTextCache.setObject(value, forKey: key as NSString)
+    }
+    
+    func getImageFromDirectCache(key: String) -> UIImage? {
+        directPhotoCache.object(forKey: key as NSString)
+    }
+    
+    func getImageFromProfilePhotoCache(key: String) -> UIImage? {
+        profilePhotoCache.object(forKey: key as NSString)
+    }
+    
+    func getTextFromProfileTextCache(key: String) -> NSString? {
+        profileTextCache.object(forKey: key as NSString)
     }
 }
