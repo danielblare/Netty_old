@@ -46,13 +46,17 @@ class ProfileViewModel: ObservableObject {
         guard let id = userRecordId else { return }
         if let savedNickname = CacheManager.instance.getTextFromProfileTextCache(key: "\(id.recordName)_nickname") as? String {
             await MainActor.run {
-                nickname = savedNickname
+                withAnimation {
+                    nickname = savedNickname
+                }
             }
         } else {
             switch await UserInfoService.instance.fetchNicknameForUser(with: id) {
             case .success(let returnedValue):
                 await MainActor.run(body: {
-                    self.nickname = returnedValue
+                    withAnimation {
+                        self.nickname = returnedValue
+                    }
                     if let nickname = returnedValue {
                         CacheManager.instance.addToProfileTextCache(key: "\(id.recordName)_nickname", value: NSString(string: nickname))
                     }
@@ -67,13 +71,17 @@ class ProfileViewModel: ObservableObject {
         guard let id = userRecordId else { return }
         if let savedName = CacheManager.instance.getTextFromProfileTextCache(key: "\(id.recordName)_fullName") as? String {
             await MainActor.run {
-                fullName = savedName
+                withAnimation {
+                    fullName = savedName
+                }
             }
         } else {
             switch await UserInfoService.instance.fetchFullNameForUser(with: id) {
             case .success(let returnedValue):
                 await MainActor.run(body: {
-                    self.fullName = returnedValue
+                    withAnimation {
+                        self.fullName = returnedValue
+                    }
                     if let fullName = returnedValue {
                         CacheManager.instance.addToProfileTextCache(key: "\(id.recordName)_fullName", value: NSString(string: fullName))
                     }
@@ -87,8 +95,10 @@ class ProfileViewModel: ObservableObject {
     func uploadImage(_ image: UIImage, for id: CKRecord.ID?) {
         guard let id = id else { return }
         DispatchQueue.main.async {
-            self.image = nil
-            self.isLoading = true
+            withAnimation {
+                self.image = nil
+                self.isLoading = true
+            }
         }
         CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { record, error in
             if let record = record,
@@ -102,8 +112,10 @@ class ProfileViewModel: ObservableObject {
                     Task {
                         let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
                         await MainActor.run {
-                            self.image = UIImage(data: data)
-                            self.isLoading = false
+                            withAnimation {
+                                self.image = UIImage(data: data)
+                                self.isLoading = false
+                            }
                         }
                         CacheManager.instance.addToProfilePhotoCache(key: "\(id.recordName)_avatar", value: image)
                     }
