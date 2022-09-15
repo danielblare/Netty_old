@@ -12,6 +12,7 @@ import SwiftUI
 
 struct ChatModel: Identifiable {
     var id: CKRecord.ID
+    let opponentId: CKRecord.ID
     
     let userName: String
     let lastMessage: String?

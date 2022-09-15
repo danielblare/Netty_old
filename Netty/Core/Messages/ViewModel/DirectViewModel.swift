@@ -38,6 +38,17 @@ class DirectViewModel: ObservableObject {
        await downloadData()
     }
     
+    func delete(chat: ChatModel) async {
+        if let id = userRecordId {
+            switch await dataService.deleteChat(with: chat.id, for: id) {
+            case .success(_):
+                chatsArray.removeAll(where: { $0.id == chat.id })
+            case .failure(let error):
+                showAlert(title: "Error while deleting chat", message: error.localizedDescription)
+            }
+        }
+    }
+    
     func fullSync() async {
         CacheManager.instance.cleanDirectPhotoCache()
         await downloadData()
@@ -58,7 +69,7 @@ class DirectViewModel: ObservableObject {
                     for chat in chats {
                         switch chat.value {
                         case .success(let record):
-                            switch await dataService.downloadChatModel(for: record, currentUserId: id) {
+                            switch await dataService.downloadChatModel(for: record, currentUserId: id, chatId: chat.key) {
                             case .success(let chatModel):
                                 result.append(chatModel)
                             case .failure(let error):

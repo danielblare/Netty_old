@@ -138,7 +138,6 @@ class ProfileViewModel: ObservableObject {
             if let record = record,
                let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathExtension("avatar.jpg"),
                let data = image.jpegData(compressionQuality: 0.2) {
-                print("\(data.count)")
                 do {
                     try data.write(to: url)
                     let asset = CKAsset(fileURL: url)

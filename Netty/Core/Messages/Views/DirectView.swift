@@ -16,14 +16,15 @@ struct DirectView: View {
         vm = DirectViewModel(userRecordId: userRecordId)
     }
     
-    
+    @State private var searchText: String = ""
+
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
                 ZStack {
                     
                     ZStack {
-                        if vm.chatsArray.isEmpty && !vm.isLoading && !vm.isRefreshing {
+                        if vm.chatsArray.isEmpty && !vm.isLoading {
                             VStack {
                                 Image(systemName: "xmark.bin")
                                     .resizable()
@@ -39,14 +40,19 @@ struct DirectView: View {
                                         await vm.fullSync()
                                     }
                                 } label: {
-                                    Label("Tap to reload", systemImage: "arrow.clockwise")
+                                    Label {
+                                        Text("Tap to reload")
+                                    } icon: {
+                                        Image(systemName: "arrow.clockwise")
+                                            .rotationEffect(vm.isRefreshing ? Angle(degrees: 360) : Angle(degrees: 0))
+                                    }
                                 }
                             }
                             .foregroundColor(.secondary)
-                        } else {
-                            List(vm.chatsArray) { chat in
+                        } else if !vm.chatsArray.isEmpty {
+                            List(searchResults) { chat in
                                 HStack {
-                                    ProfileImageView(for: chat.id)
+                                    ProfileImageView(for: chat.opponentId)
                                         .frame(width: 70, height: 70)
                                         .padding(.trailing, 5)
 
@@ -67,14 +73,22 @@ struct DirectView: View {
                                             .frame(width: geo.size.width * 0.6, alignment: .leading)
                                     }
                                 }
+                                .swipeActions(content: {
+                                    Button("Delete", role: .destructive) {
+                                        Task {
+                                            await vm.delete(chat: chat)
+                                        }
+                                    }
+                                })
                             }
-                            .padding(.top)
+                            
                             .listStyle(.inset)
+                            .searchable(text: $searchText)
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .disabled(vm.isLoading)
-                    
+
                     if vm.isLoading {
                         ProgressView()
                     }
@@ -97,7 +111,13 @@ struct DirectView: View {
         
     }
     
-    
+    private var searchResults: [ChatModel] {
+        if searchText.isEmpty {
+            return vm.chatsArray
+        } else {
+            return vm.chatsArray.filter { $0.userName.contains(searchText.lowercased()) }
+        }
+    }
     
     
 }
