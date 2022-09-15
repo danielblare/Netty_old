@@ -14,21 +14,29 @@ class ProfileViewModel: ObservableObject {
     
     @Published var image: UIImage? = nil
     @Published var isLoading: Bool = false
-    @Published var fullName: String? = nil
+    @Published var firstName: String? = nil
+    @Published var lastName: String? = nil
     @Published var nickname: String? = nil
     
     private var userRecordId: CKRecord.ID?
+    private var logOutFunc: () async -> ()
     
-    init(id: CKRecord.ID?) {
+    init(id: CKRecord.ID?, logOutFunc: @escaping () async -> ()) {
         userRecordId = id
+        self.logOutFunc = logOutFunc
         Task {
             await sync()
         }
     }
     
+    func logOut() async {
+        await logOutFunc()
+    }
+    
     func sync() async {
         await getImage()
-        await getFullName()
+        await getFirstName()
+        await getLastName()
         await getNickname()
     }
     
@@ -38,7 +46,8 @@ class ProfileViewModel: ObservableObject {
             CacheManager.instance.cleanProfilePhotoCache()
         })
         await getImage()
-        await getFullName()
+        await getFirstName()
+        await getLastName()
         await getNickname()
     }
     
@@ -67,23 +76,48 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    private func getFullName() async {
+    private func getFirstName() async {
         guard let id = userRecordId else { return }
-        if let savedName = CacheManager.instance.getTextFromProfileTextCache(key: "\(id.recordName)_fullName") as? String {
+        if let savedName = CacheManager.instance.getTextFromProfileTextCache(key: "\(id.recordName)_firstName") as? String {
             await MainActor.run {
                 withAnimation {
-                    fullName = savedName
+                    firstName = savedName
                 }
             }
         } else {
-            switch await UserInfoService.instance.fetchFullNameForUser(with: id) {
+            switch await UserInfoService.instance.fetchFirstNameForUser(with: id) {
             case .success(let returnedValue):
                 await MainActor.run(body: {
                     withAnimation {
-                        self.fullName = returnedValue
+                        self.firstName = returnedValue
                     }
-                    if let fullName = returnedValue {
-                        CacheManager.instance.addToProfileTextCache(key: "\(id.recordName)_fullName", value: NSString(string: fullName))
+                    if let firstName = returnedValue {
+                        CacheManager.instance.addToProfileTextCache(key: "\(id.recordName)_firstName", value: NSString(string: firstName))
+                    }
+                })
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func getLastName() async {
+        guard let id = userRecordId else { return }
+        if let savedName = CacheManager.instance.getTextFromProfileTextCache(key: "\(id.recordName)_lastName") as? String {
+            await MainActor.run {
+                withAnimation {
+                    lastName = savedName
+                }
+            }
+        } else {
+            switch await UserInfoService.instance.fetchLastNameForUser(with: id) {
+            case .success(let returnedValue):
+                await MainActor.run(body: {
+                    withAnimation {
+                        self.lastName = returnedValue
+                    }
+                    if let lastName = returnedValue {
+                        CacheManager.instance.addToProfileTextCache(key: "\(id.recordName)_lastName", value: NSString(string: lastName))
                     }
                 })
             case .failure(let error):

@@ -27,7 +27,21 @@ class SignUpViewModel: ObservableObject {
     
     @Binding var path: NavigationPath
     @Binding var userRecordId: CKRecord.ID?
+        
+    enum EmailButtonText: String {
+        case send = "Send code"
+        case again = "Send again"
+        case verificated = ""
+    }
     
+    struct Limits {
+        static let nameAndLastNameSymbolsLimit: Int = 35
+        static let emailSymbolsLimit: Int = 64
+        static let nicknameSymbolsLimit: Int = 20
+        static let passwordSymbolsLimit: Int = 23
+
+    }
+
     /// Error connected with nickname entering
     enum NicknameError: String {
         case nameIsUsed = "Nickname is already used"
@@ -35,26 +49,19 @@ class SignUpViewModel: ObservableObject {
         case space = "Nickname contains unacceptable characters"
         case none = ""
     }
-    
-    enum EmailButtonText: String {
-        case send = "Send code"
-        case again = "Send again"
-        case verificated = ""
-    }
-    
+
     // Name page
-    private let nameAndLastNameSymbolsLimit: Int = 35
     @Published var firstNameTextField: String = "" {
         didSet {
-            if firstNameTextField.count > nameAndLastNameSymbolsLimit {
-                firstNameTextField = firstNameTextField.truncated(limit: nameAndLastNameSymbolsLimit, position: .tail, leader: "")
+            if firstNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
+                firstNameTextField = firstNameTextField.truncated(limit: Limits.nameAndLastNameSymbolsLimit, position: .tail, leader: "")
             }
         }
     }
     @Published var lastNameTextField: String = "" {
         didSet {
-            if lastNameTextField.count > nameAndLastNameSymbolsLimit {
-                lastNameTextField = lastNameTextField.truncated(limit: nameAndLastNameSymbolsLimit, position: .tail, leader: "")
+            if lastNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
+                lastNameTextField = lastNameTextField.truncated(limit: Limits.nameAndLastNameSymbolsLimit, position: .tail, leader: "")
             }
         }
     }
@@ -63,11 +70,10 @@ class SignUpViewModel: ObservableObject {
     @Published var nameNextButtonDisabled: Bool = true
     
     // Email page
-    private let emailSymbolsLimit: Int = 64
     @Published var emailTextField: String = "" {
         didSet {
-            if emailTextField.count > emailSymbolsLimit {
-                emailTextField = emailTextField.truncated(limit: emailSymbolsLimit, position: .tail, leader: "")
+            if emailTextField.count > Limits.emailSymbolsLimit {
+                emailTextField = emailTextField.truncated(limit: Limits.emailSymbolsLimit, position: .tail, leader: "")
             }
         }
     }
@@ -101,11 +107,10 @@ class SignUpViewModel: ObservableObject {
     
     
     // Nickname page
-    private let nicknameSymbolsLimit: Int = 20
     @Published var nicknameTextField: String = "" {
         didSet {
-            if nicknameTextField.count > nicknameSymbolsLimit {
-                nicknameTextField = nicknameTextField.truncated(limit: nicknameSymbolsLimit, position: .tail, leader: "")
+            if nicknameTextField.count > Limits.nicknameSymbolsLimit {
+                nicknameTextField = nicknameTextField.truncated(limit: Limits.nicknameSymbolsLimit, position: .tail, leader: "")
             }
         }
     }
@@ -116,18 +121,17 @@ class SignUpViewModel: ObservableObject {
     @Published var nicknameNextButtonDisabled: Bool = true
     
     // Password page
-    private let passwordSymbolsLimit: Int = 23
     @Published var passwordField: String = "" {
         didSet {
-            if passwordField.count > passwordSymbolsLimit {
-                passwordField = passwordField.truncated(limit: passwordSymbolsLimit, position: .tail, leader: "")
+            if passwordField.count > Limits.passwordSymbolsLimit {
+                passwordField = passwordField.truncated(limit: Limits.passwordSymbolsLimit, position: .tail, leader: "")
             }
         }
     }
     @Published var passwordConfirmField: String = "" {
         didSet {
-            if passwordConfirmField.count > passwordSymbolsLimit {
-                passwordConfirmField = passwordConfirmField.truncated(limit: passwordSymbolsLimit, position: .tail, leader: "")
+            if passwordConfirmField.count > Limits.passwordSymbolsLimit {
+                passwordConfirmField = passwordConfirmField.truncated(limit: Limits.passwordSymbolsLimit, position: .tail, leader: "")
             }
         }
     }
@@ -330,7 +334,7 @@ class SignUpViewModel: ObservableObject {
         // After 0.5 second of inactivity checks whether first and last names are correct
         sharedFirstNamePublisher
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .filter({ ($0.containsOnlyLetters() && $0.count >= 3) && ($1.containsOnlyLetters() && $1.count >= 3) })
+            .filter({ ($0.containsOnlyLetters() && $0.count >= 2) && ($1.containsOnlyLetters() && $1.count >= 2) })
             .sink { [weak self] _ in
                 self?.nameNextButtonDisabled = false
             }

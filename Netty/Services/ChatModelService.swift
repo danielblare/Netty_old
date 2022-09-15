@@ -16,15 +16,16 @@ class ChatModelService {
     
     func getChatsIDsListForUser(with id: CKRecord.ID) async -> Result<[CKRecord.ID], Error> {
         await withCheckedContinuation { continuation in
+            print(id)
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedUserRecord, error in
-                if let user = returnedUserRecord,
-                   let chatsRefsList = user[.chatsRecordField] as? [CKRecord.Reference] {
-                    
-                    if chatsRefsList.isEmpty {
-                        continuation.resume(returning: .success([]))
-                    } else {
-                        let chatsIDsList = chatsRefsList.map { $0.recordID }
-                        continuation.resume(returning: .success(chatsIDsList))
+                if let user = returnedUserRecord {
+                    if let chatsRefsList = user[.chatsRecordField] as? [CKRecord.Reference]? {
+                        if let list = chatsRefsList {
+                            let chatsIDsList = list.map { $0.recordID }
+                            continuation.resume(returning: .success(chatsIDsList))
+                        } else {
+                            continuation.resume(returning: .success([]))
+                        }
                     }
                 } else if let error = error {
                     continuation.resume(returning: .failure(error))

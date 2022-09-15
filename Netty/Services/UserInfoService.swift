@@ -16,13 +16,28 @@ actor UserInfoService {
     
     private init() {}
     
-    func fetchFullNameForUser(with id: CKRecord.ID) async -> Result<String?, Error> {
+    func fetchFirstNameForUser(with id: CKRecord.ID) async -> Result<String?, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
                 if let returnedRecord = returnedRecord {
-                    if let firstName = returnedRecord[.firstNameRecordField] as? String,
-                       let lastName = returnedRecord[.lastNameRecordField] as? String {
-                        continuation.resume(returning: .success("\(firstName) \(lastName)"))
+                    if let firstName = returnedRecord[.firstNameRecordField] as? String {
+                        continuation.resume(returning: .success(firstName))
+                    } else {
+                        continuation.resume(returning: .success(nil))
+                    }
+                } else if let error = error {
+                    continuation.resume(returning: .failure(error))
+                }
+            }
+        }
+    }
+    
+    func fetchLastNameForUser(with id: CKRecord.ID) async -> Result<String?, Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
+                if let returnedRecord = returnedRecord {
+                    if let lastName = returnedRecord[.lastNameRecordField] as? String {
+                        continuation.resume(returning: .success(lastName))
                     } else {
                         continuation.resume(returning: .success(nil))
                     }
@@ -41,6 +56,25 @@ actor UserInfoService {
                         continuation.resume(returning: .success(nickname))
                     } else {
                         continuation.resume(returning: .success(nil))
+                    }
+                } else if let error = error {
+                    continuation.resume(returning: .failure(error))
+                }
+            }
+        }
+    }
+    
+    func updateNicknameForUserWith(recordId: CKRecord.ID, newNickname: String) async -> Result<CKRecord, Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordId) { returnedRecord, error in
+                if let record = returnedRecord {
+                    record[.nicknameRecordField] = newNickname
+                    CKContainer.default().publicCloudDatabase.save(record) { returnedRecord, error in
+                        if let record = returnedRecord {
+                            continuation.resume(returning: .success(record))
+                        } else if let error = error {
+                            continuation.resume(returning: .failure(error))
+                        }
                     }
                 } else if let error = error {
                     continuation.resume(returning: .failure(error))

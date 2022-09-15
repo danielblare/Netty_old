@@ -17,7 +17,8 @@ enum WarningMessage: String {
 
 class LogInAndOutViewModel: ObservableObject {
     
-    @Published var userRecordId: CKRecord.ID? = nil
+    @Published var userRecordId: CKRecord.ID?
+    
     
     private let manager = LogInAndOutManager.instance
     
@@ -29,15 +30,18 @@ class LogInAndOutViewModel: ObservableObject {
     var alertTitle: String = ""
     var alertMessage: String = ""
         
-    init() {
+    init(id: CKRecord.ID? = nil) {
+        userRecordId = id
         Task {
             let result = await manager.checkLoggedInDevise()
             await MainActor.run(body: {
                 switch result {
                 case .success(let id):
-                    userRecordId = id
+                    withAnimation {
+                        userRecordId = id
+                    }
                 case .failure(_):
-                    userRecordId = nil
+                    print("")
                 }
             })
         }

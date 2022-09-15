@@ -42,6 +42,7 @@
 		BBCD2B4628D2645F00C7E32A /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBCD2B4528D2645F00C7E32A /* ProfileImageView.swift */; };
 		BBCD2B4828D2646A00C7E32A /* ProfileImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBCD2B4728D2646A00C7E32A /* ProfileImageViewModel.swift */; };
 		BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */; };
+		BBE36D1928D346A200AC1DF9 /* UIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE36D1828D346A200AC1DF9 /* UIScreen.swift */; };
 		BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A912882CE0600CBDEAD /* NettyApp.swift */; };
 		BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A952882CE0800CBDEAD /* Assets.xcassets */; };
 		BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AAF2882DA3800CBDEAD /* UserModel.swift */; };
@@ -89,6 +90,7 @@
 		BBCD2B4528D2645F00C7E32A /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
 		BBCD2B4728D2646A00C7E32A /* ProfileImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageViewModel.swift; sourceTree = "<group>"; };
 		BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSendManager.swift; sourceTree = "<group>"; };
+		BBE36D1828D346A200AC1DF9 /* UIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreen.swift; sourceTree = "<group>"; };
 		BBE72A8E2882CE0600CBDEAD /* Netty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Netty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
 		BBE72A952882CE0800CBDEAD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -165,7 +167,7 @@
 			children = (
 				BB4AFAB7289158AE003407FB /* ProfileView.swift */,
 				BB81459128CE0D1300B35A5D /* LoadingAnimation.swift */,
-				BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */,
+				BBE36D1A28D34C6B00AC1DF9 /* Settings */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -270,6 +272,14 @@
 			path = AvatarImageView;
 			sourceTree = "<group>";
 		};
+		BBE36D1A28D34C6B00AC1DF9 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		BBE72A852882CE0600CBDEAD = {
 			isa = PBXGroup;
 			children = (
@@ -322,6 +332,7 @@
 				BBA71B942883024A0089D613 /* String.swift */,
 				BBA71B96288307390089D613 /* UIApplication.swift */,
 				BB34BAC82884A52D00636BE5 /* Character.swift */,
+				BBE36D1828D346A200AC1DF9 /* UIScreen.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -505,6 +516,7 @@
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */,
+				BBE36D1928D346A200AC1DF9 /* UIScreen.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
 				BBCD2B4828D2646A00C7E32A /* ProfileImageViewModel.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,

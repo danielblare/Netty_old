@@ -30,9 +30,17 @@ struct DirectView: View {
                                     .scaledToFit()
                                     .frame(width: 80)
                                 
-                                Text("You don't have any chats yet")
+                                Text("You don't have any chats")
                                     .font(.title3)
                                     .padding()
+                                
+                                Button {
+                                    Task {
+                                        await vm.fullSync()
+                                    }
+                                } label: {
+                                    Label("Tap to reload", systemImage: "arrow.clockwise")
+                                }
                             }
                             .foregroundColor(.secondary)
                         } else {
@@ -71,12 +79,19 @@ struct DirectView: View {
                         ProgressView()
                     }
                 }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                       Text("Messages")
+                            .fontWeight(.semibold)
+                            .font(.title)
+                            .foregroundColor(.accentColor)
+                    }
+                }
                 .refreshable {
                     Task {
                         await vm.fullSync()
                     }
                 }
-                .navigationTitle("Messages")
             }
         }
         
