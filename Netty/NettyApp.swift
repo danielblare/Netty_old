@@ -139,6 +139,7 @@ struct NettyApp: App {
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor : UIColor(.theme.accent)]
         UITableView.appearance().backgroundColor = UIColor.clear
         UINavigationBar.appearance().backgroundColor = UIColor(.theme.background)
+        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(.theme.accent)
     }
     
     var body: some Scene {

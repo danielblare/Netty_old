@@ -24,9 +24,9 @@ class ChatModelService {
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: userId) { returnedUserRecord, error in
                 if let user = returnedUserRecord {
                     if let chatsRefsList = user[.chatsRecordField] as? [CKRecord.Reference]? {
-                        if let chatsRefsList = chatsRefsList {
-                            let newChatsRefsList = chatsRefsList.filter({ $0.recordID != chatId })
-                            user[.chatsRecordField] = newChatsRefsList
+                        if var chatsRefsList = chatsRefsList {
+                            chatsRefsList.removeAll(where: { $0.recordID == chatId })
+                            user[.chatsRecordField] = chatsRefsList
                             CKContainer.default().publicCloudDatabase.save(user) { _, error in
                                 if let error = error {
                                     continuation.resume(returning: .failure(error))

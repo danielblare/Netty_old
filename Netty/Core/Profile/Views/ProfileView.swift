@@ -12,13 +12,15 @@ import PhotosUI
 
 struct ProfileView: View {
     
-    @State private var showSheet: Bool = false
+    @State private var showPhotoImportSheet: Bool = false
+    @State private var photoInputSource: UIImagePickerController.SourceType = .camera
+    @State private var showProfilePhotoChangingConfirmationDialog: Bool = false
     
     let userRecordId: CKRecord.ID?
     let logOutFunc: () async -> ()
 
     @ObservedObject private var vm: ProfileViewModel
-    
+        
     init(userRecordId: CKRecord.ID?, logOutFunc: @escaping () async -> ()) {
         self.userRecordId = userRecordId
         self.logOutFunc = logOutFunc
@@ -58,7 +60,26 @@ struct ProfileView: View {
                         .clipShape(Circle())
                         .padding(.horizontal)
                         .onTapGesture {
-                            showSheet = true
+                            showProfilePhotoChangingConfirmationDialog = true
+                        }
+                        .confirmationDialog("", isPresented: $showProfilePhotoChangingConfirmationDialog, titleVisibility: .hidden) {
+                            Button("Remove current photo") {
+                                vm.uploadImage(nil, for: userRecordId)
+                            }
+                            
+                            Button("Choose from library") {
+                                photoInputSource = .photoLibrary
+                                showPhotoImportSheet = true
+                            }
+                            
+                            Button("Take photo") {
+                                photoInputSource = .camera
+                                showPhotoImportSheet = true
+                            }
+                            
+                            Button("Cancel", role: .cancel) {
+                                print("Cancel")
+                            }
                         }
                         
                         VStack(alignment: .leading, spacing: 10) {
@@ -95,10 +116,11 @@ struct ProfileView: View {
                     Spacer(minLength: 0)
                 }
             }
-            .sheet(isPresented: $showSheet) {
-                ImagePicker { image in
+            .fullScreenCover(isPresented: $showPhotoImportSheet) {
+                ImagePicker(source: photoInputSource) { image in
                     vm.uploadImage(image, for: userRecordId)
                 }
+                .ignoresSafeArea()
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

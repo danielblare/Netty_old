@@ -126,7 +126,7 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    func uploadImage(_ image: UIImage, for id: CKRecord.ID?) {
+    func uploadImage(_ image: UIImage?, for id: CKRecord.ID?) {
         guard let id = id else { return }
         DispatchQueue.main.async {
             withAnimation {
@@ -135,25 +135,39 @@ class ProfileViewModel: ObservableObject {
             }
         }
         CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { record, error in
-            if let record = record,
-               let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathExtension("avatar.jpg"),
-               let data = image.jpegData(compressionQuality: 0.2) {
-                do {
-                    try data.write(to: url)
-                    let asset = CKAsset(fileURL: url)
-                    record[.avatarRecordField] = asset
+            if let record = record {
+                if let image = image {
+                   if let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathExtension("avatar.jpg"),
+                      let data = image.jpegData(compressionQuality: 0.2) {
+                       do {
+                           try data.write(to: url)
+                           let asset = CKAsset(fileURL: url)
+                           record[.avatarRecordField] = asset
+                           Task {
+                               let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
+                               await MainActor.run {
+                                   withAnimation {
+                                       self.image = UIImage(data: data)
+                                       self.isLoading = false
+                                   }
+                               }
+                               CacheManager.instance.addToProfilePhotoCache(key: "\(id.recordName)_avatar", value: image)
+                           }
+                       } catch {
+                           print(error.localizedDescription)
+                       }
+                   }
+                } else {
+                    record[.avatarRecordField] = nil
                     Task {
                         let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
                         await MainActor.run {
                             withAnimation {
-                                self.image = UIImage(data: data)
                                 self.isLoading = false
                             }
                         }
-                        CacheManager.instance.addToProfilePhotoCache(key: "\(id.recordName)_avatar", value: image)
+                        CacheManager.instance.cleanProfilePhotoCache()
                     }
-                } catch {
-                    print(error.localizedDescription)
                 }
             } else {
                 Task {
