@@ -10,14 +10,14 @@ import CloudKit
 
 struct ForgotPasswordEmailPageView: View {
     
-    @ObservedObject private var vm: ForgotPasswordViewModel
+    @StateObject private var vm: ForgotPasswordViewModel
     
     enum FocusedValue {
         case email, code
     }
     
     init(path: Binding<NavigationPath>, showAlertOnLogInScreen: @escaping (_ title: String, _ message: String) -> ()) {
-        vm = ForgotPasswordViewModel(path: path, showAlertOnLogInScreen: showAlertOnLogInScreen)
+        _vm = .init(wrappedValue: ForgotPasswordViewModel(path: path, showAlertOnLogInScreen: showAlertOnLogInScreen))
     }
     
     @FocusState private var activeField: FocusedValue?

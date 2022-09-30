@@ -14,10 +14,10 @@ struct NamePageView: View {
         case name, lastName
     }
         
-    @ObservedObject private var vm: SignUpViewModel
+    @StateObject private var vm: SignUpViewModel
     
     init(userRecordId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
-        self.vm = SignUpViewModel(userRecordId: userRecordId, path: path)
+        _vm = .init(wrappedValue: SignUpViewModel(userRecordId: userRecordId, path: path))
     }
     
     @FocusState private var activeField: FocusedValue?

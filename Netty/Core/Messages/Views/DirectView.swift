@@ -10,10 +10,10 @@ import CloudKit
 
 struct DirectView: View {
     
-    @ObservedObject private var vm: DirectViewModel
+    @StateObject private var vm: DirectViewModel
     
     init(userRecordId: CKRecord.ID?) {
-        vm = DirectViewModel(userRecordId: userRecordId)
+        _vm = .init(wrappedValue: DirectViewModel(userRecordId: userRecordId))
     }
     
     @State private var searchText: String = ""
@@ -22,64 +22,15 @@ struct DirectView: View {
         NavigationStack {
             GeometryReader { geo in
                 ZStack {
-                    
                     ZStack {
                         if vm.chatsArray.isEmpty && !vm.isLoading {
-                            VStack {
-                                Image(systemName: "xmark.bin")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80)
-                                
-                                Text("You don't have any chats")
-                                    .font(.title3)
-                                    .padding()
-                                
-                                Button {
-                                    Task {
-                                        await vm.fullSync()
-                                    }
-                                } label: {
-                                    Label {
-                                        Text("Tap to reload")
-                                    } icon: {
-                                        Image(systemName: "arrow.clockwise")
-                                            .rotationEffect(vm.isRefreshing ? Angle(degrees: 360) : Angle(degrees: 0))
-                                    }
-                                }
-                            }
-                            .foregroundColor(.secondary)
+                            noChatsView
                         } else if !vm.chatsArray.isEmpty {
                             List(searchResults) { chat in
-                                HStack {
-                                    ProfileImageView(for: chat.opponentId)
-                                        .frame(width: 70, height: 70)
-                                        .padding(.trailing, 5)
-
-                                    VStack(alignment: .leading) {
-                                        Text(chat.userName)
-                                            .lineLimit(1)
-                                            .fontWeight(.semibold)
-                                            .padding(.top)
-                                            .frame(width: geo.size.width * 0.5, alignment: .leading)
-                                        
-                                        Spacer(minLength: 0)
-                                        
-                                        Text(chat.lastMessage ?? "...")
-                                            .lineLimit(1)
-                                            .foregroundColor(.secondary)
-                                            .font(.callout)
-                                            .padding(.bottom)
-                                            .frame(width: geo.size.width * 0.6, alignment: .leading)
-                                    }
+                                chatView(for: chat, with: geo)
+                                .swipeActions {
+                                    getSwipeActionsFor(chat)
                                 }
-                                .swipeActions(content: {
-                                    Button("Delete", role: .destructive) {
-                                        Task {
-                                            await vm.delete(chat: chat)
-                                        }
-                                    }
-                                })
                             }
                             
                             .listStyle(.inset)
@@ -94,12 +45,7 @@ struct DirectView: View {
                     }
                 }
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                       Text("Messages")
-                            .fontWeight(.semibold)
-                            .font(.title)
-                            .foregroundColor(.accentColor)
-                    }
+                    getToolbar()
                 }
                 .refreshable {
                     Task {
@@ -111,11 +57,89 @@ struct DirectView: View {
         
     }
     
+    private func chatView(for chat: ChatModel, with geo: GeometryProxy) -> some View {
+        HStack {
+            ProfileImageView(for: chat.opponentId)
+                .frame(width: 70, height: 70)
+                .padding(.trailing, 5)
+
+            VStack(alignment: .leading) {
+                Text(chat.userName)
+                    .lineLimit(1)
+                    .fontWeight(.semibold)
+                    .padding(.top)
+                    .frame(width: geo.size.width * 0.5, alignment: .leading)
+                
+                Spacer(minLength: 0)
+                
+                Text(chat.lastMessage ?? "...")
+                    .lineLimit(1)
+                    .foregroundColor(.secondary)
+                    .font(.callout)
+                    .padding(.bottom)
+                    .frame(width: geo.size.width * 0.6, alignment: .leading)
+            }
+        }
+    }
+    
+    private func getSwipeActionsFor(_ chat: ChatModel) -> some View {
+        Button("Delete", role: .destructive) {
+            Task {
+                await vm.delete(chat: chat)
+            }
+        }
+    }
+    
+    private var noChatsView: some View {
+        VStack {
+            Image(systemName: "xmark.bin")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 80)
+            
+            Text("You don't have any chats")
+                .font(.title3)
+                .padding()
+            
+            Button {
+                Task {
+                    await vm.fullSync()
+                }
+            } label: {
+                Label {
+                    Text("Tap to reload")
+                } icon: {
+                    Image(systemName: "arrow.clockwise")
+                        .rotationEffect(vm.isRefreshing ? Angle(degrees: 360) : Angle(degrees: 0))
+                }
+            }
+        }
+        .foregroundColor(.secondary)
+    }
+    
+    @ToolbarContentBuilder private func getToolbar() -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            Text("Messages")
+                .fontWeight(.semibold)
+                .font(.title)
+                .foregroundColor(.accentColor)
+        }
+        
+        ToolbarItem(placement: .navigationBarTrailing) {
+            NavigationLink {
+                FindUserView()
+            } label: {
+                Image(systemName: "square.and.pencil")
+            }
+
+        }
+    }
+    
     private var searchResults: [ChatModel] {
         if searchText.isEmpty {
             return vm.chatsArray
         } else {
-            return vm.chatsArray.filter { $0.userName.contains(searchText.lowercased()) }
+            return vm.chatsArray.filter { $0.userName.lowercased().contains(searchText.lowercased()) }
         }
     }
     

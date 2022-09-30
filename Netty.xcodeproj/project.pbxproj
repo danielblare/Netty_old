@@ -49,6 +49,11 @@
 		BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */; };
 		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
 		BBE9E48E2883626900775325 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9E48D2883626900775325 /* HapticManager.swift */; };
+		BBF0375928E74C16006F89A1 /* FindUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375828E74C16006F89A1 /* FindUserViewModel.swift */; };
+		BBF0375B28E74C39006F89A1 /* FindUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375A28E74C39006F89A1 /* FindUserView.swift */; };
+		BBF0375D28E74F5E006F89A1 /* FindUserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375C28E74F5E006F89A1 /* FindUserModel.swift */; };
+		BBF0375F28E75131006F89A1 /* FindUserModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375E28E75131006F89A1 /* FindUserModelService.swift */; };
+		BBF0376128E75E6B006F89A1 /* UserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0376028E75E6B006F89A1 /* UserRow.swift */; };
 		BBF131CF288745880043A81E /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF131CE288745880043A81E /* LogInView.swift */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +103,11 @@
 		BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		BBE9E48D2883626900775325 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		BBF0375828E74C16006F89A1 /* FindUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserViewModel.swift; sourceTree = "<group>"; };
+		BBF0375A28E74C39006F89A1 /* FindUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserView.swift; sourceTree = "<group>"; };
+		BBF0375C28E74F5E006F89A1 /* FindUserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserModel.swift; sourceTree = "<group>"; };
+		BBF0375E28E75131006F89A1 /* FindUserModelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserModelService.swift; sourceTree = "<group>"; };
+		BBF0376028E75E6B006F89A1 /* UserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRow.swift; sourceTree = "<group>"; };
 		BBF131CE288745880043A81E /* LogInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -343,6 +353,7 @@
 				BB73463D2892C23000E07487 /* AvatarImageService.swift */,
 				BB81458F28CE09FF00B35A5D /* UserInfoService.swift */,
 				BBBBF0B328D22CC100FF7C65 /* ChatModelService.swift */,
+				BBF0375E28E75131006F89A1 /* FindUserModelService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -352,6 +363,7 @@
 			children = (
 				BBE72AAF2882DA3800CBDEAD /* UserModel.swift */,
 				BBBBF0AF28D202B500FF7C65 /* ChatModel.swift */,
+				BBF0375C28E74F5E006F89A1 /* FindUserModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -375,6 +387,7 @@
 		BBE72AA62882CED100CBDEAD /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				BBF0375628E74BF4006F89A1 /* FindUserView */,
 				BBCD2B4428D2644F00C7E32A /* AvatarImageView */,
 				BB6F2D4328CF548000B901BE /* ImagePicker */,
 				BB73463A2892C01800E07487 /* SecureInput */,
@@ -426,6 +439,16 @@
 				BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		BBF0375628E74BF4006F89A1 /* FindUserView */ = {
+			isa = PBXGroup;
+			children = (
+				BBF0375828E74C16006F89A1 /* FindUserViewModel.swift */,
+				BBF0375A28E74C39006F89A1 /* FindUserView.swift */,
+				BBF0376028E75E6B006F89A1 /* UserRow.swift */,
+			);
+			path = FindUserView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -515,15 +538,19 @@
 				BBC36EE228D0DD2E008D983B /* ForgotPasswordViewModel.swift in Sources */,
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
+				BBF0375B28E74C39006F89A1 /* FindUserView.swift in Sources */,
+				BBF0375F28E75131006F89A1 /* FindUserModelService.swift in Sources */,
 				BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */,
 				BBE36D1928D346A200AC1DF9 /* UIScreen.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
+				BBF0375928E74C16006F89A1 /* FindUserViewModel.swift in Sources */,
 				BBCD2B4828D2646A00C7E32A /* ProfileImageViewModel.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
 				BB81459228CE0D1300B35A5D /* LoadingAnimation.swift in Sources */,
 				BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */,
 				BB7346372892BBFA00E07487 /* ProfileViewModel.swift in Sources */,
+				BBF0376128E75E6B006F89A1 /* UserRow.swift in Sources */,
 				BB9067FD2888137400962B21 /* HomeView.swift in Sources */,
 				BB6F2D4528CF549000B901BE /* ImagePicker.swift in Sources */,
 				BB73463E2892C23000E07487 /* AvatarImageService.swift in Sources */,
@@ -531,6 +558,7 @@
 				BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */,
 				BB7346422893066400E07487 /* FileManager.swift in Sources */,
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,
+				BBF0375D28E74F5E006F89A1 /* FindUserModel.swift in Sources */,
 				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,
 				BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */,
 				BBBD05A92884556B00F18140 /* SignUpEmailPageView.swift in Sources */,
@@ -595,7 +623,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -649,7 +677,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

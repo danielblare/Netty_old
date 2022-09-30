@@ -18,100 +18,41 @@ struct ProfileView: View {
     
     let userRecordId: CKRecord.ID?
     let logOutFunc: () async -> ()
-
-    @ObservedObject private var vm: ProfileViewModel
-        
+    
+    @StateObject private var vm: ProfileViewModel
+    
     init(userRecordId: CKRecord.ID?, logOutFunc: @escaping () async -> ()) {
         self.userRecordId = userRecordId
         self.logOutFunc = logOutFunc
-        self.vm = ProfileViewModel(id: userRecordId, logOutFunc: logOutFunc)
+        self._vm = .init(wrappedValue: ProfileViewModel(id: userRecordId, logOutFunc: logOutFunc))
     }
-        
+    
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    
                     // Image and full name
                     HStack {
                         
-                        // Image
-                        ZStack {
-                            if let image = vm.image {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            } else if vm.isLoading {
-                                Rectangle()
-                                    .foregroundColor(.secondary.opacity(0.3))
-                                    .overlay {
-                                        ProgressView()
-                                    }
-                            } else {
-                                Rectangle()
-                                    .foregroundColor(.secondary.opacity(0.3))
-                                    .overlay {
-                                        Image(systemName: "questionmark")
-                                            .foregroundColor(.secondary)
-                                    }
+                        ProfileImage
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                            .padding(.horizontal)
+                            .onTapGesture {
+                                showProfilePhotoChangingConfirmationDialog = true
                             }
-                        }
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .padding(.horizontal)
-                        .onTapGesture {
-                            showProfilePhotoChangingConfirmationDialog = true
-                        }
-                        .confirmationDialog("", isPresented: $showProfilePhotoChangingConfirmationDialog, titleVisibility: .hidden) {
-                            Button("Remove current photo") {
-                                vm.uploadImage(nil, for: userRecordId)
+                            .confirmationDialog("", isPresented: $showProfilePhotoChangingConfirmationDialog, titleVisibility: .hidden) {
+                                getConfirmationActions()
                             }
-                            
-                            Button("Choose from library") {
-                                photoInputSource = .photoLibrary
-                                showPhotoImportSheet = true
-                            }
-                            
-                            Button("Take photo") {
-                                photoInputSource = .camera
-                                showPhotoImportSheet = true
-                            }
-                            
-                            Button("Cancel", role: .cancel) {
-                                print("Cancel")
-                            }
-                        }
                         
-                        VStack(alignment: .leading, spacing: 10) {
-                            
-                            // Name
-                            if let firstName = vm.firstName,
-                               let lastName = vm.lastName,
-                               let nickname = vm.nickname {
-                                Text("\(firstName) \(lastName)")
-                                    .lineLimit(1)
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                
-                                Text(nickname)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
-                            } else {
-                                LoadingAnimation()
-                                    .padding(.vertical)
-                            }
-                            
-                            
-                            Spacer(minLength: 0)
-                        }
-                        .padding(.vertical)
-                        .frame(height: 100)
+                        UserInfo
+                            .padding(.vertical)
+                            .frame(height: 100)
                         
                         Spacer(minLength: 0)
                         
                     }
                     .padding(.vertical)
-                    
                     
                     Spacer(minLength: 0)
                 }
@@ -123,26 +64,98 @@ struct ProfileView: View {
                 .ignoresSafeArea()
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink {
-                        ProfileSettingsView(vm: vm)
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Profile")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.accentColor)
-                }
+                getToolbar()
             }
             .refreshable {
                 Task {
                     await vm.fullSync()
                 }
             }
+        }
+    }
+    
+    private var ProfileImage: some View {
+        ZStack {
+            if let image = vm.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else if vm.isLoading {
+                Rectangle()
+                    .foregroundColor(.secondary.opacity(0.3))
+                    .overlay {
+                        ProgressView()
+                    }
+            } else {
+                Rectangle()
+                    .foregroundColor(.secondary.opacity(0.3))
+                    .overlay {
+                        Image(systemName: "questionmark")
+                            .foregroundColor(.secondary)
+                    }
+            }
+        }
+    }
+    
+    private var UserInfo: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            
+            // Name
+            if let firstName = vm.firstName,
+               let lastName = vm.lastName,
+               let nickname = vm.nickname {
+                Text("\(firstName) \(lastName)")
+                    .lineLimit(1)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text(nickname)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            } else {
+                LoadingAnimation()
+                    .padding(.vertical)
+            }
+            
+            
+            Spacer(minLength: 0)
+        }
+    }
+    
+    @ViewBuilder private func getConfirmationActions() -> some View {
+        Button("Remove current photo") {
+            vm.uploadImage(nil, for: userRecordId)
+        }
+        
+        Button("Choose from library") {
+            photoInputSource = .photoLibrary
+            showPhotoImportSheet = true
+        }
+        
+        Button("Take photo") {
+            photoInputSource = .camera
+            showPhotoImportSheet = true
+        }
+        
+        Button("Cancel", role: .cancel) {
+            print("Cancel")
+        }
+    }
+    
+    @ToolbarContentBuilder private func getToolbar() -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            NavigationLink {
+                ProfileSettingsView(vm: vm)
+            } label: {
+                Image(systemName: "gearshape")
+            }
+        }
+        
+        ToolbarItem(placement: .navigationBarLeading) {
+            Text("Profile")
+                .font(.title)
+                .fontWeight(.semibold)
+                .foregroundColor(.accentColor)
         }
     }
     
