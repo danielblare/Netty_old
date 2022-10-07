@@ -10,10 +10,10 @@ import SwiftUI
 
 struct ProfileImageView: View {
     
-    @StateObject private var vm: ProfileImageViewModel
+    @ObservedObject private var vm: ProfileImageViewModel
         
     init(for id: CKRecord.ID?) {
-        _vm = .init(wrappedValue: ProfileImageViewModel(id: id))
+        vm = ProfileImageViewModel(id: id)
     }
     
     var body: some View {

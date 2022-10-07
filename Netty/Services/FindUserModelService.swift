@@ -15,28 +15,66 @@ actor FindUserModelService {
     
     private init() {}
     
-    func downloadData() async -> Result<[FindUserModel], Error> {
+    func downloadRecents(for id: CKRecord.ID) async -> Result<[FindUserModel], Error> {
         await withCheckedContinuation { continuation in
-            let predicate = NSPredicate(value: true)
-            let query = CKQuery(recordType: .usersRecordType, predicate: predicate)
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
+                if let record = returnedRecord {
+                    if let recentsRefs = record[.recentsUserInSearchRecordField] as? [CKRecord.Reference] {
+                        CKContainer.default().publicCloudDatabase.fetch(withRecordIDs: recentsRefs.map({ $0.recordID })) { returnedResult in
+                            switch returnedResult {
+                            case .success(let results):
+                                var resultArray: [FindUserModel] = []
+                                for result in results.values {
+                                    switch result {
+                                    case .success(let recentUser):
+                                        if let firstName = recentUser[.firstNameRecordField] as? String,
+                                           let lastName = recentUser[.lastNameRecordField] as? String,
+                                           let nickname = recentUser[.nicknameRecordField] as? String {
+                                            resultArray.append(FindUserModel(id: recentUser.recordID, firstName: firstName, lastName: lastName, nickname: nickname))
+                                            
+                                        }
+                                    case .failure(let error):
+                                        continuation.resume(returning: .failure(error))
+                                    }
+                                }
+                                continuation.resume(returning: .success(resultArray.sorted(by: { $0.nickname.lowercased() < $1.nickname.lowercased() })))
+                            case .failure(let error):
+                                continuation.resume(returning: .failure(error))
+                            }
+                        }
+                    } else {
+                        continuation.resume(returning: .success([]))
+                    }
+                } else if let error = error {
+                    continuation.resume(returning: .failure(error))
+                }
+            }
+        }
+    }
+    
+    func downloadSearching(_ searchText: String) async -> Result<[FindUserModel], Error> {
+        await withCheckedContinuation { continuation in
+            let query = CKQuery(recordType: .usersRecordType, predicate: .init(value: true))
             CKContainer.default().publicCloudDatabase.fetch(withQuery: query) { completion in
                 switch completion {
-                case .success(let recordsArray):
-                    var result: [FindUserModel] = []
-                    for record in recordsArray.matchResults {
-                        switch record.1 {
+                case .success(let completionResult):
+                    var resultArray: [FindUserModel] = []
+                    for result in completionResult.matchResults {
+                        switch result.1 {
                         case .success(let userRecord):
                             if let firstName = userRecord[.firstNameRecordField] as? String,
                                let lastName = userRecord[.lastNameRecordField] as? String,
                                let nickname = userRecord[.nicknameRecordField] as? String {
-                                result.append(FindUserModel(id: userRecord.recordID, firstName: firstName, lastName: lastName, nickname: nickname))
+                                if firstName.lowercased().starts(with: searchText.lowercased()) || lastName.lowercased().starts(with: searchText.lowercased()) || nickname.lowercased().starts(with: searchText.lowercased()) {
+                                    resultArray.append(FindUserModel(id: userRecord.recordID, firstName: firstName, lastName: lastName, nickname: nickname))
+                                }
                             }
                             
                         case .failure(_):
                             break
                         }
                     }
-                    continuation.resume(returning: .success(result))
+                    continuation.resume(returning: .success(resultArray))
                 case .failure(let error):
                     continuation.resume(returning: .failure(error))
                 }

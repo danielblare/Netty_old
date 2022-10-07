@@ -52,6 +52,9 @@ struct DirectView: View {
                         await vm.fullSync()
                     }
                 }
+                .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+                    Text(vm.alertMessage)
+                })
             }
         }
         
@@ -127,7 +130,7 @@ struct DirectView: View {
         
         ToolbarItem(placement: .navigationBarTrailing) {
             NavigationLink {
-                FindUserView()
+                FindUserView(id: vm.userRecordId)
             } label: {
                 Image(systemName: "square.and.pencil")
             }

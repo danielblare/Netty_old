@@ -18,8 +18,8 @@ extension Color {
 struct ColorTheme {
     
     let accent = Color("AccentColor")
-    let background = Color("BackgroundColor")
-    let gradientDark = Color("GradientDark")
-    let gradientLight = Color("GradientLight")
+    let background = Color("backgroundColor")
+    let gradientDark = Color("gradientDark")
+    let gradientLight = Color("gradientLight")
     
 }

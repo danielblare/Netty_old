@@ -22,7 +22,7 @@ class DirectViewModel: ObservableObject {
     var alertTitle: String = ""
     var alertMessage: String = ""
     
-    private var userRecordId: CKRecord.ID?
+    let userRecordId: CKRecord.ID?
     
     
     init(userRecordId: CKRecord.ID?) {
