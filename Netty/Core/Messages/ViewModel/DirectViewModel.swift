@@ -50,7 +50,7 @@ class DirectViewModel: ObservableObject {
     }
     
     func fullSync() async {
-        CacheManager.instance.cleanDirectPhotoCache()
+        CacheManager.instance.clean(CacheManager.instance.directPhotoCache)
         await downloadData()
     }
     

@@ -37,39 +37,27 @@ class CacheManager {
         return cache
     }()
     
-    func cleanProfilePhotoCache() {
-        profilePhotoCache.removeAllObjects()
+    func clean(_ cache: NSCache<NSString, NSString>) {
+        cache.removeAllObjects()
     }
     
-    func cleanProfileTextCache() {
-        profileTextCache.removeAllObjects()
+    func clean(_ cache: NSCache<NSString, UIImage>) {
+        cache.removeAllObjects()
     }
     
-    func cleanDirectPhotoCache() {
-        directPhotoCache.removeAllObjects()
+    func addTo(_ cache: NSCache<NSString, NSString>, key: String, value: NSString) {
+        cache.setObject(value, forKey: key as NSString)
     }
     
-    func addToProfilePhotoCache(key: String, value: UIImage) {
-        profilePhotoCache.setObject(value, forKey: key as NSString)
+    func addTo(_ cache: NSCache<NSString, UIImage>, key: String, value: UIImage) {
+        cache.setObject(value, forKey: key as NSString)
     }
     
-    func addToDirectPhotoCache(key: String, value: UIImage) {
-        directPhotoCache.setObject(value, forKey: key as NSString)
+    func getFrom(_ cache: NSCache<NSString, UIImage>, key: String) -> UIImage? {
+        cache.object(forKey: key as NSString)
     }
     
-    func addToProfileTextCache(key: String, value: NSString) {
-        profileTextCache.setObject(value, forKey: key as NSString)
-    }
-    
-    func getImageFromDirectCache(key: String) -> UIImage? {
-        directPhotoCache.object(forKey: key as NSString)
-    }
-    
-    func getImageFromProfilePhotoCache(key: String) -> UIImage? {
-        profilePhotoCache.object(forKey: key as NSString)
-    }
-    
-    func getTextFromProfileTextCache(key: String) -> NSString? {
-        profileTextCache.object(forKey: key as NSString)
+    func getFrom(_ cache: NSCache<NSString, NSString>, key: String) -> NSString? {
+        cache.object(forKey: key as NSString)
     }
 }

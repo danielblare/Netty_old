@@ -15,6 +15,7 @@ class ProfileImageViewModel: ObservableObject {
     
     @Published var image: UIImage? = nil
     @Published var isLoading: Bool = false
+    private let cacheManager = CacheManager.instance
     
     init(id: CKRecord.ID?) {
         getImage(for: id)
@@ -23,7 +24,7 @@ class ProfileImageViewModel: ObservableObject {
 
     private func getImage(for id: CKRecord.ID?) {
         guard let id = id else { return }
-        if let savedImage = CacheManager.instance.getImageFromDirectCache(key: "\(id.recordName)_avatar") {
+        if let savedImage = cacheManager.getFrom(cacheManager.directPhotoCache, key: "\(id.recordName)_avatar") {
             image = savedImage
         } else {
             isLoading = true
@@ -36,7 +37,7 @@ class ProfileImageViewModel: ObservableObject {
                             self.image = returnedValue
                         }
                         if let image = returnedValue {
-                            CacheManager.instance.addToDirectPhotoCache(key: "\(id.recordName)_avatar", value: image)
+                            cacheManager.addTo(cacheManager.directPhotoCache, key: "\(id.recordName)_avatar", value: image)
                         }
                     })
                 case .failure(let error):
