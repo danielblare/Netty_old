@@ -59,11 +59,11 @@ actor CloudKitManager {
         }
     }
     
-    func updateFieldForUserWith(recordId: CKRecord.ID, field: String, newData: String) async -> Result<CKRecord, Error> {
+    func updateFieldForUserWith<T:Any>(recordId: CKRecord.ID, field: String, newData: T) async -> Result<CKRecord, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordId) { returnedRecord, error in
                 if let record = returnedRecord {
-                    record[field] = newData
+                    record[field] = newData as? (any __CKRecordObjCValue)
                     CKContainer.default().publicCloudDatabase.save(record) { returnedRecord, error in
                         if let record = returnedRecord {
                             continuation.resume(returning: .success(record))

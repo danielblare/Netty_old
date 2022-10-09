@@ -22,6 +22,8 @@ struct FindUserView: View {
         }
     }
     
+    @State private var showConfirmationDialog: Bool = false
+    
     enum ButtonText: String {
         case less = "Show less"
         case more = "Show more"
@@ -34,10 +36,24 @@ struct FindUserView: View {
     
     var body: some View {
         List {
-            if vm.showRecents {
-                Section("Recents") {
+            if vm.showRecents && !vm.recentsArray.isEmpty {
+                Section {
                     ForEach(vm.recentsArray) { userModel in
                         UserRow(model: userModel)
+                    }
+                } header: {
+                    HStack {
+                        Text("Recents")
+                        
+                        Spacer(minLength: 0)
+                        
+                        Button {
+                            showConfirmationDialog = true
+                        } label: {
+                            Text("Clear all")
+                                .font(.callout)
+                                .fontWeight(.semibold)
+                        }
                     }
                 }
             } else if vm.showFinded {
@@ -60,6 +76,13 @@ struct FindUserView: View {
                         .foregroundColor(.accentColor)
                         .font(.callout)
                     }
+                }
+            }
+        }
+        .confirmationDialog("Are you sure you clear all recents?", isPresented: $showConfirmationDialog, titleVisibility: .visible) {
+            Button("Clear") {
+                Task {
+                    await vm.clearRecents()
                 }
             }
         }

@@ -19,7 +19,7 @@ actor FindUserModelService {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
                 if let record = returnedRecord {
-                    if let recentsRefs = record[.recentsUserInSearchRecordField] as? [CKRecord.Reference] {
+                    if let recentsRefs = record[.recentUsersInSearchRecordField] as? [CKRecord.Reference] {
                         CKContainer.default().publicCloudDatabase.fetch(withRecordIDs: recentsRefs.map({ $0.recordID })) { returnedResult in
                             switch returnedResult {
                             case .success(let results):

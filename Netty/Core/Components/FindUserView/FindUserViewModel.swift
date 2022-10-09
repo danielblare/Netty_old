@@ -33,7 +33,23 @@ class FindUserViewModel: ObservableObject {
         }
     }
     
+    
     private var searchTask: Task<(), Never>?
+    
+    func clearRecents() async {
+        guard let id = id else { return }
+        switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .recentUsersInSearchRecordField, newData: [CKRecord.Reference]()) {
+        case .success(_):
+            await MainActor.run {
+                withAnimation {
+                    recentsArray = []
+                }
+            }
+        case .failure(let error):
+            showAlert(title: "Error while deleting recents", message: error.localizedDescription)
+        }
+        
+    }
     
     func searchTextChanged() {
         searchTask?.cancel()
