@@ -14,7 +14,7 @@ import Combine
 class DirectViewModel: ObservableObject {
     
     @Published var chatsArray: [ChatModel] = []
-    @Published var isLoading: Bool = false
+    @Published var isLoading: Bool = true
     @Published var isRefreshing: Bool = false
     
     
@@ -49,12 +49,7 @@ class DirectViewModel: ObservableObject {
         }
     }
     
-    func fullSync() async {
-        CacheManager.instance.clean(CacheManager.instance.directPhotoCache)
-        await downloadData()
-    }
-    
-    func downloadData() async {
+    private func downloadData() async {
         if let id = userRecordId {
             await MainActor.run(body: {
                 withAnimation {

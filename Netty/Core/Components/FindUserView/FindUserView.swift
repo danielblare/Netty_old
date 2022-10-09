@@ -10,26 +10,58 @@ import CloudKit
 
 struct FindUserView: View {
     
-    @ObservedObject private var vm: FindUserViewModel
+    @StateObject private var vm: FindUserViewModel
+    @State private var findedResultCount: Int = 7
+    private var buttonText: ButtonText {
+        if vm.findedArray.count <= 7 {
+            return .none
+        } else if vm.findedArray.count > findedResultCount {
+            return .more
+        } else {
+            return .less
+        }
+    }
+    
+    enum ButtonText: String {
+        case less = "Show less"
+        case more = "Show more"
+        case none
+    }
     
     init(id: CKRecord.ID?) {
-        self.vm = FindUserViewModel(id: id)
+        _vm = .init(wrappedValue: FindUserViewModel(id: id))
     }
     
     var body: some View {
         List {
             if vm.showRecents {
                 Section("Recents") {
-                    ForEach(vm.dataArray) { userModel in
+                    ForEach(vm.recentsArray) { userModel in
                         UserRow(model: userModel)
+                    }
+                    Button("Add j") {
+                        vm.searchText += "j"
                     }
                 }
             } else if vm.showFinded {
-                if vm.dataArray.isEmpty {
+                if vm.findedArray.isEmpty {
                     nothingFound
                 } else {
-                    ForEach(vm.dataArray) { userModel in
+                    ForEach(vm.findedArray.prefix(findedResultCount)) { userModel in
                         UserRow(model: userModel)
+                    }
+                    if buttonText != .none {
+                        Button(buttonText.rawValue) {
+                            withAnimation {
+                                if buttonText == .more {
+                                    findedResultCount += 5
+                                } else {
+                                    findedResultCount = 7
+                                }
+                            }
+                        }
+                        .foregroundColor(.accentColor)
+                        .font(.callout)
                     }
                 }
             }

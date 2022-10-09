@@ -52,7 +52,7 @@ actor FindUserModelService {
         }
     }
     
-    func downloadSearching(_ searchText: String) async -> Result<[FindUserModel], Error> {
+    func downloadSearching(_ searchText: String, id: CKRecord.ID) async -> Result<[FindUserModel], Error> {
         await withCheckedContinuation { continuation in
             let query = CKQuery(recordType: .usersRecordType, predicate: .init(value: true))
             CKContainer.default().publicCloudDatabase.fetch(withQuery: query) { completion in
@@ -65,7 +65,7 @@ actor FindUserModelService {
                             if let firstName = userRecord[.firstNameRecordField] as? String,
                                let lastName = userRecord[.lastNameRecordField] as? String,
                                let nickname = userRecord[.nicknameRecordField] as? String {
-                                if firstName.lowercased().starts(with: searchText.lowercased()) || lastName.lowercased().starts(with: searchText.lowercased()) || nickname.lowercased().starts(with: searchText.lowercased()) {
+                                if userRecord.recordID != id && (firstName.lowercased().starts(with: searchText.lowercased()) || lastName.lowercased().starts(with: searchText.lowercased()) || nickname.lowercased().starts(with: searchText.lowercased())) {
                                     resultArray.append(FindUserModel(id: userRecord.recordID, firstName: firstName, lastName: lastName, nickname: nickname))
                                 }
                             }

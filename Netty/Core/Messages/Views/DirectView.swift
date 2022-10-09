@@ -49,7 +49,7 @@ struct DirectView: View {
                 }
                 .refreshable {
                     Task {
-                        await vm.fullSync()
+                        await vm.sync()
                     }
                 }
                 .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
@@ -106,7 +106,7 @@ struct DirectView: View {
             
             Button {
                 Task {
-                    await vm.fullSync()
+                    await vm.sync()
                 }
             } label: {
                 Label {

@@ -11,7 +11,8 @@ import CloudKit
 
 class FindUserViewModel: ObservableObject {
     
-    @Published var dataArray: [FindUserModel] = []
+    @Published var recentsArray: [FindUserModel] = []
+    @Published var findedArray: [FindUserModel] = []
     @Published var isLoading: Bool = false
     @Published var searchText: String = ""
     @Published var showRecents: Bool = false
@@ -37,22 +38,30 @@ class FindUserViewModel: ObservableObject {
     func searchTextChanged() {
         searchTask?.cancel()
         isLoading = false
-        showRecents = searchText.isEmpty
+        if searchText.isEmpty {
+            Task {
+                await getResents()
+            }
+        } else {
+            showRecents = false
+        }
+        
         showFinded = false
     }
     
     func executeQuery() async {
+        guard let id = id else { return }
         if !searchText.isEmpty {
             searchTask = Task {
                 await MainActor.run(body: {
                     isLoading = true
                 })
-                switch await dataService.downloadSearching(searchText) {
+                switch await dataService.downloadSearching(searchText, id: id) {
                 case .success(let resultArray):
                     if let task = searchTask, !task.isCancelled {
                         await MainActor.run(body: {
                             isLoading = false
-                            dataArray = resultArray
+                            findedArray = resultArray
                             showFinded = true
                         })
                     }
@@ -64,15 +73,12 @@ class FindUserViewModel: ObservableObject {
     }
     
     private func getResents() async {
+        print("getting recents")
         guard let id = id else { return }
-        await MainActor.run(body: {
-            isLoading = true
-        })
         if let savedRecents = cacheManager.getFrom(cacheManager.recentUsers, key: "users") {
             await MainActor.run {
                 withAnimation {
-                    isLoading = false
-                    dataArray = savedRecents.users
+                    recentsArray = savedRecents.users
                     showRecents = true
                 }
             }
@@ -81,21 +87,27 @@ class FindUserViewModel: ObservableObject {
                 if savedRecents.users != dataArray {
                     cacheManager.addTo(cacheManager.recentUsers, key: "users", value: RecentUsersHolder(dataArray))
                     await MainActor.run(body: {
-                        self.dataArray = dataArray
+                        withAnimation {
+                            recentsArray = dataArray
+                        }
                     })
                 }
             case .failure(_):
                 break
             }
         } else {
-            
+            await MainActor.run(body: {
+                isLoading = true
+            })
             switch await dataService.downloadRecents(for: id) {
             case .success(let dataArray):
                 cacheManager.addTo(cacheManager.recentUsers, key: "users", value: RecentUsersHolder(dataArray))
                 await MainActor.run(body: {
-                    self.isLoading = false
-                    self.dataArray = dataArray
-                    self.showRecents = true
+                    withAnimation {
+                        isLoading = false
+                        recentsArray = dataArray
+                        showRecents = true
+                    }
                 })
             case .failure(let error):
                 showAlert(title: "Error while fetching recents", message: error.localizedDescription)

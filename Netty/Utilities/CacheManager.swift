@@ -61,8 +61,12 @@ class CacheManager {
         cache.setObject(value, forKey: key as NSString)
     }
     
-    func addTo(_ cache: NSCache<NSString, UIImage>, key: String, value: UIImage) {
-        cache.setObject(value, forKey: key as NSString)
+    func addTo(_ cache: NSCache<NSString, UIImage>, key: String, value: UIImage?) {
+        if let value = value {
+            cache.setObject(value, forKey: key as NSString)
+        } else {
+            cache.removeObject(forKey: key as NSString)
+        }
     }
     
     func getFrom(_ cache: NSCache<NSString, RecentUsersHolder>, key: String) -> RecentUsersHolder? {
