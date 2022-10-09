@@ -21,6 +21,8 @@
 		BB7346422893066400E07487 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7346412893066400E07487 /* FileManager.swift */; };
 		BB81459028CE09FF00B35A5D /* UserInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB81458F28CE09FF00B35A5D /* UserInfoService.swift */; };
 		BB81459228CE0D1300B35A5D /* LoadingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB81459128CE0D1300B35A5D /* LoadingAnimation.swift */; };
+		BB8F9A4828F2F840009101FB /* PersonalInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8F9A4728F2F840009101FB /* PersonalInfoViewModel.swift */; };
+		BB8F9A4A28F2F8DC009101FB /* PresonalInfoPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8F9A4928F2F8DC009101FB /* PresonalInfoPage.swift */; };
 		BB9067FD2888137400962B21 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9067FC2888137400962B21 /* HomeView.swift */; };
 		BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9068002888194A00962B21 /* LogInAndOutManager.swift */; };
 		BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB90680328881A5F00962B21 /* HomeViewModel.swift */; };
@@ -74,6 +76,8 @@
 		BB7346412893066400E07487 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		BB81458F28CE09FF00B35A5D /* UserInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoService.swift; sourceTree = "<group>"; };
 		BB81459128CE0D1300B35A5D /* LoadingAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingAnimation.swift; sourceTree = "<group>"; };
+		BB8F9A4728F2F840009101FB /* PersonalInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInfoViewModel.swift; sourceTree = "<group>"; };
+		BB8F9A4928F2F8DC009101FB /* PresonalInfoPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresonalInfoPage.swift; sourceTree = "<group>"; };
 		BB9067FC2888137400962B21 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		BB9068002888194A00962B21 /* LogInAndOutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInAndOutManager.swift; sourceTree = "<group>"; };
 		BB90680328881A5F00962B21 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -168,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				BB7346362892BBFA00E07487 /* ProfileViewModel.swift */,
+				BB8F9A4728F2F840009101FB /* PersonalInfoViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -286,6 +291,7 @@
 			isa = PBXGroup;
 			children = (
 				BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */,
+				BB8F9A4928F2F8DC009101FB /* PresonalInfoPage.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -539,6 +545,7 @@
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBF0375B28E74C39006F89A1 /* FindUserView.swift in Sources */,
+				BB8F9A4828F2F840009101FB /* PersonalInfoViewModel.swift in Sources */,
 				BBF0375F28E75131006F89A1 /* FindUserModelService.swift in Sources */,
 				BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */,
 				BBE36D1928D346A200AC1DF9 /* UIScreen.swift in Sources */,
@@ -566,6 +573,7 @@
 				BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */,
 				BBC36EE628D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift in Sources */,
 				BBC36EE428D0E810008D983B /* ForgotPasswordEmailPageView.swift in Sources */,
+				BB8F9A4A28F2F8DC009101FB /* PresonalInfoPage.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

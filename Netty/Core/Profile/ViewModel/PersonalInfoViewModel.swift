@@ -5,7 +5,7 @@
 //  Created by Danny on 10/4/22.
 //
 
-import Foundation
+import SwiftUI
 import Combine
 import CloudKit
 
@@ -15,6 +15,7 @@ class PersonalInfoViewModel: ObservableObject {
     private let userId: CKRecord.ID?
     @Published var isLoading: Bool = false
     @Published var saveButtonDisabled: Bool = true
+    @Published var backButtonDisabled: Bool = false
     
     // Alert
     @Published var showAlert: Bool = false
@@ -169,17 +170,20 @@ class PersonalInfoViewModel: ObservableObject {
         checkForSaveButton()
     }
     
+    private let cacheManager = CacheManager.instance
+    
     func saveChanges() async {
         guard let id = userId else { return }
         await MainActor.run(body: {
             isLoading = true
+            backButtonDisabled = true
         })
         if nicknameTextField != actualNickname {
             switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .nicknameRecordField, newData: nicknameTextField) {
             case .success(_):
                 await MainActor.run(body: {
                     actualNickname = nicknameTextField
-                    CacheManager.instance.addTo(CacheManager.instance.profileTextCache, key: "\(id.recordName)_nickname", value: NSString(string: actualNickname))
+                    cacheManager.delete(from: cacheManager.textCache, "_nickname", for: id.recordName)
                     availabilityIsPassed = false
                     nicknameError = .none
                 })
@@ -192,7 +196,7 @@ class PersonalInfoViewModel: ObservableObject {
             case .success(_):
                 await MainActor.run(body: {
                     actualFirstName = firstNameTextField
-                    CacheManager.instance.addTo(CacheManager.instance.profileTextCache, key: "\(id.recordName)_firstName", value: NSString(string: actualFirstName))
+                    cacheManager.delete(from: cacheManager.textCache, "_firstName", for: id.recordName)
                     firstNameError = .none
                 })
             case .failure(let error):
@@ -200,11 +204,11 @@ class PersonalInfoViewModel: ObservableObject {
             }
         }
         if lastNameTextField != actualLastName {
-            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .lastNameRecordField, newData: firstNameTextField) {
+            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .lastNameRecordField, newData: lastNameTextField) {
             case .success(_):
                 await MainActor.run(body: {
                     actualLastName = lastNameTextField
-                    CacheManager.instance.addTo(CacheManager.instance.profileTextCache, key: "\(id.recordName)_lastName", value: NSString(string: actualLastName))
+                    cacheManager.delete(from: cacheManager.textCache, "_lastName", for: id.recordName)
                     lastNameError = .none
                 })
             case .failure(let error):
@@ -212,8 +216,11 @@ class PersonalInfoViewModel: ObservableObject {
             }
         }
         await MainActor.run(body: {
-            checkForSaveButton()
-            isLoading = false
+            withAnimation {
+                checkForSaveButton()
+                isLoading = false
+                backButtonDisabled = false
+            }
         })
     }
     

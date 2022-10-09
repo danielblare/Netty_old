@@ -227,7 +227,7 @@ class ForgotPasswordViewModel: ObservableObject {
         switch await CloudKitManager.instance.recordIdOfUser(withField: .emailRecordField, inRecordType: .usersRecordType, equalTo: savedEmail) {
         case .success(let recordId):
             if let recordId = recordId {
-                let result = await CloudKitManager.instance.updatePasswordForUserWith(recordId: recordId, newPassword: newPassword)
+                let result = await CloudKitManager.instance.updateFieldForUserWith(recordId: recordId, field: .passwordRecordField, newData: newPassword)
                 await MainActor.run {
                     changingPasswordIsLoading = false
                     switch result {

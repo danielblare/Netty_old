@@ -81,7 +81,7 @@ class ChatModelService {
         }
     }
 
-    func downloadChatModel(for record: CKRecord, currentUserId: CKRecord.ID, chatId: CKRecord.ID) async -> Result<ChatModel, Error> {
+    func downloadChatModel(for record: CKRecord, currentUserId: CKRecord.ID, chatId: CKRecord.ID, modificationDate: Date?) async -> Result<ChatModel, Error> {
     await withCheckedContinuation { continuation in
         if let participantsArray = record[.participantsRecordField] as? [CKRecord.Reference],
             let otherParticipant = participantsArray.first(where: { $0.recordID != currentUserId }) {
@@ -90,7 +90,7 @@ class ChatModelService {
                 if let record = returnedRecord,
                     let nickname = record[.nicknameRecordField] as? String {
                     
-                    continuation.resume(returning: .success(ChatModel(id: chatId, opponentId: otherParticipant.recordID, userName: nickname, lastMessage: nil)))
+                    continuation.resume(returning: .success(ChatModel(id: chatId, opponentId: otherParticipant.recordID, userName: nickname, lastMessage: nil, modificationDate: modificationDate)))
                     
                 } else if let error = error {
                     continuation.resume(returning: .failure(error))

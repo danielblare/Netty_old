@@ -22,15 +22,14 @@ class ProfileImageViewModel: ObservableObject {
     }
 
     private func getImage(for id: CKRecord.ID?) {
-        print("getting")
         guard let id = id else { return }
-        if let savedImage = cacheManager.getFrom(cacheManager.directPhotoCache, key: "\(id.recordName)_avatar") {
+        if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(id.recordName)_avatar") {
             image = savedImage
             Task {
                 switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
                 case .success(let returnedValue):
                     await MainActor.run(body: {
-                        cacheManager.addTo(cacheManager.directPhotoCache, key: "\(id.recordName)_avatar", value: returnedValue)
+                        cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: returnedValue)
                         self.image = returnedValue
                     })
                 case .failure(_):
@@ -48,7 +47,7 @@ class ProfileImageViewModel: ObservableObject {
                             self.image = returnedValue
                         }
                         if let image = returnedValue {
-                            cacheManager.addTo(cacheManager.directPhotoCache, key: "\(id.recordName)_avatar", value: image)
+                            cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: image)
                         }
                     })
                 case .failure(let error):

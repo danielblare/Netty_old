@@ -10,6 +10,14 @@ import SwiftUI
 import Combine
 import CloudKit
 
+struct Limits {
+    static let nameAndLastNameSymbolsLimit: Int = 35
+    static let emailSymbolsLimit: Int = 64
+    static let nicknameSymbolsLimit: Int = 20
+    static let passwordSymbolsLimit: Int = 23
+
+}
+
 class SignUpViewModel: ObservableObject {
     
     init(userRecordId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
@@ -34,13 +42,6 @@ class SignUpViewModel: ObservableObject {
         case verificated = ""
     }
     
-    struct Limits {
-        static let nameAndLastNameSymbolsLimit: Int = 35
-        static let emailSymbolsLimit: Int = 64
-        static let nicknameSymbolsLimit: Int = 20
-        static let passwordSymbolsLimit: Int = 23
-
-    }
 
     /// Error connected with nickname entering
     enum NicknameError: String {

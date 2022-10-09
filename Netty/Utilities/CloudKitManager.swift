@@ -59,11 +59,11 @@ actor CloudKitManager {
         }
     }
     
-    func updatePasswordForUserWith(recordId: CKRecord.ID, newPassword: String) async -> Result<CKRecord, Error> {
+    func updateFieldForUserWith(recordId: CKRecord.ID, field: String, newData: String) async -> Result<CKRecord, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordId) { returnedRecord, error in
                 if let record = returnedRecord {
-                    record[.passwordRecordField] = newPassword
+                    record[field] = newData
                     CKContainer.default().publicCloudDatabase.save(record) { returnedRecord, error in
                         if let record = returnedRecord {
                             continuation.resume(returning: .success(record))

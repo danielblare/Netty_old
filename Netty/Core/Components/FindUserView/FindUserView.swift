@@ -39,9 +39,6 @@ struct FindUserView: View {
                     ForEach(vm.recentsArray) { userModel in
                         UserRow(model: userModel)
                     }
-                    Button("Add j") {
-                        vm.searchText += "j"
-                    }
                 }
             } else if vm.showFinded {
                 if vm.findedArray.isEmpty {

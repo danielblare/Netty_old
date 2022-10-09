@@ -35,7 +35,10 @@ class DirectViewModel: ObservableObject {
     }
     
     func sync() async {
-       await downloadData()
+        for chat in chatsArray {
+            CacheManager.instance.delete(from: CacheManager.instance.photoCache, "_avatar", for: chat.opponentId.recordName)
+        }
+        await downloadData()
     }
     
     func delete(chat: ChatModel) async {
@@ -64,7 +67,7 @@ class DirectViewModel: ObservableObject {
                     for chat in chats {
                         switch chat.value {
                         case .success(let record):
-                            switch await dataService.downloadChatModel(for: record, currentUserId: id, chatId: chat.key) {
+                            switch await dataService.downloadChatModel(for: record, currentUserId: id, chatId: chat.key, modificationDate: record.modificationDate) {
                             case .success(let chatModel):
                                 result.append(chatModel)
                             case .failure(let error):
@@ -76,7 +79,14 @@ class DirectViewModel: ObservableObject {
                     }
                     await MainActor.run(body: {
                         withAnimation {
-                            chatsArray = result
+                            chatsArray = result.sorted { f, s in
+                                if let fdate = f.modificationDate,
+                                   let sdate = s.modificationDate {
+                                    return fdate > sdate
+                                } else {
+                                    return false
+                                }
+                            }
                         }
                     })
                 case .failure(let error):

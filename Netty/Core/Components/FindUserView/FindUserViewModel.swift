@@ -73,7 +73,6 @@ class FindUserViewModel: ObservableObject {
     }
     
     private func getResents() async {
-        print("getting recents")
         guard let id = id else { return }
         if let savedRecents = cacheManager.getFrom(cacheManager.recentUsers, key: "users") {
             await MainActor.run {

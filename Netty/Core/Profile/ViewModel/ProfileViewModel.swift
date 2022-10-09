@@ -18,7 +18,7 @@ class ProfileViewModel: ObservableObject {
     @Published var lastName: String? = nil
     @Published var nickname: String? = nil
     
-    private var userRecordId: CKRecord.ID?
+    let userRecordId: CKRecord.ID?
     private var logOutFunc: () async -> ()
     private let cacheManager = CacheManager.instance
     
@@ -26,7 +26,7 @@ class ProfileViewModel: ObservableObject {
         userRecordId = id
         self.logOutFunc = logOutFunc
         Task {
-            await sync()
+            await getData()
         }
     }
     
@@ -34,33 +34,32 @@ class ProfileViewModel: ObservableObject {
         await logOutFunc()
     }
     
-    func sync() async {
+    func getData() async {
         await getImage()
         await getFirstName()
         await getLastName()
         await getNickname()
     }
     
-    func fullSync() async {
-        await MainActor.run(body: {
-            cacheManager.clean(cacheManager.profileTextCache)
-            cacheManager.clean(cacheManager.profilePhotoCache)
-        })
-        await getImage()
-        await getFirstName()
-        await getLastName()
-        await getNickname()
+    func sync() async {
+        guard let id = userRecordId else { return }
+        cacheManager.delete(from: cacheManager.textCache, "_firstName", for: id.recordName)
+        cacheManager.delete(from: cacheManager.textCache, "_nickname", for: id.recordName)
+        cacheManager.delete(from: cacheManager.textCache, "_lastName", for: id.recordName)
+        cacheManager.delete(from: cacheManager.photoCache, "_avatar", for: id.recordName)
+        await getData()
     }
     
     private func getNickname() async {
         guard let id = userRecordId else { return }
-        if let savedNickname = cacheManager.getFrom(cacheManager.profileTextCache, key: "\(id.recordName)_nickname") as? String {
+        if let savedNickname = cacheManager.getFrom(cacheManager.textCache, key: "\(id.recordName)_nickname") as? String {
             await MainActor.run {
                 withAnimation {
                     nickname = savedNickname
                 }
             }
         } else {
+            
             switch await UserInfoService.instance.fetchNicknameForUser(with: id) {
             case .success(let returnedValue):
                 await MainActor.run(body: {
@@ -68,7 +67,7 @@ class ProfileViewModel: ObservableObject {
                         self.nickname = returnedValue
                     }
                     if let nickname = returnedValue {
-                        cacheManager.addTo(cacheManager.profileTextCache, key: "\(id.recordName)_nickname", value: NSString(string: nickname))
+                        cacheManager.addTo(cacheManager.textCache, key: "\(id.recordName)_nickname", value: NSString(string: nickname))
                     }
                 })
             case .failure(let error):
@@ -79,7 +78,7 @@ class ProfileViewModel: ObservableObject {
     
     private func getFirstName() async {
         guard let id = userRecordId else { return }
-        if let savedName = cacheManager.getFrom(cacheManager.profileTextCache, key: "\(id.recordName)_firstName") as? String {
+        if let savedName = cacheManager.getFrom(cacheManager.textCache, key: "\(id.recordName)_firstName") as? String {
             await MainActor.run {
                 withAnimation {
                     firstName = savedName
@@ -93,7 +92,7 @@ class ProfileViewModel: ObservableObject {
                         self.firstName = returnedValue
                     }
                     if let firstName = returnedValue {
-                        cacheManager.addTo(cacheManager.profileTextCache, key: "\(id.recordName)_firstName", value: NSString(string: firstName))
+                        cacheManager.addTo(cacheManager.textCache, key: "\(id.recordName)_firstName", value: NSString(string: firstName))
                     }
                 })
             case .failure(let error):
@@ -104,7 +103,7 @@ class ProfileViewModel: ObservableObject {
     
     private func getLastName() async {
         guard let id = userRecordId else { return }
-        if let savedName = cacheManager.getFrom(cacheManager.profileTextCache, key: "\(id.recordName)_lastName") as? String {
+        if let savedName = cacheManager.getFrom(cacheManager.textCache, key: "\(id.recordName)_lastName") as? String {
             await MainActor.run {
                 withAnimation {
                     lastName = savedName
@@ -118,7 +117,7 @@ class ProfileViewModel: ObservableObject {
                         self.lastName = returnedValue
                     }
                     if let lastName = returnedValue {
-                        cacheManager.addTo(cacheManager.profileTextCache, key: "\(id.recordName)_lastName", value: NSString(string: lastName))
+                        cacheManager.addTo(cacheManager.textCache, key: "\(id.recordName)_lastName", value: NSString(string: lastName))
                     }
                 })
             case .failure(let error):
@@ -152,7 +151,7 @@ class ProfileViewModel: ObservableObject {
                                        self.isLoading = false
                                    }
                                }
-                               self.cacheManager.addTo(self.cacheManager.profilePhotoCache, key: "\(id.recordName)_avatar", value: image)
+                               self.cacheManager.addTo(self.cacheManager.photoCache, key: "\(id.recordName)_avatar", value: image)
                            }
                        } catch {
                            print(error.localizedDescription)
@@ -167,7 +166,7 @@ class ProfileViewModel: ObservableObject {
                                 self.isLoading = false
                             }
                         }
-                        self.cacheManager.clean(self.cacheManager.profilePhotoCache)
+                        self.cacheManager.delete(from: self.cacheManager.photoCache, "_avatar", for: record.recordID.recordName)
                     }
                 }
             } else {
@@ -180,7 +179,7 @@ class ProfileViewModel: ObservableObject {
     
     private func getImage() async {
         guard let id = userRecordId else { return }
-        if let savedImage = cacheManager.getFrom(cacheManager.profilePhotoCache, key: "\(id.recordName)_avatar") {
+        if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(id.recordName)_avatar") {
             await MainActor.run(body: {
                 withAnimation {
                     image = savedImage
@@ -189,7 +188,6 @@ class ProfileViewModel: ObservableObject {
         } else {
             await MainActor.run {
                 withAnimation {
-                    image = nil
                     isLoading = true
                 }
             }
@@ -201,7 +199,7 @@ class ProfileViewModel: ObservableObject {
                         self.image = returnedValue
                     }
                     if let image = returnedValue {
-                        cacheManager.addTo(cacheManager.profilePhotoCache, key: "\(id.recordName)_avatar", value: image)
+                        cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: image)
                     }
                 })
             case .failure(let error):

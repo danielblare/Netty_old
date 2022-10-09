@@ -7,13 +7,14 @@
 
 import Foundation
 import SwiftUI
+import CloudKit
 
 class CacheManager {
     
     static let instance = CacheManager()
     private init() { }
     
-    var profilePhotoCache: NSCache<NSString, UIImage> = {
+    var photoCache: NSCache<NSString, UIImage> = {
         
         var cache = NSCache<NSString, UIImage>()
         cache.countLimit = 200
@@ -21,18 +22,10 @@ class CacheManager {
         return cache
     }()
     
-    var profileTextCache: NSCache<NSString, NSString> = {
+    var textCache: NSCache<NSString, NSString> = {
         
         var cache = NSCache<NSString, NSString>()
         cache.countLimit = 200
-        cache.totalCostLimit = 1024 * 1024 * 20
-        return cache
-    }()
-    
-    var directPhotoCache: NSCache<NSString, UIImage> = {
-        
-        var cache = NSCache<NSString, UIImage>()
-        cache.countLimit = 20
         cache.totalCostLimit = 1024 * 1024 * 20
         return cache
     }()
@@ -45,13 +38,19 @@ class CacheManager {
         return cache
     }()
     
-    func clean(_ cache: NSCache<NSString, NSString>) {
-        cache.removeAllObjects()
+    
+    
+    func delete(from cache: NSCache<NSString, UIImage>, _ strValue: String, for recordName: String) {
+        cache.removeObject(forKey: "\(recordName)\(strValue)" as NSString)
     }
     
-    func clean(_ cache: NSCache<NSString, UIImage>) {
-        cache.removeAllObjects()
+    func delete(from cache: NSCache<NSString, NSString>, _ strValue: String, for recordName: String) {
+        cache.removeObject(forKey: "\(recordName)\(strValue)" as NSString)
     }
+        
+    
+    
+    
     
     func addTo(_ cache: NSCache<NSString, NSString>, key: String, value: NSString) {
         cache.setObject(value, forKey: key as NSString)

@@ -16,4 +16,5 @@ struct ChatModel: Identifiable {
     
     let userName: String
     let lastMessage: String?
+    let modificationDate: Date?
 }

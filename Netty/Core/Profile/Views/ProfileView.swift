@@ -68,7 +68,7 @@ struct ProfileView: View {
             }
             .refreshable {
                 Task {
-                    await vm.fullSync()
+                    await vm.sync()
                 }
             }
         }
