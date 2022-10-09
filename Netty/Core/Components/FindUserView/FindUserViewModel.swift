@@ -43,6 +43,7 @@ class FindUserViewModel: ObservableObject {
             await MainActor.run {
                 withAnimation {
                     recentsArray = []
+                    cacheManager.delete(from: cacheManager.recentUsers, "users", for: "")
                 }
             }
         case .failure(let error):

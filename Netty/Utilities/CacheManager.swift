@@ -47,6 +47,10 @@ class CacheManager {
     func delete(from cache: NSCache<NSString, NSString>, _ strValue: String, for recordName: String) {
         cache.removeObject(forKey: "\(recordName)\(strValue)" as NSString)
     }
+    
+    func delete(from cache: NSCache<NSString, RecentUsersHolder>, _ strValue: String, for recordName: String) {
+        cache.removeObject(forKey: "\(recordName)\(strValue)" as NSString)
+    }
         
     
     
