@@ -16,6 +16,7 @@ class PersonalInfoViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var saveButtonDisabled: Bool = true
     @Published var backButtonDisabled: Bool = false
+    @Published var disabled: Bool = false
     
     // Alert
     @Published var showAlert: Bool = false
@@ -76,6 +77,11 @@ class PersonalInfoViewModel: ObservableObject {
         }
     }
     
+    // DateOfBirth
+    private var actualDateOfBirth: Date = Date()
+    @Published var dateOfBirthPicker: Date = Date()
+    
+    
     
     private var nicknameCheckTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
@@ -102,8 +108,8 @@ class PersonalInfoViewModel: ObservableObject {
         sharedNicknameTextField
             .removeDuplicates()
             .dropFirst()
-            .sink { _ in
-                self.nicknameFieldChanged()
+            .sink { [weak self] _ in
+                self?.nicknameFieldChanged()
             }
             .store(in: &cancellables)
         
@@ -122,8 +128,8 @@ class PersonalInfoViewModel: ObservableObject {
         sharedFirstNameTextField
             .removeDuplicates()
             .dropFirst()
-            .sink { _ in
-                self.firstNameFieldChanged()
+            .sink { [weak self] _ in
+                self?.firstNameFieldChanged()
             }
             .store(in: &cancellables)
         
@@ -142,12 +148,17 @@ class PersonalInfoViewModel: ObservableObject {
         sharedLastNameTextField
             .removeDuplicates()
             .dropFirst()
-            .sink { _ in
-                self.lastNameFieldChanged()
+            .sink { [weak self] _ in
+                self?.lastNameFieldChanged()
+            }
+            .store(in: &cancellables)
+        
+        $dateOfBirthPicker
+            .sink { [weak self] _ in
+                self?.checkForSaveButton()
             }
             .store(in: &cancellables)
     }
-    
     
     private func nicknameFieldChanged() {
         nicknameCheckTask?.cancel()
@@ -215,6 +226,16 @@ class PersonalInfoViewModel: ObservableObject {
                 showAlert(title: "Error while saving last name", message: error.localizedDescription)
             }
         }
+        if dateOfBirthPicker != actualDateOfBirth {
+            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .dateOfBirthRecordField, newData: dateOfBirthPicker) {
+            case .success(_):
+                await MainActor.run(body: {
+                    actualDateOfBirth = dateOfBirthPicker
+                })
+            case .failure(let error):
+                showAlert(title: "Error while saving date of birth", message: error.localizedDescription)
+            }
+        }
         await MainActor.run(body: {
             withAnimation {
                 checkForSaveButton()
@@ -226,7 +247,7 @@ class PersonalInfoViewModel: ObservableObject {
     
     private func checkForSaveButton() {
         DispatchQueue.main.async {
-            self.saveButtonDisabled = !((self.nicknamePassed && self.firstNamePassed && self.lastNamePassed) && (self.nicknameTextField != self.actualNickname || self.firstNameTextField != self.actualFirstName || self.lastNameTextField != self.actualLastName))
+            self.saveButtonDisabled = !((self.nicknamePassed && self.firstNamePassed && self.lastNamePassed) && (self.nicknameTextField != self.actualNickname || self.firstNameTextField != self.actualFirstName || self.lastNameTextField != self.actualLastName || Calendar.current.dateComponents([.day, .year, .month], from: self.dateOfBirthPicker) != Calendar.current.dateComponents([.day, .year, .month], from: self.actualDateOfBirth)))
         }
     }
     
@@ -330,23 +351,30 @@ class PersonalInfoViewModel: ObservableObject {
         guard let id = userId else { return }
         isLoading = true
         CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { [weak self] user, error in
-            if let user = user,
-               let nickname = user[.nicknameRecordField] as? String,
-               let firstName = user[.firstNameRecordField] as? String,
-               let lastName = user[.lastNameRecordField] as? String {
+            if let self = self {
                 DispatchQueue.main.async {
-                    if let self = self {
-                        self.isLoading = false
+                    if let user = user,
+                       let nickname = user[.nicknameRecordField] as? String,
+                       let firstName = user[.firstNameRecordField] as? String,
+                       let lastName = user[.lastNameRecordField] as? String,
+                       let dateOfBirth = user[.dateOfBirthRecordField] as? Date {
                         self.nicknameTextField = nickname
                         self.firstNameTextField = firstName
                         self.lastNameTextField = lastName
                         self.actualNickname = nickname
                         self.actualFirstName = firstName
                         self.actualLastName = lastName
+                        self.actualDateOfBirth = dateOfBirth
+                        self.dateOfBirthPicker = dateOfBirth
+                    } else if let error = error {
+                        self.disabled = true
+                        self.showAlert(title: "Error fetching personal data", message: error.localizedDescription)
+                    } else {
+                        self.disabled = true
+                        self.showAlert(title: "Cannot fetch personal data", message: "Contact support")
                     }
+                    self.isLoading = false
                 }
-            } else if let error = error {
-                self?.showAlert(title: "Error fetching personal data", message: error.localizedDescription)
             }
         }
     }

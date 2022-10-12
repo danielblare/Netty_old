@@ -15,6 +15,11 @@ struct PersonalInfoPage: View {
     }
     
     @State private var confirmationDialogIsPresented: Bool = false
+    private var dateRange: ClosedRange<Date> {
+        let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
+        let endingDate: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date())!
+        return startingDate...endingDate
+    }
     
     var body: some View {
         List {
@@ -23,11 +28,14 @@ struct PersonalInfoPage: View {
             firstNamePart
             
             lastNamePart
+            
+            dateOfBirthPart
         }
         .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
             Text(vm.alertMessage)
         })
         .disabled(vm.isLoading)
+        .disabled(vm.disabled)
         .navigationBarBackButtonHidden(vm.backButtonDisabled)
         .overlay {
             if vm.isLoading {
@@ -53,6 +61,16 @@ struct PersonalInfoPage: View {
                 confirmationDialogIsPresented = true
             }
             .disabled(vm.saveButtonDisabled)
+        }
+    }
+    
+    private var dateOfBirthPart: some View {
+        ZStack {
+            DatePicker("Date of birth:", selection: $vm.dateOfBirthPicker, in: dateRange, displayedComponents: .date)
+                .datePickerStyle(.compact)
+                .foregroundColor(.secondary)
+                .font(.callout)
+                .padding(.vertical, 2)
         }
     }
     
@@ -105,7 +123,7 @@ struct PersonalInfoPage: View {
             VStack(spacing: 0) {
                 ZStack {
                     HStack {
-                        Text("First name")
+                        Text("First name:")
                             .lineLimit(1)
                             .foregroundColor(.secondary)
                             .font(.callout)
@@ -131,7 +149,7 @@ struct PersonalInfoPage: View {
             VStack(spacing: 0) {
                 ZStack {
                     HStack {
-                        Text("Last name")
+                        Text("Last name:")
                             .lineLimit(1)
                             .foregroundColor(.secondary)
                             .font(.callout)
