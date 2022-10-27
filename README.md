@@ -3,6 +3,7 @@ An iOS social network with ability to create your account with all personal data
 # What I learned
 * Core data
 * CloudKit
+* MVVM
 * API 
 * Combine
 * Async/await, actors
