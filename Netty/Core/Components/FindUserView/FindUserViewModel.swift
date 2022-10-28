@@ -12,11 +12,11 @@ import CloudKit
 class FindUserViewModel: ObservableObject {
     
     @Published var recentsArray: [FindUserModel] = []
-    @Published var findedArray: [FindUserModel] = []
+    @Published var foundArray: [FindUserModel] = []
     @Published var isLoading: Bool = false
     @Published var searchText: String = ""
     @Published var showRecents: Bool = false
-    @Published var showFinded: Bool = false
+    @Published var showFound: Bool = false
     private let id: CKRecord.ID?
     
     @Published var showAlert: Bool = false
@@ -63,7 +63,7 @@ class FindUserViewModel: ObservableObject {
             showRecents = false
         }
         
-        showFinded = false
+        showFound = false
     }
     
     func executeQuery() async {
@@ -78,8 +78,8 @@ class FindUserViewModel: ObservableObject {
                     if let task = searchTask, !task.isCancelled {
                         await MainActor.run(body: {
                             isLoading = false
-                            findedArray = resultArray
-                            showFinded = true
+                            foundArray = resultArray
+                            showFound = true
                         })
                     }
                 case .failure(let error):

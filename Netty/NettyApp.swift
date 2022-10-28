@@ -153,14 +153,12 @@ struct NettyApp: App {
                         .environmentObject(logInAndOutViewModel)
                         .transition(.opacity)
                 }
-                    
                 
-                ZStack {
-                    if showLaunchView {
-                        LaunchView(showLaunchView: $showLaunchView)
-                    }
+                
+                if showLaunchView {
+                    LaunchView(showLaunchView: $showLaunchView)
+                        .zIndex(2.0)
                 }
-                .zIndex(2.0)
             }
             .persistentSystemOverlays(.hidden)
             .alert(Text(logInAndOutViewModel.alertTitle), isPresented: $logInAndOutViewModel.showAlert, actions: {}, message: {

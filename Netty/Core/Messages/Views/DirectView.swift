@@ -17,20 +17,37 @@ struct DirectView: View {
     }
     
     @State private var searchText: String = ""
-
+    
     var body: some View {
-        NavigationStack {
-            GeometryReader { geo in
-                ZStack {
+        GeometryReader { geo in
+            ZStack {
+                VStack {
+                    HStack {
+                        Text("Messages")
+                            .fontWeight(.semibold)
+                            .font(.title)
+                            .foregroundColor(.accentColor)
+                        
+                        Spacer(minLength: 0)
+                        
+                        NavigationLink {
+                            FindUserView(id: vm.userRecordId)
+                        } label: {
+                            Image(systemName: "square.and.pencil")
+                                .font(.title2)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
                     ZStack {
                         if vm.chatsArray.isEmpty && !vm.isLoading {
                             noChatsView
                         } else if !vm.chatsArray.isEmpty {
                             List(searchResults) { chat in
                                 chatView(for: chat, with: geo)
-                                .swipeActions {
-                                    getSwipeActionsFor(chat)
-                                }
+                                    .swipeActions {
+                                        getSwipeActionsFor(chat)
+                                    }
                             }
                             
                             .listStyle(.inset)
@@ -40,24 +57,21 @@ struct DirectView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .disabled(vm.isLoading)
 
-                    if vm.isLoading {
-                        ProgressView()
-                    }
                 }
-                .toolbar {
-                    getToolbar()
+                
+                if vm.isLoading {
+                    ProgressView()
                 }
-                .refreshable {
-                    Task {
-                        await vm.sync()
-                    }
-                }
-                .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
-                    Text(vm.alertMessage)
-                })
             }
+            .refreshable {
+                Task {
+                    await vm.sync()
+                }
+            }
+            .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+                Text(vm.alertMessage)
+            })
         }
-        
     }
     
     private func chatView(for chat: ChatModel, with geo: GeometryProxy) -> some View {
@@ -65,7 +79,7 @@ struct DirectView: View {
             ProfileImageView(for: chat.opponentId)
                 .frame(width: 70, height: 70)
                 .padding(.trailing, 5)
-
+            
             VStack(alignment: .leading) {
                 Text(chat.userName)
                     .lineLimit(1)
@@ -119,25 +133,7 @@ struct DirectView: View {
         }
         .foregroundColor(.secondary)
     }
-    
-    @ToolbarContentBuilder private func getToolbar() -> some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Text("Messages")
-                .fontWeight(.semibold)
-                .font(.title)
-                .foregroundColor(.accentColor)
-        }
         
-        ToolbarItem(placement: .navigationBarTrailing) {
-            NavigationLink {
-                FindUserView(id: vm.userRecordId)
-            } label: {
-                Image(systemName: "square.and.pencil")
-            }
-
-        }
-    }
-    
     private var searchResults: [ChatModel] {
         if searchText.isEmpty {
             return vm.chatsArray
@@ -154,7 +150,7 @@ struct DirectView: View {
 
 struct DirectView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectView(userRecordId: CKRecord.ID(recordName: "2BF042AD-D7B5-4AEE-9328-D328E942B0FF"))
-        DirectView(userRecordId: CKRecord.ID(recordName: "3AF89E4F-8FFA-46CA-A2D3-D6268C5AF11C"))
+        DirectView(userRecordId: CKRecord.ID(recordName: "7C21B420-2449-22D0-1F26-387A189663EA"))
+        DirectView(userRecordId: CKRecord.ID(recordName: "7C21B420-2449-22D0-1F26-387A189663EA"))
     }
 }

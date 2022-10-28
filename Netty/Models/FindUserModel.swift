@@ -8,7 +8,7 @@
 import Foundation
 import CloudKit
 
-struct FindUserModel: Identifiable, Equatable {
+struct FindUserModel: Identifiable, Equatable, Hashable {
     let id: CKRecord.ID
     let firstName, lastName, nickname: String
     

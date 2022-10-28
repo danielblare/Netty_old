@@ -13,23 +13,27 @@ struct MainScreenView: View {
     let userRecordId: CKRecord.ID?
     let logOutFunc: () async -> ()
     
+    @State private var path: NavigationPath = .init()
+    
     var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Image(systemName: "photo.on.rectangle")
-                }
-                .tag(0)
-            DirectView(userRecordId: userRecordId)
-                .tabItem {
-                    Image(systemName: "ellipsis.bubble")
-                }
-                .tag(1)
-            ProfileView(userRecordId: userRecordId, logOutFunc: logOutFunc)
-                .tabItem {
-                    Image(systemName: "person")
-                }
-                .tag(2)
+        NavigationStack {
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Image(systemName: "photo.on.rectangle")
+                    }
+                    .tag(0)
+                DirectView(userRecordId: userRecordId)
+                    .tabItem {
+                        Image(systemName: "ellipsis.bubble")
+                    }
+                    .tag(1)
+                ProfileView(userRecordId: userRecordId, logOutFunc: logOutFunc)
+                    .tabItem {
+                        Image(systemName: "person")
+                    }
+                    .tag(2)
+            }
         }
     }
 }

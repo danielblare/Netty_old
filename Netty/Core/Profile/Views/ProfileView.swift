@@ -28,48 +28,59 @@ struct ProfileView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack {
-                    // Image and full name
-                    HStack {
-                        
-                        ProfileImage
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            .padding(.horizontal)
-                            .onTapGesture {
-                                showProfilePhotoChangingConfirmationDialog = true
-                            }
-                            .confirmationDialog("", isPresented: $showProfilePhotoChangingConfirmationDialog, titleVisibility: .hidden) {
-                                getConfirmationActions()
-                            }
-                        
-                        UserInfo
-                            .padding(.vertical)
-                            .frame(height: 100)
-                        
-                        Spacer(minLength: 0)
-                        
-                    }
-                    .padding(.vertical)
+        ScrollView {
+            VStack {
+                HStack {
+                    Text("Profile")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.accentColor)
                     
                     Spacer(minLength: 0)
+                    
+                    NavigationLink {
+                        ProfileSettingsView(vm: vm)
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .font(.title2)
+                    }
                 }
-            }
-            .fullScreenCover(isPresented: $showPhotoImportSheet) {
-                ImagePicker(source: photoInputSource) { image in
-                    vm.uploadImage(image, for: userRecordId)
+                .padding(.horizontal)
+                // Image and full name
+                HStack {
+                    
+                    ProfileImage
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                        .padding(.horizontal)
+                        .onTapGesture {
+                            showProfilePhotoChangingConfirmationDialog = true
+                        }
+                        .confirmationDialog("", isPresented: $showProfilePhotoChangingConfirmationDialog, titleVisibility: .hidden) {
+                            getConfirmationActions()
+                        }
+                    
+                    UserInfo
+                        .padding(.vertical)
+                        .frame(height: 100)
+                    
+                    Spacer(minLength: 0)
+                    
                 }
-                .ignoresSafeArea()
+                .padding(.vertical)
+                
+                Spacer(minLength: 0)
             }
-            .toolbar {
-                getToolbar()
+        }
+        .fullScreenCover(isPresented: $showPhotoImportSheet) {
+            ImagePicker(source: photoInputSource) { image in
+                vm.uploadImage(image, for: userRecordId)
             }
-            .refreshable {
-                Task {
-                    await vm.sync()
-                }
+            .ignoresSafeArea()
+        }
+        .refreshable {
+            Task {
+                await vm.sync()
             }
         }
     }
@@ -141,24 +152,6 @@ struct ProfileView: View {
             print("Cancel")
         }
     }
-    
-    @ToolbarContentBuilder private func getToolbar() -> some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            NavigationLink {
-                ProfileSettingsView(vm: vm)
-            } label: {
-                Image(systemName: "gearshape")
-            }
-        }
-        
-        ToolbarItem(placement: .navigationBarLeading) {
-            Text("Profile")
-                .font(.title)
-                .fontWeight(.semibold)
-                .foregroundColor(.accentColor)
-        }
-    }
-    
 }
 
 

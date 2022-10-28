@@ -11,11 +11,11 @@ import CloudKit
 struct FindUserView: View {
     
     @StateObject private var vm: FindUserViewModel
-    @State private var findedResultCount: Int = 7
+    @State private var foundResultCount: Int = 7
     private var buttonText: ButtonText {
-        if vm.findedArray.count <= 7 {
+        if vm.foundArray.count <= 7 {
             return .none
-        } else if vm.findedArray.count > findedResultCount {
+        } else if vm.foundArray.count > foundResultCount {
             return .more
         } else {
             return .less
@@ -39,7 +39,11 @@ struct FindUserView: View {
             if vm.showRecents && !vm.recentsArray.isEmpty {
                 Section {
                     ForEach(vm.recentsArray) { userModel in
-                        UserRow(model: userModel)
+                        NavigationLink {
+                            Text(userModel.firstName)
+                        } label: {
+                            UserRow(model: userModel)
+                        }
                     }
                 } header: {
                     HStack {
@@ -56,20 +60,24 @@ struct FindUserView: View {
                         }
                     }
                 }
-            } else if vm.showFinded {
-                if vm.findedArray.isEmpty {
+            } else if vm.showFound {
+                if vm.foundArray.isEmpty {
                     nothingFound
                 } else {
-                    ForEach(vm.findedArray.prefix(findedResultCount)) { userModel in
-                        UserRow(model: userModel)
+                    ForEach(vm.foundArray.prefix(foundResultCount)) { userModel in
+                        NavigationLink {
+                            Text(userModel.firstName)
+                        } label: {
+                            UserRow(model: userModel)
+                        }
                     }
                     if buttonText != .none {
                         Button(buttonText.rawValue) {
                             withAnimation {
                                 if buttonText == .more {
-                                    findedResultCount += 5
+                                    foundResultCount += 5
                                 } else {
-                                    findedResultCount = 7
+                                    foundResultCount = 7
                                 }
                             }
                         }
