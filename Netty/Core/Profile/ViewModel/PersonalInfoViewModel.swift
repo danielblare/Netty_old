@@ -16,7 +16,6 @@ class PersonalInfoViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var saveButtonDisabled: Bool = true
     @Published var backButtonDisabled: Bool = false
-    @Published var disabled: Bool = false
     
     // Alert
     @Published var showAlert: Bool = false
@@ -367,10 +366,8 @@ class PersonalInfoViewModel: ObservableObject {
                         self.actualDateOfBirth = dateOfBirth
                         self.dateOfBirthPicker = dateOfBirth
                     } else if let error = error {
-                        self.disabled = true
                         self.showAlert(title: "Error fetching personal data", message: error.localizedDescription)
                     } else {
-                        self.disabled = true
                         self.showAlert(title: "Cannot fetch personal data", message: "Contact support")
                     }
                     self.isLoading = false

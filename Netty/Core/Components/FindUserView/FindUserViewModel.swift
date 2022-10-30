@@ -17,7 +17,7 @@ class FindUserViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var showRecents: Bool = false
     @Published var showFound: Bool = false
-    private let id: CKRecord.ID?
+    let id: CKRecord.ID?
     
     @Published var showAlert: Bool = false
     var alertTitle: String = ""

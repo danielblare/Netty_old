@@ -13,7 +13,6 @@ struct MainScreenView: View {
     let userRecordId: CKRecord.ID?
     let logOutFunc: () async -> ()
     
-    @State private var path: NavigationPath = .init()
     
     var body: some View {
         NavigationStack {

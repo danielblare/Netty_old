@@ -8,7 +8,7 @@ import SwiftUI
 import CloudKit
 
 struct PersonalInfoPage: View {
-    
+    @Environment(\.presentationMode) var presentationMode
     @StateObject private var vm: PersonalInfoViewModel
     init(id: CKRecord.ID?) {
         _vm = .init(wrappedValue: PersonalInfoViewModel(id: id))
@@ -31,11 +31,14 @@ struct PersonalInfoPage: View {
             
             dateOfBirthPart
         }
-        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {
+            Button("OK") {
+                presentationMode.wrappedValue.dismiss()
+            }
+        }, message: {
             Text(vm.alertMessage)
         })
         .disabled(vm.isLoading)
-        .disabled(vm.disabled)
         .navigationBarBackButtonHidden(vm.backButtonDisabled)
         .overlay {
             if vm.isLoading {

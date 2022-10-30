@@ -40,7 +40,7 @@ struct FindUserView: View {
                 Section {
                     ForEach(vm.recentsArray) { userModel in
                         NavigationLink {
-                            Text(userModel.firstName)
+                            ChatView(for: userModel, ownId: vm.id)
                         } label: {
                             UserRow(model: userModel)
                         }
