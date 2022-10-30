@@ -66,7 +66,7 @@ struct FindUserView: View {
                 } else {
                     ForEach(vm.foundArray.prefix(foundResultCount)) { userModel in
                         NavigationLink {
-                            Text(userModel.firstName)
+                            ChatView(for: userModel, ownId: vm.id)
                         } label: {
                             UserRow(model: userModel)
                         }

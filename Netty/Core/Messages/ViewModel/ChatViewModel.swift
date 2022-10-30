@@ -11,6 +11,8 @@ import CloudKit
 struct ChatMessage: Identifiable {
     let id = UUID()
     let message: String
+    let isCurrentUser: Bool
+   
 }
 
 final class ChatViewModel: ObservableObject {
@@ -31,6 +33,15 @@ final class ChatViewModel: ObservableObject {
         userModel = user
         self.ownId = ownId
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     private func showAlert(title: String, message: String) {
         alertTitle = title

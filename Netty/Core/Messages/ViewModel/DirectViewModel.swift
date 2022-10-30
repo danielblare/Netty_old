@@ -32,6 +32,7 @@ class DirectViewModel: ObservableObject {
             await sync()
             isLoading = false
         }
+        requestNotificationPermission()
     }
     
     func sync() async {
@@ -50,6 +51,19 @@ class DirectViewModel: ObservableObject {
                     chatsArray.append(backup)
                 }
                 showAlert(title: "Error while deleting chat", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func requestNotificationPermission() {
+        let options: UNAuthorizationOptions = [.alert, .sound, .badge]
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { success, error in
+            if let error = error {
+                print(error)
+            } else if success {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
             }
         }
     }
