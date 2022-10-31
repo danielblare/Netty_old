@@ -139,7 +139,7 @@ struct SignUpEmailPageView: View {
             Text(vm.alertMessage)
         })
         .navigationTitle("Enter your e-mail")
-        .background(Color.theme.background.onTapGesture {
+        .background(Color(uiColor: .systemBackground).onTapGesture {
             UIApplication.shared.endEditing()
         })
     }

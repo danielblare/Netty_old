@@ -12,65 +12,74 @@ struct DirectView: View {
     
     @StateObject private var vm: DirectViewModel
     
-    init(userRecordId: CKRecord.ID?) {
+    init(userRecordId: CKRecord.ID?, path: Binding<NavigationPath>) {
         _vm = .init(wrappedValue: DirectViewModel(userRecordId: userRecordId))
+        self._path = path
     }
     
     @State private var searchText: String = ""
+    @State private var showSheet: Bool = false
+    @Binding private var path: NavigationPath
     
     var body: some View {
-        GeometryReader { geo in
-            ZStack {
-                VStack {
-                    HStack {
-                        Text("Messages")
-                            .fontWeight(.semibold)
-                            .font(.title)
-                            .foregroundColor(.accentColor)
-                        
-                        Spacer(minLength: 0)
-                        
-                        NavigationLink {
-                            FindUserView(id: vm.userRecordId)
-                        } label: {
-                            Image(systemName: "square.and.pencil")
-                                .font(.title2)
+        NavigationView {
+            GeometryReader { geo in
+                ZStack {
+                    if vm.chatsArray.isEmpty && !vm.isLoading {
+                        noChatsView
+                    } else if !vm.chatsArray.isEmpty {
+                        List(searchResults) { chat in
+                            chatView(for: chat, with: geo)
+                                .swipeActions {
+                                    getSwipeActionsFor(chat)
+                                }
                         }
+                        
+                        .listStyle(.inset)
+                        .searchable(text: $searchText)
                     }
-                    .padding(.horizontal)
-                    
-                    ZStack {
-                        if vm.chatsArray.isEmpty && !vm.isLoading {
-                            noChatsView
-                        } else if !vm.chatsArray.isEmpty {
-                            List(searchResults) { chat in
-                                chatView(for: chat, with: geo)
-                                    .swipeActions {
-                                        getSwipeActionsFor(chat)
-                                    }
-                            }
-                            
-                            .listStyle(.inset)
-                            .searchable(text: $searchText)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .disabled(vm.isLoading)
-
                 }
-                
-                if vm.isLoading {
-                    ProgressView()
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .disabled(vm.isLoading)
             .refreshable {
                 Task {
                     await vm.sync()
                 }
             }
-            .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
-                Text(vm.alertMessage)
-            })
+            .toolbar { getToolbar() }
+        }
+        .overlay {
+            if vm.isLoading {
+                ProgressView()
+            }
+        }
+        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+            Text(vm.alertMessage)
+        })
+        .sheet(isPresented: $showSheet) {
+            FindUserView(id: vm.userRecordId, path: $path, showSheet: $showSheet)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .padding(.top)
+        }
+    }
+    
+    @ToolbarContentBuilder private func getToolbar() -> some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            Text("Messages")
+                .fontWeight(.semibold)
+                .font(.title)
+                .foregroundColor(.accentColor)
+        }
+        
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                showSheet.toggle()
+            } label: {
+                Image(systemName: "square.and.pencil")
+            }
+            
         }
     }
     
@@ -133,7 +142,7 @@ struct DirectView: View {
         }
         .foregroundColor(.secondary)
     }
-        
+    
     private var searchResults: [ChatModel] {
         if searchText.isEmpty {
             return vm.chatsArray
@@ -141,8 +150,6 @@ struct DirectView: View {
             return vm.chatsArray.filter { $0.userName.lowercased().contains(searchText.lowercased()) }
         }
     }
-    
-    
 }
 
 
@@ -150,7 +157,7 @@ struct DirectView: View {
 
 struct DirectView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectView(userRecordId: CKRecord.ID(recordName: "7C21B420-2449-22D0-1F26-387A189663EA"))
-        DirectView(userRecordId: CKRecord.ID(recordName: "7C21B420-2449-22D0-1F26-387A189663EA"))
+        DirectView(userRecordId: CKRecord.ID(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089"), path: .constant(.init()))
+        DirectView(userRecordId: CKRecord.ID(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089"), path: .constant(.init()))
     }
 }

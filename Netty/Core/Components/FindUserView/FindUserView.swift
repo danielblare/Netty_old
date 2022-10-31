@@ -30,90 +30,126 @@ struct FindUserView: View {
         case none
     }
     
-    init(id: CKRecord.ID?) {
+    @Binding private var path: NavigationPath
+    @Binding private var showSheet: Bool
+    
+    init(id: CKRecord.ID?, path: Binding<NavigationPath>, showSheet: Binding<Bool>) {
         _vm = .init(wrappedValue: FindUserViewModel(id: id))
+        self._path = path
+        self._showSheet = showSheet
     }
     
     var body: some View {
-        List {
-            if vm.showRecents && !vm.recentsArray.isEmpty {
-                Section {
-                    ForEach(vm.recentsArray) { userModel in
-                        NavigationLink {
-                            ChatView(for: userModel, ownId: vm.id)
-                        } label: {
-                            UserRow(model: userModel)
-                        }
-                    }
-                } header: {
-                    HStack {
-                        Text("Recents")
+        NavigationStack {
+            
+            List {
+                
+                if vm.showRecents && !vm.recentsArray.isEmpty {
+                    
+                    recentsSection
+                    
+                } else if vm.showFound {
+                    
+                    if vm.foundArray.isEmpty {
                         
-                        Spacer(minLength: 0)
+                        nothingFound
                         
-                        Button {
-                            showConfirmationDialog = true
-                        } label: {
-                            Text("Clear all")
-                                .font(.callout)
-                                .fontWeight(.semibold)
+                    } else {
+                        
+                        foundResultsSection
+                        
+                        if buttonText != .none {
+                            
+                            buttonView
+                            
                         }
-                    }
-                }
-            } else if vm.showFound {
-                if vm.foundArray.isEmpty {
-                    nothingFound
-                } else {
-                    ForEach(vm.foundArray.prefix(foundResultCount)) { userModel in
-                        NavigationLink {
-                            ChatView(for: userModel, ownId: vm.id)
-                        } label: {
-                            UserRow(model: userModel)
-                        }
-                    }
-                    if buttonText != .none {
-                        Button(buttonText.rawValue) {
-                            withAnimation {
-                                if buttonText == .more {
-                                    foundResultCount += 5
-                                } else {
-                                    foundResultCount = 7
-                                }
-                            }
-                        }
-                        .foregroundColor(.accentColor)
-                        .font(.callout)
                     }
                 }
             }
-        }
-        .confirmationDialog("Are you sure you clear all recents?", isPresented: $showConfirmationDialog, titleVisibility: .visible) {
-            Button("Clear") {
+            .confirmationDialog("Are you sure you clear all recents?", isPresented: $showConfirmationDialog, titleVisibility: .visible) {
+                Button("Clear") {
+                    Task {
+                        await vm.clearRecents()
+                    }
+                }
+            }
+            .overlay {
+                if vm.isLoading {
+                    ProgressView()
+                }
+            }
+            .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
+            .onReceive(vm.$searchText.debounce(for: 0.5, scheduler: RunLoop.main), perform: { _ in
                 Task {
-                    await vm.clearRecents()
+                    await vm.executeQuery()
+                }
+            })
+            .onReceive(vm.$searchText, perform: { _ in
+                vm.searchTextChanged()
+            })
+            .listStyle(.plain)
+            .navigationTitle("New message")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+                Text(vm.alertMessage)
+            })
+        }
+    }
+    
+    private var buttonView: some View {
+        Button(buttonText.rawValue) {
+            withAnimation {
+                if buttonText == .more {
+                    foundResultCount += 5
+                } else {
+                    foundResultCount = 7
                 }
             }
         }
-        .overlay {
-            if vm.isLoading {
-                ProgressView()
+        .foregroundColor(.accentColor)
+        .font(.callout)
+    }
+    
+    private var foundResultsSection: some View {
+        ForEach(vm.foundArray.prefix(foundResultCount)) { userModel in
+            Button {
+                showSheet = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    path.append(userModel)
+                }
+            } label: {
+                UserRow(model: userModel)
             }
         }
-        .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
-        .onReceive(vm.$searchText.debounce(for: 0.5, scheduler: RunLoop.main), perform: { _ in
-            Task {
-                await vm.executeQuery()
+    }
+    
+    private var recentsSection: some View {
+        Section {
+            ForEach(vm.recentsArray) { userModel in
+                Button {
+                    showSheet = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        path.append(userModel)
+                    }
+                } label: {
+                    UserRow(model: userModel)
+                }
             }
-        })
-        .onReceive(vm.$searchText, perform: { _ in
-            vm.searchTextChanged()
-        })
-        .listStyle(.plain)
-        .navigationTitle("New message")
-        .navigationBarTitleDisplayMode(.inline)
-        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
-            Text(vm.alertMessage)
-        })
+        } header: {
+            HStack {
+                Text("Recents")
+                
+                Spacer(minLength: 0)
+                
+                Button {
+                    showConfirmationDialog = true
+                } label: {
+                    Text("Clear all")
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                }
+            }
+        }
     }
     
     private var nothingFound: some View {
@@ -134,7 +170,7 @@ struct FindUserView: View {
 struct FindUserView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            FindUserView(id: .init(recordName: "7C21B420-2449-22D0-1F26-387A189663EA"))
+            FindUserView(id: .init(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089"), path: .constant(.init()), showSheet: .constant(true))
         }
     }
 }

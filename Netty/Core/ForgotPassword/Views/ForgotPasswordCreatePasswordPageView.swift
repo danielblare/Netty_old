@@ -91,7 +91,7 @@ struct ForgotPasswordCreatePasswordPageView: View {
             Text(vm.alertMessage)
         })
         .navigationTitle("Create new Password")
-        .background(Color.theme.background.onTapGesture {
+        .background(Color(uiColor: .systemBackground).onTapGesture {
             UIApplication.shared.endEditing()
         })
     }

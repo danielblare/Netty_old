@@ -90,7 +90,7 @@ struct CreatePasswordPageView: View {
             Text(vm.alertMessage)
         })
         .navigationTitle("Create a Password")
-        .background(Color.theme.background.onTapGesture {
+        .background(Color(uiColor: .systemBackground).onTapGesture {
             UIApplication.shared.endEditing()
         })
     }

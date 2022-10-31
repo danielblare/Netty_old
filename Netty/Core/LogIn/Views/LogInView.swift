@@ -116,9 +116,9 @@ struct LogInView: View {
                     
                 }
                 .navigationBarHidden(true)
-                .background(Color.theme.background.onTapGesture {
+                .background(Color(uiColor: .systemBackground).onTapGesture {
                     UIApplication.shared.endEditing()
-            })
+                })
                 .disabled(vm.isLoading)
                 
                 

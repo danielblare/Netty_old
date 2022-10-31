@@ -46,8 +46,8 @@ struct PersonalInfoPage: View {
             }
         }
         .navigationTitle("Personal Information")
-        .toolbar { getToolbar() }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar { getToolbar() }
         .confirmationDialog("Are you sure you want to save changes?", isPresented: $confirmationDialogIsPresented, titleVisibility: .visible) {
             Button("Save") {
                 Task {

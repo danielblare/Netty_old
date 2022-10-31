@@ -135,10 +135,10 @@ struct NettyApp: App {
     @State private var showLaunchView: Bool = true
     
     init() {
-        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor : UIColor(.theme.accent)]
+//        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor : UIColor(.theme.accent)]
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor : UIColor(.theme.accent)]
-        UITableView.appearance().backgroundColor = UIColor.clear
-        UINavigationBar.appearance().backgroundColor = UIColor(.theme.background)
+//        UITableView.appearance().backgroundColor = UIColor.clear
+//        UINavigationBar.appearance().backgroundColor = UIColor(.theme.background)
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(.theme.accent)
     }
     

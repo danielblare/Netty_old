@@ -81,7 +81,7 @@ struct NamePageView: View {
         }
         .navigationBarTitleDisplayMode(.large)
         .navigationTitle("Welcome to Netty!")
-        .background(Color.theme.background.onTapGesture {
+        .background(Color(uiColor: .systemBackground).onTapGesture {
             UIApplication.shared.endEditing()
         })
     }
