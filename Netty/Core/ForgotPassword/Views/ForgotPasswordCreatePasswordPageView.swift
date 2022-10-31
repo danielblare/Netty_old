@@ -9,84 +9,82 @@ import SwiftUI
 
 struct ForgotPasswordCreatePasswordPageView: View {
     
+    // View Model
     @ObservedObject private var vm: ForgotPasswordViewModel
     
     init(vm: ForgotPasswordViewModel) {
         self.vm = vm
     }
-    
-    private let text = "Passwords do not match"
-    
+        
+    // Focused field
+    @FocusState private var activeField: FocusedValue?
     enum FocusedValue {
         case pass, confPass
     }
     
-    @FocusState private var activeField: FocusedValue?
-    
-    
     var body: some View {
-        ZStack {
-            VStack() {
+        VStack() {
+            
+            Spacer(minLength: 0)
+            
+            // Fields
+            VStack(spacing: 10) {
                 
-                Spacer(minLength: 0)
+                SecureInputView("New password", text: $vm.passwordField) { activeField = .confPass }
+                    .focused($activeField, equals: .pass)
                 
-                // Fields
-                VStack(spacing: 10) {
-                    
-                    SecureInputView("New password", text: $vm.passwordField) { activeField = .confPass }
-                        .focused($activeField, equals: .pass)
-                    
-                    PasswordStrongnessView(message: $vm.passwordMessage)
-                    
-                    SecureInputView("Confirm new password", text: $vm.passwordConfirmField) { UIApplication.shared.endEditing() }
-                        .focused($activeField, equals: .confPass)
-                }
-                .padding(.horizontal)
+                PasswordStrengthView(message: $vm.passwordMessage)
                 
-                if vm.showDontMatchError {
-                    HStack {
-                        
-                        Spacer(minLength: 0)
-                        
-                        Text(text)
-                            .font(.footnote)
-                            .foregroundColor(.red)
-                            .padding(.horizontal, 10)
-                        
-                    }
-                    .padding(.horizontal)
-                }
-                
-                Spacer(minLength: 0)
-                
-                Spacer(minLength: 0)
-                
-                // Buttons
+                SecureInputView("Confirm new password", text: $vm.passwordConfirmField) { UIApplication.shared.endEditing() }
+                    .focused($activeField, equals: .confPass)
+            }
+            .padding(.horizontal)
+            
+            // Password error
+            if vm.showMatchingError {
                 HStack {
                     
                     Spacer(minLength: 0)
                     
-                    // Next button
-                    Button(action: {
-                        Task {
-                            await vm.changePassword()
-                        }
-                    }, label: {
-                        Text("Change password")
-                            .font(.title3)
-                    })
-                    .buttonStyle(.borderedProminent)
-                    .disabled(vm.passwordNextButtonDisabled)
-                    .padding()
+                    Text("Passwords do not match")
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 10)
+                    
                 }
+                .padding(.horizontal)
             }
             
-            if vm.changingPasswordIsLoading {
-                ProgressView()
+            Spacer(minLength: 0)
+            
+            Spacer(minLength: 0)
+            
+            // Buttons
+            HStack {
+                
+                Spacer(minLength: 0)
+                
+                // Next button
+                Button(action: {
+                    Task {
+                        await vm.changePassword()
+                    }
+                }, label: {
+                    Text("Change password")
+                        .font(.title3)
+                })
+                .buttonStyle(.borderedProminent)
+                .disabled(vm.passwordNextButtonDisabled)
+                .padding()
             }
         }
         .navigationBarBackButtonHidden(vm.changingPasswordIsLoading)
         .disabled(vm.changingPasswordIsLoading)
+        .overlay {
+            if vm.changingPasswordIsLoading {
+                ProgressView()
+            }
+        }
         .alert(vm.alertTitle, isPresented: $vm.showAlert, actions: {}, message: {
             Text(vm.alertMessage)
         })

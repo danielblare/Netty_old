@@ -12,8 +12,10 @@ import Combine
 
 class ForgotPasswordViewModel: ObservableObject {
     
+    // Shows alert on log in screen
     private let showAlertOnLogInScreen: (_ title: String, _ message: String) -> ()
     
+    // Path for navigation view
     @Binding var path: NavigationPath
     
     init(path: Binding<NavigationPath>, showAlertOnLogInScreen: @escaping (String, String) -> ()) {
@@ -21,13 +23,7 @@ class ForgotPasswordViewModel: ObservableObject {
         self.showAlertOnLogInScreen = showAlertOnLogInScreen
         addSubscribers()
     }
-            
-    enum EmailButtonText: String {
-        case send = "Send code"
-        case again = "Send again"
-        case verificated = ""
-    }
-    
+                
     // Email page
     private let emailSymbolsLimit: Int = 64
     @Published var emailTextField: String = "" {
@@ -48,7 +44,7 @@ class ForgotPasswordViewModel: ObservableObject {
     @Published var showTimer: Bool = false
     @Published var timeRemaining: String = ""
     
-    
+    // One time code
     @Published var codeTextField: String = "" {
         didSet {
             if codeTextField.containsSomethingExceptNumbers() && !oldValue.containsSomethingExceptNumbers() {
@@ -61,8 +57,8 @@ class ForgotPasswordViewModel: ObservableObject {
     }
     @Published var showCodeTextField: Bool = false
     @Published var codeCheckPassed: Bool = false
-    @Published var confirmButtonDisabeld: Bool = true
-    @Published var showSuccedStatusIcon: Bool = false
+    @Published var confirmButtonDisabled: Bool = true
+    @Published var showSucceedStatusIcon: Bool = false
     @Published var showFailStatusIcon: Bool = false
     
     
@@ -85,16 +81,21 @@ class ForgotPasswordViewModel: ObservableObject {
     @Published var passwordMessage: PasswordWarningMessage = .short
     @Published var passwordNextButtonDisabled: Bool = true
     @Published var changingPasswordIsLoading: Bool = false
-    @Published var showDontMatchError: Bool = false
+    @Published var showMatchingError: Bool = false
     
+    // Alert
     var alertTitle: String = ""
     @Published var showAlert: Bool = false
     var alertMessage: String = ""
-        
     
-    // Cancellables publishers
+    // Cancellable publishers
     private var cancellables = Set<AnyCancellable>()
+    private var cancellablesForTimer = Set<AnyCancellable>()
+
+    // Future date to set up time out after email sending
+    private var futureDate = Date()
     
+    /// Perform action if email button pressed
     func emailButtonPressed() async {
         
         savedEmail = emailTextField.lowercased()
@@ -119,7 +120,7 @@ class ForgotPasswordViewModel: ObservableObject {
                             self.emailButtonDisabled = true
                         }
                     }
-                case .verificated: break
+                case .verified: break
                 }
                 
                 do {
@@ -137,6 +138,7 @@ class ForgotPasswordViewModel: ObservableObject {
         
     }
     
+    /// Shows alert
     private func showAlert(title: String, message: String) {
         alertTitle = title
         alertMessage = message
@@ -145,10 +147,7 @@ class ForgotPasswordViewModel: ObservableObject {
         }
     }
     
-    private var futureDate = Date()
-    
-    private var cancellablesTimer = Set<AnyCancellable>()
-    
+    /// Starts timer for definite time
     private func startTimerFor(seconds: Int) {
         futureDate = Calendar.current.date(byAdding: .second, value: seconds + 1, to: Date()) ?? Date()
         let remaining = Calendar.current.dateComponents([.minute, .second], from: Date(), to: self.futureDate)
@@ -167,7 +166,7 @@ class ForgotPasswordViewModel: ObservableObject {
                 let second = remaining.second ?? 0
                 if second <= 0 && minute <= 0 {
                     self.showTimer = false
-                    self.cancellablesTimer.first?.cancel()
+                    self.cancellablesForTimer.first?.cancel()
                 } else {
                     if second >= 10 {
                         self.timeRemaining = "\(minute):\(second)"
@@ -176,11 +175,12 @@ class ForgotPasswordViewModel: ObservableObject {
                     }
                 }
             }
-            .store(in: &cancellablesTimer)
+            .store(in: &cancellablesForTimer)
         
         
     }
     
+    /// Sends email with verification code
     private func sendEmail() async throws {
         
         oneTimePasscode = String.generateOneTimeCode()
@@ -193,11 +193,12 @@ class ForgotPasswordViewModel: ObservableObject {
         let _ = try await EmailSendManager.instance.sendEmail(to: to, subject: subject, type: type, text: text)
     }
         
+    /// Performs actions if confirm button pressed
     func confirmButtonPressed() {
         withAnimation(.easeInOut(duration: 0.09)) {
             if codeTextField == oneTimePasscode {
                 showTimer = false
-                emailButtonText = .verificated
+                emailButtonText = .verified
                 emailTextField = savedEmail
                 emailTextFieldIsDisabled = true
                 withAnimation(.easeInOut.delay(0.5)) {
@@ -206,17 +207,18 @@ class ForgotPasswordViewModel: ObservableObject {
                     emailNextButtonDisabled = false
                 }
                 withAnimation(.easeInOut.delay(1)) {
-                    showSuccedStatusIcon = true
+                    showSucceedStatusIcon = true
                     HapticManager.instance.notification(of: .success)
                 }
             } else {
-                confirmButtonDisabeld = true
+                confirmButtonDisabled = true
                 showFailStatusIcon = true
                 HapticManager.instance.notification(of: .error)
             }
         }
     }
     
+    /// Updates password
     func changePassword() async {
         await MainActor.run(body: {
             changingPasswordIsLoading = true
@@ -232,9 +234,7 @@ class ForgotPasswordViewModel: ObservableObject {
                     changingPasswordIsLoading = false
                     switch result {
                     case .success(_):
-                        withAnimation {
-                            path = NavigationPath()
-                        }
+                        path = NavigationPath()
                         showAlertOnLogInScreen("Password reset", "Your password has been successfully changed")
                     case .failure(let error):
                         showAlert(title: "Error while updating password", message: error.localizedDescription)
@@ -250,7 +250,7 @@ class ForgotPasswordViewModel: ObservableObject {
 
     }
             
-    /// Adding subscribers depending on current registration level
+    /// Subscribes on publishers
     private func addSubscribers() {
         let sharedEmailPublisher = $emailTextField
             .share()
@@ -268,7 +268,7 @@ class ForgotPasswordViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Disables next button immidiatly with any field change
+        // Disables next button immediately with any field change
         sharedEmailPublisher
             .removeDuplicates()
             .filter({ _ in !self.emailButtonDisabled })
@@ -281,7 +281,7 @@ class ForgotPasswordViewModel: ObservableObject {
             .removeDuplicates()
             .map({ $0.count == 6 })
             .sink { [weak self] receivedValue in
-                self?.confirmButtonDisabeld = !receivedValue
+                self?.confirmButtonDisabled = !receivedValue
             }
             .store(in: &cancellables)
         
@@ -301,7 +301,7 @@ class ForgotPasswordViewModel: ObservableObject {
             .debounce(for: 2.0, scheduler: DispatchQueue.main)
             .filter({ $0 != $1 })
             .sink { [weak self] _, _ in
-                self?.showDontMatchError = true
+                self?.showMatchingError = true
             }
             .store(in: &cancellables)
         
@@ -319,15 +319,15 @@ class ForgotPasswordViewModel: ObservableObject {
             .store(in: &cancellables)
         
         sharedPasswordPublisher
-            .filter( { _, _ in !self.passwordNextButtonDisabled || self.showDontMatchError })
+            .filter( { _, _ in !self.passwordNextButtonDisabled || self.showMatchingError })
             .sink { [weak self] _, _ in
-                self?.showDontMatchError = false
+                self?.showMatchingError = false
                 self?.passwordNextButtonDisabled = true
             }
             .store(in: &cancellables)
     }
     
-    /// Returnes bool and PasswordWarningMessage where bool is true if password passed check and equals confirmation field
+    /// Returns bool and PasswordWarningMessage where bool is true if password passed check and equals confirmation field
     private func mapPasswords(_ password: String, _ confirmation: String) -> (Bool, PasswordWarningMessage) {
         if password.count < 8 { return (false, .short) } else {
             if password.containsUnacceptableSymbols() { return (false, .unacceptableSymbols) } else {
@@ -372,5 +372,4 @@ class ForgotPasswordViewModel: ObservableObject {
             }
         }
     }
-    
 }

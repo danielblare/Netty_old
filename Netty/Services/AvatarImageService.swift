@@ -18,9 +18,9 @@ actor AvatarImageService {
     
     func fetchAvatarForUser(with id: CKRecord.ID) async -> Result<UIImage?, Error> {
         await withCheckedContinuation { continuation in
-            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedrecord, error in
-                if let returnedrecord = returnedrecord {
-                    if let imageAsset = returnedrecord[.avatarRecordField] as? CKAsset,
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
+                if let returnedRecord = returnedRecord {
+                    if let imageAsset = returnedRecord[.avatarRecordField] as? CKAsset,
                        let imageURL = imageAsset.fileURL,
                        let data = try? Data(contentsOf: imageURL),
                        let image = UIImage(data: data) {

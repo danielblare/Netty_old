@@ -8,28 +8,29 @@
 import Foundation
 import CloudKit
 
-struct ChatMessage: Identifiable {
-    let id = UUID()
-    let message: String
-    let isCurrentUser: Bool
-   
-}
-
 final class ChatViewModel: ObservableObject {
     
+    // Message text field
     @Published var messageTextField: String = ""
-    @Published var chatMessages: [ChatMessage]? = nil
+    
+    // Messages array
+    @Published var chatMessages: [ChatMessageModel]? = nil
+    
+    // Shows loading view if true
     @Published var isLoading: Bool = true
     
+    // Current user's ID
     private let ownId: CKRecord.ID?
-    let userModel: FindUserModel
     
+    // Pal's model
+    let userModel: UserModel
+    
+    // Alert
     var alertTitle: String = ""
     @Published var showAlert: Bool = false
     var alertMessage: String = ""
-        
     
-    init(user: FindUserModel, ownId: CKRecord.ID?) {
+    init(user: UserModel, ownId: CKRecord.ID?) {
         userModel = user
         self.ownId = ownId
     }
@@ -43,6 +44,7 @@ final class ChatViewModel: ObservableObject {
     
     
     
+    /// Shows alert
     private func showAlert(title: String, message: String) {
         alertTitle = title
         alertMessage = message

@@ -9,19 +9,6 @@ import Foundation
 import SwiftUI
 import CloudKit
 
-enum LogInError: Error {
-    case noUserFound
-}
-
-extension LogInError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .noUserFound:
-            return NSLocalizedString("User with this nickname or e-mail does not exist", comment: "Used wasn't found")
-        }
-    }
-}
-
 actor LogInAndOutManager {
     
     private init() {}

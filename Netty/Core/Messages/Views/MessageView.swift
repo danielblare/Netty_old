@@ -9,11 +9,16 @@ import SwiftUI
 
 struct MessageView: View {
     
+    // Message text
     let message: String
+    
+    // True if message belongs to current user
     let isCurrentUser: Bool
+    
+    // Geometry proxy
     let proxy: GeometryProxy
     
-    init(_ chatMessage: ChatMessage, geo: GeometryProxy) {
+    init(_ chatMessage: ChatMessageModel, geo: GeometryProxy) {
         message = chatMessage.message
         isCurrentUser = chatMessage.isCurrentUser
         proxy = geo
@@ -21,7 +26,7 @@ struct MessageView: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            if isCurrentUser {
+            if isCurrentUser { // Pushes message to the right is current user sent this message
                 Spacer(minLength: 0)
             }
             
@@ -33,7 +38,7 @@ struct MessageView: View {
                 .frame(maxWidth: proxy.size.width * 0.78, alignment: isCurrentUser ? .trailing : .leading)
 
             
-            if !isCurrentUser {
+            if !isCurrentUser { // Pushes message to the left is current user didn't send this message
                 Spacer(minLength: 0)
             }
         }
@@ -43,7 +48,7 @@ struct MessageView: View {
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader { geo in
-            MessageView(ChatMessage(message: "Hello", isCurrentUser: false), geo: geo)
+            MessageView(ChatMessageModel(message: "Hello", isCurrentUser: false), geo: geo)
             .previewLayout(.sizeThatFits)
         }
     }

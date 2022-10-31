@@ -9,9 +9,10 @@ import SwiftUI
 
 struct LoadingAnimation: View {
     
+    // Timer for animation
     private let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
     
-    
+    // Just Counter variable
     @State private var count: Int = 0
     
     var body: some View {

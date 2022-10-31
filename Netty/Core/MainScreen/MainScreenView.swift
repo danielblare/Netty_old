@@ -10,9 +10,13 @@ import CloudKit
 
 struct MainScreenView: View {
     
+    // Current user's recordID
     let userRecordId: CKRecord.ID?
+    
+    // Log out func passed from LogInAndOutViewModel
     let logOutFunc: () async -> ()
     
+    // Navigation path
     @State private var path: NavigationPath = NavigationPath()
     
     var body: some View {
@@ -34,7 +38,7 @@ struct MainScreenView: View {
                     }
                     .tag(2)
             }
-            .navigationDestination(for: FindUserModel.self) { userModel in
+            .navigationDestination(for: UserModel.self) { userModel in
                 ChatView(for: userModel, ownId: userRecordId)
             }
             .toolbar(.hidden)

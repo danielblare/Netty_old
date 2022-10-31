@@ -8,32 +8,16 @@
 import Foundation
 import Combine
 
-enum EmailSendError: Error {
-    case serialization
-    case url
-}
-
-extension EmailSendError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .serialization:
-            return NSLocalizedString("Error while serialization data", comment: "Error while sending e-mail")
-        case .url:
-            return NSLocalizedString("Error while getting URL", comment: "URL getting error")
-        }
-    }
-}
-
-
 actor EmailSendManager {
     
     static let instance = EmailSendManager()
     private init() {}
     
-
+    /// Sends e-mail to e-mail address from stated e-mail address with stated subject and text
     func sendEmail(to: String, from: String = "no-reply@nettysupport.com", subject: String, type: String = "text/plain", text: String) async throws -> Data {
-        guard let url = URL(string: "https://rapidprod-sendgrid-v1.p.rapidapi.com/mail/send") else { throw EmailSendError.url }
+        guard let url = URL(string: "https://rapidprod-sendgrid-v1.p.rapidapi.com/mail/send") else { throw EmailSendingError.url }
         
+        // E-mail forming
         let headers = [
             "content-type": "application/json",
             "X-RapidAPI-Key": "f651d68838msh1df01afcec3c473p1cd121jsn33db27102e12",
@@ -55,7 +39,7 @@ actor EmailSendManager {
             ]
         ] as [String : Any]
         
-        guard let postData = try? JSONSerialization.data(withJSONObject: parameters, options: []) else { throw EmailSendError.serialization }
+        guard let postData = try? JSONSerialization.data(withJSONObject: parameters, options: []) else { throw EmailSendingError.serialization }
         
         var request: URLRequest = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10)
         request.httpMethod = "POST"

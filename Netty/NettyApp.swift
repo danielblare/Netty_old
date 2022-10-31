@@ -9,23 +9,21 @@ import SwiftUI
 import Combine
 import CloudKit
 
-enum WarningMessage: String {
-    case usernameIsShort = "Username less than 3 symbols"
-    case passwordIsShort = "Password less than 8 symbols"
-    case none = ""
-}
-
 class LogInAndOutViewModel: ObservableObject {
     
+    // Current user's recordID
     @Published var userRecordId: CKRecord.ID?
     
-    
+    // Log in and out manager
     private let manager = LogInAndOutManager.instance
     
+    // Error message
     @Published var warningMessage: WarningMessage = .none
     
+    // Shows loading view if true
     @Published var isLoading: Bool = false
     
+    // Alert
     @Published var showAlert: Bool = false
     var alertTitle: String = ""
     var alertMessage: String = ""
@@ -48,6 +46,7 @@ class LogInAndOutViewModel: ObservableObject {
         getiCloudStatus()
     }
     
+    /// Logs user in
     func logIn(username: String, password: String) async {
         if username.count < 3 {
             await MainActor.run(body: {
@@ -83,6 +82,7 @@ class LogInAndOutViewModel: ObservableObject {
         }
     }
     
+    /// Shows alert
     func showAlert(title: String, message: String) {
         alertTitle = title
         alertMessage = message
@@ -91,6 +91,7 @@ class LogInAndOutViewModel: ObservableObject {
         }
     }
     
+    /// Logs user out
     func logOut() async {
         if let id = userRecordId {
             switch await manager.logOut(for: id) {
@@ -106,6 +107,7 @@ class LogInAndOutViewModel: ObservableObject {
         }
     }
     
+    /// Gets user's iCloud status
     private func getiCloudStatus() {
         CKContainer.default().accountStatus {  returnedStatus, returnedError in
             DispatchQueue.main.async {

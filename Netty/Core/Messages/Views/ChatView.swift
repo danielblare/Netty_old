@@ -10,21 +10,28 @@ import CloudKit
 
 
 struct ChatView: View {
+    
+    // Presentation mode to dismiss view if error occurred
     @Environment(\.presentationMode) var presentationMode
+    
+    // View Model
     @StateObject private var vm: ChatViewModel
     
-    init(for user: FindUserModel, ownId: CKRecord.ID?) {
+    init(for user: UserModel, ownId: CKRecord.ID?) {
         _vm = .init(wrappedValue: ChatViewModel(user: user, ownId: ownId))
     }
     
     var body: some View {
         GeometryReader { geo in
+            
             VStack(spacing: 0) {
                 
                 ScrollViewReader { proxy in
                     
+                    // Chat messages
                     ScrollView(.vertical) {
                         VStack(spacing: 2) {
+                            
                             if let chatMessages = vm.chatMessages {
                                 ForEach(chatMessages) { chatMessage in
                                     MessageView(chatMessage, geo: geo)
@@ -35,10 +42,10 @@ struct ChatView: View {
                             }
                         }
                     }
-                    .onAppear {
+                    .onAppear { // Keeps scroll view on the last message
                         goDown(proxy)
                     }
-                    .onChange(of: vm.chatMessages?.count) { _ in
+                    .onChange(of: vm.chatMessages?.count) { _ in // Keeps scroll view on the last message
                         goDown(proxy, animated: true)
                         
                     }
@@ -47,7 +54,8 @@ struct ChatView: View {
                         UIApplication.shared.endEditing()
                     }
                     
-                    getTextField(proxy)
+                    // Message text field
+                    getMessageTextField(proxy)
                 }
             }
             .navigationTitle(vm.userModel.nickname)
@@ -68,7 +76,8 @@ struct ChatView: View {
         }
     }
     
-    private func getTextField(_ proxy: ScrollViewProxy) -> some View {
+    // New message text field with send button
+    private func getMessageTextField(_ proxy: ScrollViewProxy) -> some View {
         HStack(alignment: .bottom) {
             TextField("Message", text: $vm.messageTextField, axis: .vertical)
                 .padding(.vertical, 6)
@@ -98,6 +107,7 @@ struct ChatView: View {
         .background(.ultraThinMaterial)
     }
     
+    // Scrolls messages to last one
     private func goDown(_ proxy: ScrollViewProxy, animated: Bool = false) {
         withAnimation(animated ? .default : .none) {
             proxy.scrollTo(vm.chatMessages?.last?.id)
@@ -118,7 +128,7 @@ struct ChatView: View {
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            ChatView(for: FindUserModel(id: .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736"), firstName: "Anastasi", lastName: "Zavrak", nickname: "anastasi.a"), ownId: .init(recordName: "7C21B420-2449-22D0-1F26-387A189663EA"))
+            ChatView(for: UserModel(id: .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736"), firstName: "Anastasi", lastName: "Zavrak", nickname: "anastasi.a"), ownId: .init(recordName: "7C21B420-2449-22D0-1F26-387A189663EA"))
         }
     }
 }

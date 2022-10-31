@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB10BA4C29102DD900B57CF5 /* ChatMessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB10BA4B29102DD900B57CF5 /* ChatMessageModel.swift */; };
+		BB10BA4F29102E2F00B57CF5 /* Enums+structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB10BA4E29102E2F00B57CF5 /* Enums+structs.swift */; };
 		BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB19A676288967D50042AA65 /* CloudKitManager.swift */; };
 		BB1B8791290F211600F1030C /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1B8790290F211600F1030C /* MessageView.swift */; };
 		BB34BAC728848E3100636BE5 /* SecureInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC628848E3100636BE5 /* SecureInputView.swift */; };
@@ -40,7 +42,7 @@
 		BBBD05A92884556B00F18140 /* SignUpEmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A82884556B00F18140 /* SignUpEmailPageView.swift */; };
 		BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05AA288455FE00F18140 /* NicknamePageView.swift */; };
 		BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05AC2884563800F18140 /* CreatePasswordPageView.swift */; };
-		BBBD05B1288459B200F18140 /* PasswordStrongnessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05B0288459B200F18140 /* PasswordStrongnessView.swift */; };
+		BBBD05B1288459B200F18140 /* PasswordStrengthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05B0288459B200F18140 /* PasswordStrengthView.swift */; };
 		BBC36EE228D0DD2E008D983B /* ForgotPasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC36EE128D0DD2E008D983B /* ForgotPasswordViewModel.swift */; };
 		BBC36EE428D0E810008D983B /* ForgotPasswordEmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC36EE328D0E810008D983B /* ForgotPasswordEmailPageView.swift */; };
 		BBC36EE628D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC36EE528D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift */; };
@@ -50,19 +52,20 @@
 		BBE36D1928D346A200AC1DF9 /* UIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE36D1828D346A200AC1DF9 /* UIScreen.swift */; };
 		BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72A912882CE0600CBDEAD /* NettyApp.swift */; };
 		BBE72A962882CE0800CBDEAD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BBE72A952882CE0800CBDEAD /* Assets.xcassets */; };
-		BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AAF2882DA3800CBDEAD /* UserModel.swift */; };
 		BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */; };
 		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
 		BBE9E48E2883626900775325 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9E48D2883626900775325 /* HapticManager.swift */; };
 		BBF0375928E74C16006F89A1 /* FindUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375828E74C16006F89A1 /* FindUserViewModel.swift */; };
 		BBF0375B28E74C39006F89A1 /* FindUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375A28E74C39006F89A1 /* FindUserView.swift */; };
-		BBF0375D28E74F5E006F89A1 /* FindUserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375C28E74F5E006F89A1 /* FindUserModel.swift */; };
+		BBF0375D28E74F5E006F89A1 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375C28E74F5E006F89A1 /* UserModel.swift */; };
 		BBF0375F28E75131006F89A1 /* FindUserModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375E28E75131006F89A1 /* FindUserModelService.swift */; };
 		BBF0376128E75E6B006F89A1 /* UserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0376028E75E6B006F89A1 /* UserRow.swift */; };
 		BBF131CF288745880043A81E /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF131CE288745880043A81E /* LogInView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BB10BA4B29102DD900B57CF5 /* ChatMessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageModel.swift; sourceTree = "<group>"; };
+		BB10BA4E29102E2F00B57CF5 /* Enums+structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Enums+structs.swift"; sourceTree = "<group>"; };
 		BB19A676288967D50042AA65 /* CloudKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitManager.swift; sourceTree = "<group>"; };
 		BB1B8790290F211600F1030C /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		BB34BAC328848B1A00636BE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -98,7 +101,7 @@
 		BBBD05A82884556B00F18140 /* SignUpEmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpEmailPageView.swift; sourceTree = "<group>"; };
 		BBBD05AA288455FE00F18140 /* NicknamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknamePageView.swift; sourceTree = "<group>"; };
 		BBBD05AC2884563800F18140 /* CreatePasswordPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePasswordPageView.swift; sourceTree = "<group>"; };
-		BBBD05B0288459B200F18140 /* PasswordStrongnessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordStrongnessView.swift; sourceTree = "<group>"; };
+		BBBD05B0288459B200F18140 /* PasswordStrengthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordStrengthView.swift; sourceTree = "<group>"; };
 		BBC36EE128D0DD2E008D983B /* ForgotPasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewModel.swift; sourceTree = "<group>"; };
 		BBC36EE328D0E810008D983B /* ForgotPasswordEmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordEmailPageView.swift; sourceTree = "<group>"; };
 		BBC36EE528D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordCreatePasswordPageView.swift; sourceTree = "<group>"; };
@@ -109,13 +112,12 @@
 		BBE72A8E2882CE0600CBDEAD /* Netty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Netty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
 		BBE72A952882CE0800CBDEAD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		BBE72AAF2882DA3800CBDEAD /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		BBE9E48D2883626900775325 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		BBF0375828E74C16006F89A1 /* FindUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserViewModel.swift; sourceTree = "<group>"; };
 		BBF0375A28E74C39006F89A1 /* FindUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserView.swift; sourceTree = "<group>"; };
-		BBF0375C28E74F5E006F89A1 /* FindUserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserModel.swift; sourceTree = "<group>"; };
+		BBF0375C28E74F5E006F89A1 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		BBF0375E28E75131006F89A1 /* FindUserModelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserModelService.swift; sourceTree = "<group>"; };
 		BBF0376028E75E6B006F89A1 /* UserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRow.swift; sourceTree = "<group>"; };
 		BBF131CE288745880043A81E /* LogInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
@@ -132,6 +134,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BB10BA4D29102E1A00B57CF5 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				BB10BA4E29102E2F00B57CF5 /* Enums+structs.swift */,
+			);
+			path = Other;
+			sourceTree = "<group>";
+		};
 		BB4AFAAC289155D3003407FB /* MainScreen */ = {
 			isa = PBXGroup;
 			children = (
@@ -207,7 +217,7 @@
 		BB7346392892C00400E07487 /* PasswordStrongness */ = {
 			isa = PBXGroup;
 			children = (
-				BBBD05B0288459B200F18140 /* PasswordStrongnessView.swift */,
+				BBBD05B0288459B200F18140 /* PasswordStrengthView.swift */,
 			);
 			path = PasswordStrongness;
 			sourceTree = "<group>";
@@ -328,6 +338,7 @@
 			children = (
 				BB34BAC328848B1A00636BE5 /* Info.plist */,
 				BBE72A912882CE0600CBDEAD /* NettyApp.swift */,
+				BB10BA4D29102E1A00B57CF5 /* Other */,
 				BBE72A9F2882CE3E00CBDEAD /* Utilities */,
 				BBE72AA02882CE5100CBDEAD /* Extensions */,
 				BBE72AA12882CE7100CBDEAD /* Services */,
@@ -376,9 +387,9 @@
 		BBE72AA22882CE8C00CBDEAD /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				BBE72AAF2882DA3800CBDEAD /* UserModel.swift */,
 				BBBBF0AF28D202B500FF7C65 /* ChatModel.swift */,
-				BBF0375C28E74F5E006F89A1 /* FindUserModel.swift */,
+				BBF0375C28E74F5E006F89A1 /* UserModel.swift */,
+				BB10BA4B29102DD900B57CF5 /* ChatMessageModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -539,7 +550,7 @@
 				BB81459028CE09FF00B35A5D /* UserInfoService.swift in Sources */,
 				BB34BAC728848E3100636BE5 /* SecureInputView.swift in Sources */,
 				BBA71B952883024A0089D613 /* String.swift in Sources */,
-				BBBD05B1288459B200F18140 /* PasswordStrongnessView.swift in Sources */,
+				BBBD05B1288459B200F18140 /* PasswordStrengthView.swift in Sources */,
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
@@ -563,10 +574,10 @@
 				BBF0375928E74C16006F89A1 /* FindUserViewModel.swift in Sources */,
 				BBCD2B4828D2646A00C7E32A /* ProfileImageViewModel.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
-				BBE72AB02882DA3800CBDEAD /* UserModel.swift in Sources */,
 				BB81459228CE0D1300B35A5D /* LoadingAnimation.swift in Sources */,
 				BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */,
 				BB7346372892BBFA00E07487 /* ProfileViewModel.swift in Sources */,
+				BB10BA4C29102DD900B57CF5 /* ChatMessageModel.swift in Sources */,
 				BBF0376128E75E6B006F89A1 /* UserRow.swift in Sources */,
 				BB9067FD2888137400962B21 /* HomeView.swift in Sources */,
 				BB6F2D4528CF549000B901BE /* ImagePicker.swift in Sources */,
@@ -577,7 +588,7 @@
 				BB3CAA88290EE28B00180E9B /* ChatViewModel.swift in Sources */,
 				BB1B8791290F211600F1030C /* MessageView.swift in Sources */,
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,
-				BBF0375D28E74F5E006F89A1 /* FindUserModel.swift in Sources */,
+				BBF0375D28E74F5E006F89A1 /* UserModel.swift in Sources */,
 				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,
 				BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */,
 				BBBD05A92884556B00F18140 /* SignUpEmailPageView.swift in Sources */,
@@ -587,6 +598,7 @@
 				BBC36EE428D0E810008D983B /* ForgotPasswordEmailPageView.swift in Sources */,
 				BB8F9A4A28F2F8DC009101FB /* PresonalInfoPage.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
+				BB10BA4F29102E2F00B57CF5 /* Enums+structs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

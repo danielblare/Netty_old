@@ -10,13 +10,14 @@ import Combine
 
 struct SignUpEmailPageView: View {
     
+    // View Model
     @ObservedObject private var vm: SignUpViewModel
     
+    // Focused field
+    @FocusState private var activeField: FocusedValue?
     enum FocusedValue {
         case email, code
     }
-    
-    @FocusState private var activeField: FocusedValue?
     
     init(vm: SignUpViewModel) {
         self.vm = vm
@@ -37,7 +38,7 @@ struct SignUpEmailPageView: View {
                         .autocorrectionDisabled(true)
                         .focused($activeField, equals: .email)
                         .overlay(alignment: .trailing) {
-                            if vm.showSuccedStatusIcon {
+                            if vm.showSucceedStatusIcon {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
                             }
@@ -77,7 +78,7 @@ struct SignUpEmailPageView: View {
                 
                 
                 if vm.showCodeTextField {
-                    TextField("Confirmation code", text: $vm.codeTextField) { !vm.confirmButtonDisabeld ? vm.confirmButtonPressed() : UIApplication.shared.endEditing() }
+                    TextField("Confirmation code", text: $vm.codeTextField) { !vm.confirmButtonDisabled ? vm.confirmButtonPressed() : UIApplication.shared.endEditing() }
                         .keyboardType(.numberPad)
                         .textContentType(.oneTimeCode)
                         .focused($activeField, equals: .code)
@@ -128,7 +129,7 @@ struct SignUpEmailPageView: View {
                             .padding(.horizontal, 5)
                             .font(.title3)
                     }
-                    .disabled(vm.confirmButtonDisabeld)
+                    .disabled(vm.confirmButtonDisabled)
                     .buttonStyle(.borderedProminent)
                     .padding()
                 }

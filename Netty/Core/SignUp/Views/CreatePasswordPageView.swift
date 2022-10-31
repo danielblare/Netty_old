@@ -9,19 +9,18 @@ import SwiftUI
 
 struct CreatePasswordPageView: View {
     
+    // View Model
     @ObservedObject private var vm: SignUpViewModel
-    private let text = "Passwords do not match"
     
+    // Focused field
+    @FocusState private var activeField: FocusedValue?
     enum FocusedValue {
         case pass, confPass
     }
     
-    @FocusState private var activeField: FocusedValue?
-    
     init(vm: SignUpViewModel) {
         self.vm = vm
     }
-    
     
     var body: some View {
         ZStack {
@@ -35,19 +34,19 @@ struct CreatePasswordPageView: View {
                     SecureInputView("Password", text: $vm.passwordField) { activeField = .confPass }
                         .focused($activeField, equals: .pass)
                     
-                    PasswordStrongnessView(message: $vm.passwordMessage)
+                    PasswordStrengthView(message: $vm.passwordMessage)
                     
                     SecureInputView("Confirm password", text: $vm.passwordConfirmField) { UIApplication.shared.endEditing() }
                         .focused($activeField, equals: .confPass)
                 }
                 .padding(.horizontal)
                 
-                if vm.showDontMatchError {
+                if vm.showMatchingError {
                     HStack {
                         
                         Spacer(minLength: 0)
                         
-                        Text(text)
+                        Text("Passwords do not match")
                             .font(.footnote)
                             .foregroundColor(.red)
                             .padding(.horizontal, 10)

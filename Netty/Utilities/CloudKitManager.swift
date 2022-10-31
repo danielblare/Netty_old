@@ -16,6 +16,14 @@ actor CloudKitManager {
     
     static let instance = CloudKitManager()
         
+    /// Checks if given user exists in `inRecordType` of public database `withField` which equals to `equalTo`.
+    ///
+    /// - Parameters:
+    ///     - inRecordType: Record type where search will be completed.
+    ///     - withField: User's field.
+    ///     - equalTo: Value of stated field.
+    ///
+    /// - Returns: Result of bool with possible error.
     func doesRecordExistInPublicDatabase(inRecordType: String, withField: String, equalTo: String) async -> Result<Bool, Error> {
         await withCheckedContinuation { continuation in
             let predicate = NSPredicate(format: "\(withField) == %@", equalTo.lowercased())
@@ -31,6 +39,12 @@ actor CloudKitManager {
         }
     }
 
+    /// Saves `record` to public database.
+    ///
+    /// - Parameters:
+    ///     - record: Record that will be saved.
+    ///
+    /// - Returns: Result of returned record with possible error.
     func saveRecordToPublicDatabase(_ record: CKRecord) async -> Result<CKRecord, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.save(record) { returnedRecord, error in
@@ -44,6 +58,14 @@ actor CloudKitManager {
         }
     }
     
+    /// Returns id of user `withField` which equals to `equalTo` stored in `inRecordType` of public database.
+    ///
+    /// - Parameters:
+    ///     - withField: User's field.
+    ///     - inRecordType: Record type where search will be completed.
+    ///     - equalTo: Value of stated field.
+    ///
+    /// - Returns: Result of possible returned record with possible error.
     func recordIdOfUser(withField: String, inRecordType: String, equalTo: String) async -> Result<CKRecord.ID?, Error> {
         await withCheckedContinuation { continuation in
             let predicate = NSPredicate(format: "\(withField) == %@", equalTo.lowercased())
@@ -59,6 +81,14 @@ actor CloudKitManager {
         }
     }
     
+    /// Updates `field` with `newData` for user with `recordId`
+    ///
+    /// - Parameters:
+    ///     - recordId: User's recordId
+    ///     - field: User's field.
+    ///     - newData: New data.
+    ///
+    /// - Returns: Result of returned record with possible error.
     func updateFieldForUserWith<T:Any>(recordId: CKRecord.ID, field: String, newData: T) async -> Result<CKRecord, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: recordId) { returnedRecord, error in

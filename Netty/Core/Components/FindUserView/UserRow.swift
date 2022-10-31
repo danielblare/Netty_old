@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserRow: View {
     
-    let model: FindUserModel
+    let model: UserModel
     
     var body: some View {
             HStack {

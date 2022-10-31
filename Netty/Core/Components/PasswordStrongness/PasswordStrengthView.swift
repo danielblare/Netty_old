@@ -1,5 +1,5 @@
 //
-//  PasswordStrongnessView.swift
+//  PasswordStrengthView.swift
 //  Netty
 //
 //  Created by Danny on 17/07/2022.
@@ -7,18 +7,9 @@
 
 import SwiftUI
 
-enum PasswordWarningMessage: String {
-    case short = "Enter at least 8 symbols"
-    case unacceptableSymbols = "Password contains unacceptable symbols"
-    case numbersAndLetters = "Password should contain letters and numbers"
-    case weak = "Weak"
-    case medium = "Medium"
-    case strong = "Strong"
-    case veryStrong = "Very strong"
-}
-
-struct PasswordStrongnessView: View {
+struct PasswordStrengthView: View {
     
+    // Password error message
     @Binding private var message: PasswordWarningMessage
     private let weakColor: Color = .red
     private let mediumColor: Color = .orange
@@ -93,7 +84,7 @@ struct PasswordStrongnessView_Previews: PreviewProvider {
     @State private static var message: PasswordWarningMessage = .veryStrong
     
     static var previews: some View {
-        PasswordStrongnessView(message: $message)
+        PasswordStrengthView(message: $message)
             .padding()
             .previewLayout(.sizeThatFits)
     }

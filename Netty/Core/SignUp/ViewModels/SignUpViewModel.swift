@@ -10,14 +10,6 @@ import SwiftUI
 import Combine
 import CloudKit
 
-struct Limits {
-    static let nameAndLastNameSymbolsLimit: Int = 35
-    static let emailSymbolsLimit: Int = 64
-    static let nicknameSymbolsLimit: Int = 20
-    static let passwordSymbolsLimit: Int = 23
-
-}
-
 class SignUpViewModel: ObservableObject {
     
     init(userRecordId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
@@ -33,24 +25,12 @@ class SignUpViewModel: ObservableObject {
         addSubscribers()
     }
     
+    // Path for log in page navigation view
     @Binding var path: NavigationPath
-    @Binding var userRecordId: CKRecord.ID?
-        
-    enum EmailButtonText: String {
-        case send = "Send code"
-        case again = "Send again"
-        case verificated = ""
-    }
     
-
-    /// Error connected with nickname entering
-    enum NicknameError: String {
-        case nameIsUsed = "Nickname is already used"
-        case length = "Enter 3 or more symbols"
-        case space = "Nickname contains unacceptable characters"
-        case none = ""
-    }
-
+    // Current user record id
+    @Binding var userRecordId: CKRecord.ID?
+            
     // Name page
     @Published var firstNameTextField: String = "" {
         didSet {
@@ -89,7 +69,7 @@ class SignUpViewModel: ObservableObject {
     @Published var showTimer: Bool = false
     @Published var timeRemaining: String = ""
     
-    
+    // One time code
     @Published var codeTextField: String = "" {
         didSet {
             if codeTextField.containsSomethingExceptNumbers() && !oldValue.containsSomethingExceptNumbers() {
@@ -102,10 +82,9 @@ class SignUpViewModel: ObservableObject {
     }
     @Published var showCodeTextField: Bool = false
     @Published var codeCheckPassed: Bool = false
-    @Published var confirmButtonDisabeld: Bool = true
-    @Published var showSuccedStatusIcon: Bool = false
+    @Published var confirmButtonDisabled: Bool = true
+    @Published var showSucceedStatusIcon: Bool = false
     @Published var showFailStatusIcon: Bool = false
-    
     
     // Nickname page
     @Published var nicknameTextField: String = "" {
@@ -139,16 +118,21 @@ class SignUpViewModel: ObservableObject {
     @Published var passwordMessage: PasswordWarningMessage = .short
     @Published var passwordNextButtonDisabled: Bool = true
     @Published var creatingAccountIsLoading: Bool = false
-    @Published var showDontMatchError: Bool = false
+    @Published var showMatchingError: Bool = false
     
+    // Future date for send email time out
+    private var futureDate = Date()
+    
+    // Alert
     var alertTitle: String = ""
     @Published var showAlert: Bool = false
     var alertMessage: String = ""
-        
     
-    // Cancellables publishers
+    // Cancellable publishers
     private var cancellables = Set<AnyCancellable>()
+    private var cancellablesForTimer = Set<AnyCancellable>()
     
+    /// Perform action if send email button pressed
     func emailButtonPressed() async {
         
         savedEmail = emailTextField.lowercased()
@@ -173,7 +157,7 @@ class SignUpViewModel: ObservableObject {
                             self.emailButtonDisabled = true
                         }
                     }
-                case .verificated: break
+                case .verified: break
                 }
                 
                 do {
@@ -191,6 +175,7 @@ class SignUpViewModel: ObservableObject {
         
     }
     
+    /// Shows alert
     private func showAlert(title: String, message: String) {
         alertTitle = title
         alertMessage = message
@@ -199,10 +184,7 @@ class SignUpViewModel: ObservableObject {
         }
     }
     
-    private var futureDate = Date()
-    
-    private var cancellablesTimer = Set<AnyCancellable>()
-    
+    /// Starts timer for definite time
     private func startTimerFor(seconds: Int) {
         futureDate = Calendar.current.date(byAdding: .second, value: seconds + 1, to: Date()) ?? Date()
         let remaining = Calendar.current.dateComponents([.minute, .second], from: Date(), to: self.futureDate)
@@ -221,7 +203,7 @@ class SignUpViewModel: ObservableObject {
                 let second = remaining.second ?? 0
                 if second <= 0 && minute <= 0 {
                     self.showTimer = false
-                    self.cancellablesTimer.first?.cancel()
+                    self.cancellablesForTimer.first?.cancel()
                 } else {
                     if second >= 10 {
                         self.timeRemaining = "\(minute):\(second)"
@@ -230,11 +212,12 @@ class SignUpViewModel: ObservableObject {
                     }
                 }
             }
-            .store(in: &cancellablesTimer)
+            .store(in: &cancellablesForTimer)
         
         
     }
     
+    /// Sends email with confirmation code
     private func sendEmail() async throws {
         
         oneTimePasscode = String.generateOneTimeCode()
@@ -247,6 +230,7 @@ class SignUpViewModel: ObservableObject {
         let _ = try await EmailSendManager.instance.sendEmail(to: to, subject: subject, type: type, text: text)
     }
     
+    /// Creates account for user
     func createAccount() async {
         await MainActor.run(body: {
             creatingAccountIsLoading = true
@@ -254,7 +238,7 @@ class SignUpViewModel: ObservableObject {
         
         let firstName = firstNameTextField
         let lastName = lastNameTextField
-        let dateOfBirth = birthDate
+        let dateOfBirth = Calendar.current.startOfDay(for: birthDate)
         let nickname = nicknameTextField
         let email = savedEmail
         let password = passwordField
@@ -277,12 +261,10 @@ class SignUpViewModel: ObservableObject {
                 Task {
                     await LogInAndOutManager.instance.addLoggedInDevice(for: returnedRecord.recordID)
                 }
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    path = NavigationPath()
-                }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
                         self.userRecordId = returnedRecord.recordID
+                        self.path = NavigationPath()
                     }
                 }
             case .failure(let error):
@@ -291,11 +273,12 @@ class SignUpViewModel: ObservableObject {
         })
     }
     
+    /// Performs actions if confirm button pressed
     func confirmButtonPressed() {
         withAnimation(.easeInOut(duration: 0.09)) {
             if codeTextField == oneTimePasscode {
                 showTimer = false
-                emailButtonText = .verificated
+                emailButtonText = .verified
                 emailTextField = savedEmail
                 emailTextFieldIsDisabled = true
                 withAnimation(.easeInOut.delay(0.5)) {
@@ -304,17 +287,18 @@ class SignUpViewModel: ObservableObject {
                     emailNextButtonDisabled = false
                 }
                 withAnimation(.easeInOut.delay(1)) {
-                    showSuccedStatusIcon = true
+                    showSucceedStatusIcon = true
                     HapticManager.instance.notification(of: .success)
                 }
             } else {
-                confirmButtonDisabeld = true
+                confirmButtonDisabled = true
                 showFailStatusIcon = true
                 HapticManager.instance.notification(of: .error)
             }
         }
     }
     
+    /// Checks nickname availability
     func checkAvailability(for nickname: String) async -> Bool {
         
         switch await CloudKitManager.instance.doesRecordExistInPublicDatabase(inRecordType: .usersRecordType, withField: .nicknameRecordField, equalTo: nickname) {
@@ -341,7 +325,7 @@ class SignUpViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Disables next button immidiatly with any field change
+        // Disables next button immediately with any field change
         sharedFirstNamePublisher
             .filter({ _ in !self.nameNextButtonDisabled })
             .sink { [weak self] _ in
@@ -366,7 +350,7 @@ class SignUpViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Disables next button immidiatly with any field change
+        // Disables next button immediately with any field change
         sharedEmailPublisher
             .removeDuplicates()
             .filter({ _ in !self.emailButtonDisabled })
@@ -379,7 +363,7 @@ class SignUpViewModel: ObservableObject {
             .removeDuplicates()
             .map({ $0.count == 6 })
             .sink { [weak self] receivedValue in
-                self?.confirmButtonDisabeld = !receivedValue
+                self?.confirmButtonDisabled = !receivedValue
             }
             .store(in: &cancellables)
         
@@ -406,7 +390,7 @@ class SignUpViewModel: ObservableObject {
                     if returnedValue.count < 3 {
                         self.nicknameError = .length
                     } else if returnedValue.containsUnacceptableSymbols() {
-                        self.nicknameError = .space
+                        self.nicknameError = .unacceptableCharacters
                     } else {
                         self.nicknameIsChecking = true
                         self.checkTask = Task {
@@ -430,7 +414,7 @@ class SignUpViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // Disables next button and stops availability checking task immidiatly with any field change
+        // Disables next button and stops availability checking task immediately with any field change
         sharedNicknamePublisher
             .removeDuplicates()
             .drop(while: { $0.count == 0 })
@@ -455,7 +439,7 @@ class SignUpViewModel: ObservableObject {
             .debounce(for: 2.0, scheduler: DispatchQueue.main)
             .filter({ $0 != $1 })
             .sink { [weak self] _, _ in
-                self?.showDontMatchError = true
+                self?.showMatchingError = true
             }
             .store(in: &cancellables)
         
@@ -473,15 +457,15 @@ class SignUpViewModel: ObservableObject {
             .store(in: &cancellables)
         
         sharedPasswordPublisher
-            .filter( { _, _ in !self.passwordNextButtonDisabled || self.showDontMatchError })
+            .filter( { _, _ in !self.passwordNextButtonDisabled || self.showMatchingError })
             .sink { [weak self] _, _ in
-                self?.showDontMatchError = false
+                self?.showMatchingError = false
                 self?.passwordNextButtonDisabled = true
             }
             .store(in: &cancellables)
     }
     
-    /// Returnes bool and PasswordWarningMessage where bool is true if password passed check and equals confirmation field
+    /// Returns bool and PasswordWarningMessage where bool is true if password passed check and equals confirmation field
     private func mapPasswords(_ password: String, _ confirmation: String) -> (Bool, PasswordWarningMessage) {
         if password.count < 8 { return (false, .short) } else {
             if password.containsUnacceptableSymbols() { return (false, .unacceptableSymbols) } else {

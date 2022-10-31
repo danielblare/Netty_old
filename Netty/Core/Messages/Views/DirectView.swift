@@ -10,33 +10,42 @@ import CloudKit
 
 struct DirectView: View {
     
+    // View Model
     @StateObject private var vm: DirectViewModel
+    
+    // Search text in search field
+    @State private var searchText: String = ""
+    
+    // Shows new message sheet
+    @State private var showSheet: Bool = false
+    
+    // Navigation path for main screen
+    @Binding private var path: NavigationPath
     
     init(userRecordId: CKRecord.ID?, path: Binding<NavigationPath>) {
         _vm = .init(wrappedValue: DirectViewModel(userRecordId: userRecordId))
         self._path = path
     }
     
-    @State private var searchText: String = ""
-    @State private var showSheet: Bool = false
-    @Binding private var path: NavigationPath
-    
     var body: some View {
         NavigationView {
             GeometryReader { geo in
                 ZStack {
-                    if vm.chatsArray.isEmpty && !vm.isLoading {
+                    if vm.chatsArray.isEmpty && !vm.isLoading { // No messages
+                        
                         noChatsView
+                        
                     } else if !vm.chatsArray.isEmpty {
+                        
                         List(searchResults) { chat in
-                            chatView(for: chat, with: geo)
+                            chatRowView(for: chat, with: geo)
                                 .swipeActions {
                                     getSwipeActionsFor(chat)
                                 }
                         }
                         
                         .listStyle(.inset)
-                        .searchable(text: $searchText)
+                        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic))
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -65,7 +74,10 @@ struct DirectView: View {
         }
     }
     
+    // Creates toolbar for navigation view
     @ToolbarContentBuilder private func getToolbar() -> some ToolbarContent {
+        
+        // Title
         ToolbarItem(placement: .navigationBarLeading) {
             Text("Messages")
                 .fontWeight(.semibold)
@@ -73,6 +85,7 @@ struct DirectView: View {
                 .foregroundColor(.accentColor)
         }
         
+        // New message button
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
                 showSheet.toggle()
@@ -83,7 +96,8 @@ struct DirectView: View {
         }
     }
     
-    private func chatView(for chat: ChatModel, with geo: GeometryProxy) -> some View {
+    // Chat view
+    private func chatRowView(for chat: ChatModel, with geo: GeometryProxy) -> some View {
         HStack {
             ProfileImageView(for: chat.opponentId)
                 .frame(width: 70, height: 70)
@@ -108,6 +122,7 @@ struct DirectView: View {
         }
     }
     
+    // Swipe actions for each chat
     private func getSwipeActionsFor(_ chat: ChatModel) -> some View {
         Button("Delete", role: .destructive) {
             Task {
@@ -116,6 +131,7 @@ struct DirectView: View {
         }
     }
     
+    // View which is showed if user has no chats
     private var noChatsView: some View {
         VStack {
             Image(systemName: "xmark.bin")
@@ -143,6 +159,7 @@ struct DirectView: View {
         .foregroundColor(.secondary)
     }
     
+    // Filters messages to satisfy search request
     private var searchResults: [ChatModel] {
         if searchText.isEmpty {
             return vm.chatsArray

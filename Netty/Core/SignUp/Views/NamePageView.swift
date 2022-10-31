@@ -10,17 +10,18 @@ import CloudKit
 
 struct NamePageView: View {
     
+    // Focused field
+    @FocusState private var activeField: FocusedValue?
     enum FocusedValue {
         case name, lastName
     }
-        
+    
+    // View Model
     @StateObject private var vm: SignUpViewModel
     
     init(userRecordId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
         _vm = .init(wrappedValue: SignUpViewModel(userRecordId: userRecordId, path: path))
     }
-    
-    @FocusState private var activeField: FocusedValue?
     
     var body: some View {
         VStack {

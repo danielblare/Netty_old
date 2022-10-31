@@ -10,8 +10,11 @@ import CloudKit
 
 struct ForgotPasswordEmailPageView: View {
     
+    // View Model
     @StateObject private var vm: ForgotPasswordViewModel
     
+    // Focused field
+    @FocusState private var activeField: FocusedValue?
     enum FocusedValue {
         case email, code
     }
@@ -20,13 +23,12 @@ struct ForgotPasswordEmailPageView: View {
         _vm = .init(wrappedValue: ForgotPasswordViewModel(path: path, showAlertOnLogInScreen: showAlertOnLogInScreen))
     }
     
-    @FocusState private var activeField: FocusedValue?
-    
     var body: some View {
         VStack {
             
             Spacer(minLength: 0)
 
+            // Title
             Text("Enter e-mail that is connected to your account:")
                 .foregroundColor(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -35,7 +37,8 @@ struct ForgotPasswordEmailPageView: View {
             
             
             VStack(spacing: 30) {
-                // TextField
+                
+                // Email text field
                 VStack(spacing: 0) {
                     TextField("E-mail", text: $vm.emailTextField) { vm.showCodeTextField ? activeField = .code : UIApplication.shared.endEditing() }
                         .keyboardType(.emailAddress)
@@ -44,7 +47,7 @@ struct ForgotPasswordEmailPageView: View {
                         .autocorrectionDisabled(true)
                         .focused($activeField, equals: .email)
                         .overlay(alignment: .trailing) {
-                            if vm.showSuccedStatusIcon {
+                            if vm.showSucceedStatusIcon {
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundColor(.green)
                             }
@@ -56,7 +59,7 @@ struct ForgotPasswordEmailPageView: View {
                         })
                         .padding(.horizontal)
                     
-                    
+                    // Timer and send email button
                     HStack() {
                         if vm.showTimer {
                             Text(vm.timeRemaining)
@@ -81,10 +84,9 @@ struct ForgotPasswordEmailPageView: View {
                     .padding(.vertical, 10)
                 }
                 
-                
-                
+                // Code text field
                 if vm.showCodeTextField {
-                    TextField("Confirmation code", text: $vm.codeTextField) { !vm.confirmButtonDisabeld ? vm.confirmButtonPressed() : UIApplication.shared.endEditing() }
+                    TextField("Confirmation code", text: $vm.codeTextField) { !vm.confirmButtonDisabled ? vm.confirmButtonPressed() : UIApplication.shared.endEditing() }
                         .keyboardType(.numberPad)
                         .textContentType(.oneTimeCode)
                         .focused($activeField, equals: .code)
@@ -135,7 +137,7 @@ struct ForgotPasswordEmailPageView: View {
                             .padding(.horizontal, 5)
                             .font(.title3)
                     }
-                    .disabled(vm.confirmButtonDisabeld)
+                    .disabled(vm.confirmButtonDisabled)
                     .buttonStyle(.borderedProminent)
                     .padding()
                 }

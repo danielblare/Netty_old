@@ -11,7 +11,7 @@ import SwiftUI
 class PhotoModelFileManager {
     
     static let instance = PhotoModelFileManager()
-    let folderName = "avatars"
+    private let folderName = "avatars"
     
     private init() {
         createFolderIfNeeded()

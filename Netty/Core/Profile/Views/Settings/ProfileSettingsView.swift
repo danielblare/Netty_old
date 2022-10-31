@@ -10,12 +10,18 @@ import CloudKit
 
 struct ProfileSettingsView: View {
     
+    // View model
     @ObservedObject var vm: ProfileViewModel
     
+    // Shows loading view if true
     @State private var isLoading: Bool = false
     
     var body: some View {
+        
+        // Settings list
         List {
+            
+            // Settings section
             Section {
                 NavigationLink {
                     PersonalInfoPage(id: vm.userRecordId)
@@ -31,7 +37,7 @@ struct ProfileSettingsView: View {
                 }
             }
             
-            // Log Out
+            // Log Out section
             Section {
                 Button(role: .destructive, action: {
                     Task {

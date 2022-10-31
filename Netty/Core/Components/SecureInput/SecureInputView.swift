@@ -9,16 +9,23 @@ import SwiftUI
 
 struct SecureInputView: View {
     
+    // Doesn't show characters if true
     @State private var isSecured: Bool = true
+    
+    // Text field text
     @Binding private var text: String
+    
+    // Text field title
     private var title: String
+    
+    // Completion if return button pressed
     private let completion: (() -> Void)?
     
+    // Focused field
+    @FocusState private var activeField: FocusedValue?
     enum FocusedValue {
         case secure, text
     }
-    
-    @FocusState private var activeField: FocusedValue?
     
     init(_ title: String, text: Binding<String>, completion: (() -> Void)? = nil) {
         self.title = title

@@ -12,15 +12,20 @@ import CloudKit
 
 class ProfileImageViewModel: ObservableObject {
     
-    
+    // Profile image
     @Published var image: UIImage? = nil
+    
+    // Shows loading view if true
     @Published var isLoading: Bool = false
+    
+    // Cache manager
     private let cacheManager = CacheManager.instance
     
     init(id: CKRecord.ID?) {
         getImage(for: id)
     }
 
+    /// Gets image for record id from database
     private func getImage(for id: CKRecord.ID?) {
         guard let id = id else { return }
         if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(id.recordName)_avatar") {

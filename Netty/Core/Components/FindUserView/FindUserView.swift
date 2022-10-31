@@ -10,8 +10,13 @@ import CloudKit
 
 struct FindUserView: View {
     
+    // View Model
     @StateObject private var vm: FindUserViewModel
+    
+    // Quantity of showed users
     @State private var foundResultCount: Int = 7
+    
+    // Show more/less button text
     private var buttonText: ButtonText {
         if vm.foundArray.count <= 7 {
             return .none
@@ -22,6 +27,7 @@ struct FindUserView: View {
         }
     }
     
+    // Shows clear recents confirmation dialog if true
     @State private var showConfirmationDialog: Bool = false
     
     enum ButtonText: String {
@@ -30,7 +36,10 @@ struct FindUserView: View {
         case none
     }
     
+    // Navigation path for navigation view
     @Binding private var path: NavigationPath
+    
+    // Shows new message sheet
     @Binding private var showSheet: Bool
     
     init(id: CKRecord.ID?, path: Binding<NavigationPath>, showSheet: Binding<Bool>) {
@@ -96,6 +105,7 @@ struct FindUserView: View {
         }
     }
     
+    // Show more/less button
     private var buttonView: some View {
         Button(buttonText.rawValue) {
             withAnimation {
@@ -110,6 +120,7 @@ struct FindUserView: View {
         .font(.callout)
     }
     
+    // Found results
     private var foundResultsSection: some View {
         ForEach(vm.foundArray.prefix(foundResultCount)) { userModel in
             Button {
@@ -123,6 +134,7 @@ struct FindUserView: View {
         }
     }
     
+    // Recent users in search
     private var recentsSection: some View {
         Section {
             ForEach(vm.recentsArray) { userModel in
@@ -152,6 +164,7 @@ struct FindUserView: View {
         }
     }
     
+    // Nothing found view
     private var nothingFound: some View {
         Text("Nothing found...")
             .foregroundColor(.secondary)

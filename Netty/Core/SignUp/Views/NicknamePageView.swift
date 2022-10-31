@@ -9,18 +9,18 @@ import SwiftUI
 
 struct NicknamePageView: View {
     
+    // View Model
     @ObservedObject private var vm: SignUpViewModel
     
+    // Focused field
+    @FocusState private var activeField: FocusedValue?
     enum FocusedValue {
         case nick
     }
     
-    @FocusState private var activeField: FocusedValue?
-    
     init(vm: SignUpViewModel) {
         self.vm = vm
     }
-    
     
     var body: some View {
         VStack() {
@@ -76,7 +76,7 @@ struct NicknamePageView: View {
                     Text(vm.nicknameError.rawValue)
                         .padding(.horizontal, 5)
                         .font(.footnote)
-                        .foregroundColor(.red)
+                        .foregroundColor(vm.nicknameError == .none ? .secondary : .red)
                     
                     
                     Spacer(minLength: 0)
@@ -113,5 +113,4 @@ struct NicknamePageView: View {
             UIApplication.shared.endEditing()
         })
     }
-    
 }

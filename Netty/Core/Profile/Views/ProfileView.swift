@@ -9,29 +9,41 @@ import SwiftUI
 import CloudKit
 import PhotosUI
 
-
 struct ProfileView: View {
     
+    // Presenting sheet to let user choose new avatar photo
     @State private var showPhotoImportSheet: Bool = false
+    
+    // Source of input photo
     @State private var photoInputSource: UIImagePickerController.SourceType = .camera
+    
+    // Shows dialog with options to choose new photo from library, take new photo, remove current avatar
     @State private var showProfilePhotoChangingConfirmationDialog: Bool = false
     
+    // Current user record ID
     let userRecordId: CKRecord.ID?
+    
+    // Func passed from logInAndOutViewModel to let user log out
     let logOutFunc: () async -> ()
     
+    // View Model
     @StateObject private var vm: ProfileViewModel
+    
     
     init(userRecordId: CKRecord.ID?, logOutFunc: @escaping () async -> ()) {
         self.userRecordId = userRecordId
         self.logOutFunc = logOutFunc
         self._vm = .init(wrappedValue: ProfileViewModel(id: userRecordId, logOutFunc: logOutFunc))
     }
-    
+        
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack {
-                    // Image and full name
+        GeometryReader { proxy in
+
+            NavigationView {
+                
+                ScrollView {
+                    
+                    // Image and user info
                     HStack {
                         
                         ProfileImage
@@ -54,27 +66,39 @@ struct ProfileView: View {
                     }
                     .padding(.vertical)
                     
-                    Spacer(minLength: 0)
+//                    LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
+//                        ForEach() { _ in
+//                            Image(_)
+//                                .resizable()
+//                        }
+//                    }
+                    
                 }
-            }
-            .toolbar {
-                getToolbar()
-            }
-            .refreshable {
-                Task {
-                    await vm.sync()
+                .toolbar {
+                    getToolbar()
                 }
-            }
-            .fullScreenCover(isPresented: $showPhotoImportSheet) {
-                ImagePicker(source: photoInputSource) { image in
-                    vm.uploadImage(image, for: userRecordId)
+                .refreshable {
+                    Task {
+                        await vm.sync()
+                    }
                 }
-                .ignoresSafeArea()
+                .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+                    Text(vm.alertMessage)
+                })
+                .fullScreenCover(isPresented: $showPhotoImportSheet) {
+                    ImagePicker(source: photoInputSource) { image in
+                        vm.uploadImage(image, for: userRecordId)
+                    }
+                    .ignoresSafeArea()
+                }
             }
         }
     }
     
+    // Creates toolbar for NavigationView
     @ToolbarContentBuilder private func getToolbar() -> some ToolbarContent {
+        
+        // Setting button
         ToolbarItem(placement: .navigationBarTrailing) {
             NavigationLink {
                 ProfileSettingsView(vm: vm)
@@ -83,6 +107,7 @@ struct ProfileView: View {
             }
         }
         
+        // Title
         ToolbarItem(placement: .navigationBarLeading) {
             Text("Profile")
                 .font(.title)
@@ -91,19 +116,20 @@ struct ProfileView: View {
         }
     }
     
+    // Profile avatar
     private var ProfileImage: some View {
         ZStack {
-            if let image = vm.image {
+            if let image = vm.image { // image view
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-            } else if vm.isLoading {
+            } else if vm.isLoading { // loading view
                 Rectangle()
                     .foregroundColor(.secondary.opacity(0.3))
                     .overlay {
                         ProgressView()
                     }
-            } else {
+            } else { // no avatar view
                 Rectangle()
                     .foregroundColor(.secondary.opacity(0.3))
                     .overlay {
@@ -117,7 +143,7 @@ struct ProfileView: View {
     private var UserInfo: some View {
         VStack(alignment: .leading, spacing: 10) {
             
-            // Name
+            // User data
             if let firstName = vm.firstName,
                let lastName = vm.lastName,
                let nickname = vm.nickname {
@@ -129,7 +155,7 @@ struct ProfileView: View {
                 Text(nickname)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
-            } else {
+            } else { // loading view
                 LoadingAnimation()
                     .padding(.vertical)
             }
@@ -139,6 +165,7 @@ struct ProfileView: View {
         }
     }
     
+    // Creates confirmation dialog with options to select new avatar
     @ViewBuilder private func getConfirmationActions() -> some View {
         Button("Remove current photo") {
             vm.uploadImage(nil, for: userRecordId)
@@ -170,7 +197,7 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     
-    static private let id = CKRecord.ID(recordName: "2BF042AD-D7B5-4AEE-9328-D328E942B0FF")
+    static private let id = CKRecord.ID(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089")
     static var previews: some View {
         ProfileView(userRecordId: id, logOutFunc: LogInAndOutViewModel(id: id).logOut)
             .preferredColorScheme(.light)

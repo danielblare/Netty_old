@@ -11,39 +11,56 @@ import CloudKit
 
 class FindUserViewModel: ObservableObject {
     
-    @Published var recentsArray: [FindUserModel] = []
-    @Published var foundArray: [FindUserModel] = []
-    @Published var isLoading: Bool = false
-    @Published var searchText: String = ""
-    @Published var showRecents: Bool = false
-    @Published var showFound: Bool = false
-    let id: CKRecord.ID?
+    // Recent users array
+    @Published var recentsArray: [UserModel] = []
     
+    // Results of search through users
+    @Published var foundArray: [UserModel] = []
+    
+    // Shows loading view if true
+    @Published var isLoading: Bool = false
+    
+    // Search text field
+    @Published var searchText: String = ""
+    
+    // Shows recents if true
+    @Published var showRecents: Bool = false
+    
+    // Shows search results if true
+    @Published var showFound: Bool = false
+    
+    // Current user id
+    private let userId: CKRecord.ID?
+    
+    // Alert
     @Published var showAlert: Bool = false
     var alertTitle: String = ""
     var alertMessage: String = ""
     
+    // Find user data service
     private let dataService = FindUserModelService.instance
+    // Cache manager
     private let cacheManager = CacheManager.instance
     
+    // Search task
+    private var searchTask: Task<(), Never>?
+    
     init(id: CKRecord.ID?) {
-        self.id = id
+        self.userId = id
         Task {
             await getResents()
         }
     }
     
-    
-    private var searchTask: Task<(), Never>?
-    
+    /// Clears all recent users
     func clearRecents() async {
-        guard let id = id else { return }
+        guard let id = userId else { return }
         switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .recentUsersInSearchRecordField, newData: [CKRecord.Reference]()) {
         case .success(_):
             await MainActor.run {
                 withAnimation {
                     recentsArray = []
-                    cacheManager.delete(from: cacheManager.recentUsers, "users", for: "")
+                    cacheManager.delete(from: cacheManager.recentUsers, "users", for: "") // Clears cache
                 }
             }
         case .failure(let error):
@@ -52,6 +69,7 @@ class FindUserViewModel: ObservableObject {
         
     }
     
+    /// Performs some actions if search text field was changed
     func searchTextChanged() {
         searchTask?.cancel()
         isLoading = false
@@ -66,8 +84,9 @@ class FindUserViewModel: ObservableObject {
         showFound = false
     }
     
+    /// Performs actions if search process started
     func executeQuery() async {
-        guard let id = id else { return }
+        guard let id = userId else { return }
         if !searchText.isEmpty {
             searchTask = Task {
                 await MainActor.run(body: {
@@ -89,16 +108,17 @@ class FindUserViewModel: ObservableObject {
         }
     }
     
+    /// Gets recents from database
     private func getResents() async {
-        guard let id = id else { return }
-        if let savedRecents = cacheManager.getFrom(cacheManager.recentUsers, key: "users") {
+        guard let id = userId else { return }
+        if let savedRecents = cacheManager.getFrom(cacheManager.recentUsers, key: "users") { // Checks if there are any recents in cache
             await MainActor.run {
                 withAnimation {
                     recentsArray = savedRecents.users
                     showRecents = true
                 }
             }
-            switch await dataService.downloadRecents(for: id) {
+            switch await dataService.downloadRecents(for: id) { // Downloads recents in background
             case .success(let dataArray):
                 if savedRecents.users != dataArray {
                     cacheManager.addTo(cacheManager.recentUsers, key: "users", value: RecentUsersHolder(dataArray))
@@ -131,6 +151,7 @@ class FindUserViewModel: ObservableObject {
         }
     }
     
+    /// Shows alert
     private func showAlert(title: String, message: String) {
         isLoading = false
         alertTitle = title

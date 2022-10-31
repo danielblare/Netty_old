@@ -13,17 +13,25 @@ import Combine
 @MainActor
 class DirectViewModel: ObservableObject {
     
+    // User's chats array
     @Published var chatsArray: [ChatModel] = []
+    
+    // Shows loading view if true
     @Published var isLoading: Bool = true
+    
+    // Rotates refreshing arrow if true
     @Published var isRefreshing: Bool = false
     
-    
+    // Alert
     @Published var showAlert: Bool = false
     var alertTitle: String = ""
     var alertMessage: String = ""
     
+    // Current user's record ID
     let userRecordId: CKRecord.ID?
     
+    // Chat data service
+    private let dataService = ChatModelService.instance
     
     init(userRecordId: CKRecord.ID?) {
         self.userRecordId = userRecordId
@@ -35,19 +43,21 @@ class DirectViewModel: ObservableObject {
         requestNotificationPermission()
     }
     
+    /// Syncs chats
     func sync() async {
         await downloadData()
     }
     
+    /// Deletes chat
     func delete(chat: ChatModel) async {
         if let id = userRecordId {
-            let backup = chatsArray.first(where: { $0.id == chat.id })
-            chatsArray.removeAll(where: { $0.id == chat.id })
-            switch await dataService.deleteChat(with: chat.id, for: id) {
+            let backup = chatsArray.first(where: { $0.id == chat.id }) // Saves chat before deleting
+            chatsArray.removeAll(where: { $0.id == chat.id }) // Removes chat from array
+            switch await dataService.deleteChat(with: chat.id, for: id) { // Deletes chat in database
             case .success(_):
                 break
             case .failure(let error):
-                if let backup = backup {
+                if let backup = backup { // If failure restores chat from backup
                     chatsArray.append(backup)
                 }
                 showAlert(title: "Error while deleting chat", message: error.localizedDescription)
@@ -55,6 +65,7 @@ class DirectViewModel: ObservableObject {
         }
     }
     
+    /// Requests permission to send notifications
     private func requestNotificationPermission() {
         let options: UNAuthorizationOptions = [.alert, .sound, .badge]
         UNUserNotificationCenter.current().requestAuthorization(options: options) { success, error in
@@ -68,6 +79,7 @@ class DirectViewModel: ObservableObject {
         }
     }
     
+    /// Downloads user's chats
     private func downloadData() async {
         if let id = userRecordId {
             await MainActor.run(body: {
@@ -75,15 +87,15 @@ class DirectViewModel: ObservableObject {
                     isRefreshing = true
                 }
             })
-            switch await dataService.getChatsIDsListForUser(with: id) {
+            switch await dataService.getChatsIDsListForUser(with: id) { // Gets IDs for all chats of current user
             case .success(let IDs):
-                switch await dataService.getChats(with: IDs) {
+                switch await dataService.getChats(with: IDs) { // Fetches chats from IDs
                 case .success(let chats):
                     var result: [ChatModel] = []
                     for chat in chats {
                         switch chat.value {
                         case .success(let record):
-                            switch await dataService.downloadChatModel(for: record, currentUserId: id, chatId: chat.key, modificationDate: record.modificationDate) {
+                            switch await dataService.downloadChatModel(for: record, currentUserId: id, chatId: chat.key, modificationDate: record.modificationDate) { // Downloads chat models
                             case .success(let chatModel):
                                 result.append(chatModel)
                             case .failure(let error):
@@ -95,7 +107,7 @@ class DirectViewModel: ObservableObject {
                     }
                     await MainActor.run(body: {
                         withAnimation {
-                            chatsArray = result.sorted { f, s in
+                            chatsArray = result.sorted { f, s in // Sorts chats
                                 if let fdate = f.modificationDate,
                                    let sdate = s.modificationDate {
                                     return fdate > sdate
@@ -119,8 +131,7 @@ class DirectViewModel: ObservableObject {
         })
     }
         
-    private let dataService = ChatModelService.instance
-    
+    /// Shows alert
     private func showAlert(title: String, message: String) {
         alertTitle = title
         alertMessage = message
@@ -128,7 +139,6 @@ class DirectViewModel: ObservableObject {
             self.showAlert = true
         }
     }
-    
 }
 
 

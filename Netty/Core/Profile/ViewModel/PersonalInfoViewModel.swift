@@ -11,10 +11,16 @@ import CloudKit
 
 class PersonalInfoViewModel: ObservableObject {
     
-    // General
+    // RecordID of current user
     private let userId: CKRecord.ID?
+    
+    // Shows loading view if true
     @Published var isLoading: Bool = false
+    
+    // Disables save button
     @Published var saveButtonDisabled: Bool = true
+    
+    // Disables back button
     @Published var backButtonDisabled: Bool = false
     
     // Alert
@@ -23,19 +29,24 @@ class PersonalInfoViewModel: ObservableObject {
     var alertMessage: String = ""
     
     // Nickname
+    // True if nickname checks were passed
     private var nicknamePassed = true
+    
+    // Current user's nickname
     private var actualNickname: String = ""
+    
+    // Error while checking nickname
     @Published var nicknameError: NicknameError = .none
-    @Published var nicknameIsChecking: Bool = false // Progress view
+    
+    // Shows loading view if nickname is checking
+    @Published var nicknameIsChecking: Bool = false
+    
+    // Shows if nickname availability test was passed
     @Published var availabilityIsPassed: Bool = false
-    enum NicknameError: String {
-        case nameIsUsed = "Nickname is already used"
-        case length = "Enter 3 or more symbols"
-        case unacceptableCharacters = "Nickname contains unacceptable characters"
-        case none = "Enter from 3 to 20 symbols"
-    }
+    
+    // Nickname text field
     @Published var nicknameTextField: String = "" {
-        didSet {
+        didSet { // Checks if nickname is longer than limit
             if nicknameTextField.count > Limits.nicknameSymbolsLimit {
                 nicknameTextField = nicknameTextField.truncated(limit: Limits.nicknameSymbolsLimit, position: .tail, leader: "")
             }
@@ -43,16 +54,18 @@ class PersonalInfoViewModel: ObservableObject {
     }
     
     // FirstName
+    // True if first name checks were passed
     private var firstNamePassed = true
+    
+    // Current user's first name
     private var actualFirstName: String = ""
+    
+    // Error while checking first name
     @Published var firstNameError: FirstNameError = .none
-    enum FirstNameError: String {
-        case length = "Enter 2 or more letters"
-        case unacceptableCharacters = "First name contains unacceptable characters"
-        case none = "Enter your first name"
-    }
+    
+    // First name text field
     @Published var firstNameTextField: String = "" {
-        didSet {
+        didSet { // Checks if first name is longer than limit
             if firstNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
                 firstNameTextField = firstNameTextField.truncated(limit: Limits.nameAndLastNameSymbolsLimit, position: .tail, leader: "")
             }
@@ -60,16 +73,18 @@ class PersonalInfoViewModel: ObservableObject {
     }
     
     // LastName
+    // True if last name checks were passed
     private var lastNamePassed = true
+    
+    // Current user's last name
     private var actualLastName: String = ""
+    
+    // Error while checking last name
     @Published var lastNameError: LastNameError = .none
-    enum LastNameError: String {
-        case length = "Enter 2 or more letters"
-        case unacceptableCharacters = "Last name contains unacceptable characters"
-        case none = "Enter your last name"
-    }
+
+    // Last name text field
     @Published var lastNameTextField: String = "" {
-        didSet {
+        didSet { // Checks if last name is longer than limit
             if lastNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
                 lastNameTextField = lastNameTextField.truncated(limit: Limits.nameAndLastNameSymbolsLimit, position: .tail, leader: "")
             }
@@ -77,13 +92,20 @@ class PersonalInfoViewModel: ObservableObject {
     }
     
     // DateOfBirth
+    // Current user's date of birth
     private var actualDateOfBirth: Date = Date()
+    
+    // Date of birth picker
     @Published var dateOfBirthPicker: Date = Date()
     
-    
-    
+    // Nickname checking task
     private var nicknameCheckTask: Task<Void, Never>?
+    
+    // Publishers storage
     private var cancellables = Set<AnyCancellable>()
+    
+    // Cache manager
+    private let cacheManager = CacheManager.instance
     
     init(id: CKRecord.ID?) {
         userId = id
@@ -91,6 +113,7 @@ class PersonalInfoViewModel: ObservableObject {
         addSubscribers()
     }
     
+    /// Subscribes on publishers
     private func addSubscribers() {
         let sharedNicknameTextField = $nicknameTextField.share()
         
@@ -159,6 +182,7 @@ class PersonalInfoViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    /// Perform actions if nickname text field was changed
     private func nicknameFieldChanged() {
         nicknameCheckTask?.cancel()
         nicknameIsChecking = false
@@ -168,27 +192,34 @@ class PersonalInfoViewModel: ObservableObject {
         checkForSaveButton()
     }
     
+    /// Perform actions if first name text field was changed
     private func firstNameFieldChanged() {
         firstNamePassed = false
         firstNameError = .none
         checkForSaveButton()
     }
-    
+
+    /// Perform actions if last name text field was changed
     private func lastNameFieldChanged() {
         lastNamePassed = false
         lastNameError = .none
         checkForSaveButton()
     }
-    
-    private let cacheManager = CacheManager.instance
-    
+        
+    /// Saves all changes to database and cache
     func saveChanges() async {
         guard let id = userId else { return }
+        
+        // Starts loading view
         await MainActor.run(body: {
             isLoading = true
             backButtonDisabled = true
         })
+        
+        // Checks if nickname was changed
         if nicknameTextField != actualNickname {
+            
+            // Updates record in database
             switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .nicknameRecordField, newData: nicknameTextField) {
             case .success(_):
                 await MainActor.run(body: {
@@ -201,7 +232,11 @@ class PersonalInfoViewModel: ObservableObject {
                 showAlert(title: "Error while saving nickname", message: error.localizedDescription)
             }
         }
+        
+        // Checks if first name was changed
         if firstNameTextField != actualFirstName {
+            
+            // Updates record in database
             switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .firstNameRecordField, newData: firstNameTextField) {
             case .success(_):
                 await MainActor.run(body: {
@@ -213,7 +248,11 @@ class PersonalInfoViewModel: ObservableObject {
                 showAlert(title: "Error while saving first name", message: error.localizedDescription)
             }
         }
+        
+        // Checks if last name was changed
         if lastNameTextField != actualLastName {
+            
+            // Updates record in database
             switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .lastNameRecordField, newData: lastNameTextField) {
             case .success(_):
                 await MainActor.run(body: {
@@ -225,16 +264,22 @@ class PersonalInfoViewModel: ObservableObject {
                 showAlert(title: "Error while saving last name", message: error.localizedDescription)
             }
         }
+        
+        // Checks if date of birth was changed
         if dateOfBirthPicker != actualDateOfBirth {
-            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .dateOfBirthRecordField, newData: dateOfBirthPicker) {
+            
+            // Updates record in database
+            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .dateOfBirthRecordField, newData: Calendar.current.startOfDay(for: dateOfBirthPicker)) {
             case .success(_):
                 await MainActor.run(body: {
-                    actualDateOfBirth = dateOfBirthPicker
+                    actualDateOfBirth = Calendar.current.startOfDay(for: dateOfBirthPicker)
                 })
             case .failure(let error):
                 showAlert(title: "Error while saving date of birth", message: error.localizedDescription)
             }
         }
+        
+        // Ends saving process
         await MainActor.run(body: {
             withAnimation {
                 checkForSaveButton()
@@ -244,27 +289,29 @@ class PersonalInfoViewModel: ObservableObject {
         })
     }
     
+    /// Checks if save button should be disabled
     private func checkForSaveButton() {
         DispatchQueue.main.async {
             self.saveButtonDisabled = !((self.nicknamePassed && self.firstNamePassed && self.lastNamePassed) && (self.nicknameTextField != self.actualNickname || self.firstNameTextField != self.actualFirstName || self.lastNameTextField != self.actualLastName || Calendar.current.dateComponents([.day, .year, .month], from: self.dateOfBirthPicker) != Calendar.current.dateComponents([.day, .year, .month], from: self.actualDateOfBirth)))
         }
     }
     
+    /// Nickname checking process
     func executeNicknameQuery() async {
-        if !nicknameTextField.isEmpty {
-            if nicknameTextField == actualNickname {
+        if !nicknameTextField.isEmpty { // Checks if field is empty
+            if nicknameTextField == actualNickname { // Checks if field equals actual nickname => no changes
                 nicknamePassed = true
             } else {
-                if nicknameTextField.count < 3 {
+                if nicknameTextField.count < 3 { // Checks if field length less than 3
                     await MainActor.run {
                         nicknameError = .length
                     }
-                } else if nicknameTextField.containsUnacceptableSymbols() {
+                } else if nicknameTextField.containsUnacceptableSymbols() { // Checks if nickname contains unacceptable characters
                     await MainActor.run {
                         nicknameError = .unacceptableCharacters
                     }
                 } else {
-                    nicknameCheckTask = Task {
+                    nicknameCheckTask = Task { // Finally checks if nickname is already used
                         await MainActor.run(body: {
                             nicknameIsChecking = true
                         })
@@ -273,11 +320,11 @@ class PersonalInfoViewModel: ObservableObject {
                             if !Task.isCancelled {
                                 await MainActor.run {
                                     nicknameIsChecking = false
-                                    if exist {
+                                    if exist { // Shows that nickname is used
                                         availabilityIsPassed = false
                                         nicknameError = .nameIsUsed
                                         HapticManager.instance.notification(of: .error)
-                                    } else {
+                                    } else { // Shows that nickname is free to use
                                         availabilityIsPassed = true
                                         nicknamePassed = true
                                         checkForSaveButton()
@@ -296,16 +343,17 @@ class PersonalInfoViewModel: ObservableObject {
         }
     }
     
+    /// First name checking process
     func executeFirstNameQuery() async {
-        if !firstNameTextField.isEmpty {
-            if firstNameTextField == actualFirstName {
+        if !firstNameTextField.isEmpty { // Checks if field is empty
+            if firstNameTextField == actualFirstName { // Checks if field equals actual first name => no changes
                 firstNamePassed = true
             } else {
-                if firstNameTextField.count < 2 {
+                if firstNameTextField.count < 2 { // Checks if field length less than 2
                     await MainActor.run {
                         firstNameError = .length
                     }
-                } else if !firstNameTextField.containsOnlyLetters() {
+                } else if !firstNameTextField.containsOnlyLetters() { // Checks if first name contains unacceptable characters
                     await MainActor.run {
                         firstNameError = .unacceptableCharacters
                     }
@@ -317,16 +365,17 @@ class PersonalInfoViewModel: ObservableObject {
         }
     }
     
+    /// Last name checking process
     func executeLastNameQuery() async {
-        if !lastNameTextField.isEmpty {
-            if lastNameTextField == actualLastName {
+        if !lastNameTextField.isEmpty { // Checks if field is empty
+            if lastNameTextField == actualLastName { // Checks if field equals actual last name => no changes
                 lastNamePassed = true
             } else {
-                if lastNameTextField.count < 2 {
+                if lastNameTextField.count < 2 { // Checks if field length less than 2
                     await MainActor.run {
                         lastNameError = .length
                     }
-                } else if !lastNameTextField.containsOnlyLetters() {
+                } else if !lastNameTextField.containsOnlyLetters() { // Checks if last name contains unacceptable characters
                     await MainActor.run {
                         lastNameError = .unacceptableCharacters
                     }
@@ -338,6 +387,7 @@ class PersonalInfoViewModel: ObservableObject {
         }
     }
     
+    /// Shows alert
     private func showAlert(title: String, message: String) {
         alertTitle = title
         alertMessage = message
@@ -346,6 +396,7 @@ class PersonalInfoViewModel: ObservableObject {
         }
     }
     
+    /// Fetches current user's data from database
     private func fetchDataFromDatabase() {
         guard let id = userId else { return }
         isLoading = true

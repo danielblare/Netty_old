@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ProfileImageView: View {
     
+    // View Model
     @ObservedObject private var vm: ProfileImageViewModel
         
     init(for id: CKRecord.ID?) {

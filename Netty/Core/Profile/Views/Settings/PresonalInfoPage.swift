@@ -8,13 +8,21 @@ import SwiftUI
 import CloudKit
 
 struct PersonalInfoPage: View {
+    
+    // Presentation mode to dismiss current page if error occurred
     @Environment(\.presentationMode) var presentationMode
+    
+    // View Model
     @StateObject private var vm: PersonalInfoViewModel
+    
+    // Confirmation dialog before saving changes
+    @State private var confirmationDialogIsPresented: Bool = false
+    
     init(id: CKRecord.ID?) {
         _vm = .init(wrappedValue: PersonalInfoViewModel(id: id))
     }
     
-    @State private var confirmationDialogIsPresented: Bool = false
+    // Date range for date picker from 100 years ago to 18 years ago to prevent user choosing later date
     private var dateRange: ClosedRange<Date> {
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
         let endingDate: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date())!
@@ -56,9 +64,11 @@ struct PersonalInfoPage: View {
             }
         }
     }
-
     
+    // Creates toolbar for navigationView
     @ToolbarContentBuilder private func getToolbar() -> some ToolbarContent {
+        
+        // Save changes button
         ToolbarItem(placement: .navigationBarTrailing) {
             Button("Save") {
                 confirmationDialogIsPresented = true
@@ -67,108 +77,118 @@ struct PersonalInfoPage: View {
         }
     }
     
+    // Date of birth picker
     private var dateOfBirthPart: some View {
-        ZStack {
-            DatePicker("Date of birth:", selection: $vm.dateOfBirthPicker, in: dateRange, displayedComponents: .date)
-                .datePickerStyle(.compact)
-                .foregroundColor(.secondary)
-                .font(.callout)
-                .padding(.vertical, 2)
-        }
+        DatePicker("Date of birth:", selection: $vm.dateOfBirthPicker, in: dateRange, displayedComponents: .date)
+            .datePickerStyle(.compact)
+            .foregroundColor(.secondary)
+            .font(.callout)
+            .padding(.vertical, 2)
     }
     
+    // Nickname textField
     private var nicknamePart: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                ZStack {
-                    HStack {
-                        Text("Nickname:")
-                            .lineLimit(1)
-                            .foregroundColor(.secondary)
-                            .font(.callout)
-                        TextField("", text: $vm.nicknameTextField)
-                            .autocorrectionDisabled(true)
-                            .textContentType(.nickname)
-                            .keyboardType(.asciiCapable)
-                    }
-                    HStack {
-                        Spacer(minLength: 0)
-                        
-                        if vm.nicknameIsChecking {
-                            ProgressView()
-                        }
-                    }
-                    HStack {
-                        Spacer(minLength: 0)
-                        
-                        if vm.availabilityIsPassed {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                        } else if vm.nicknameError == .nameIsUsed {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.red)
-                        }
-                    }
-                }
+        VStack(spacing: 0) {
+            
+            // Actual text field
+            ZStack {
+                
+                // Text field title
                 HStack {
-                    Text(vm.nicknameError.rawValue)
-                        .padding(.top, 5)
-                        .font(.caption)
-                        .foregroundColor(vm.nicknameError == .none ? .secondary : .red)
-                    Spacer(minLength: 0)
+                    Text("Nickname:")
+                        .lineLimit(1)
+                        .foregroundColor(.secondary)
+                        .font(.callout)
+                    TextField("", text: $vm.nicknameTextField)
+                        .autocorrectionDisabled(true)
+                        .textContentType(.nickname)
+                        .keyboardType(.asciiCapable)
                 }
+                
+                // Loading view
+                HStack {
+                    Spacer(minLength: 0)
+                    
+                    if vm.nicknameIsChecking {
+                        ProgressView()
+                    }
+                }
+                
+                // Status icon view
+                HStack {
+                    Spacer(minLength: 0)
+                    
+                    if vm.availabilityIsPassed {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                    } else if vm.nicknameError == .nameIsUsed {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+            
+            // Error description under text field
+            HStack {
+                Text(vm.nicknameError.rawValue)
+                    .padding(.top, 5)
+                    .font(.caption)
+                    .foregroundColor(vm.nicknameError == .none ? .secondary : .red)
+                Spacer(minLength: 0)
             }
         }
     }
     
+    // First name text field
     private var firstNamePart: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                ZStack {
-                    HStack {
-                        Text("First name:")
-                            .lineLimit(1)
-                            .foregroundColor(.secondary)
-                            .font(.callout)
-                        TextField("", text: $vm.firstNameTextField)
-                            .autocorrectionDisabled(true)
-                            .textContentType(.givenName)
-                            .keyboardType(.asciiCapable)
-                    }
-                }
-                HStack {
-                    Text(vm.firstNameError.rawValue)
-                        .padding(.top, 5)
-                        .font(.caption)
-                        .foregroundColor(vm.firstNameError == .none ? .secondary : .red)
-                    Spacer(minLength: 0)
-                }
+        VStack(spacing: 0) {
+            
+            // Text field title
+            HStack {
+                Text("First name:")
+                    .lineLimit(1)
+                    .foregroundColor(.secondary)
+                    .font(.callout)
+                TextField("", text: $vm.firstNameTextField)
+                    .autocorrectionDisabled(true)
+                    .textContentType(.givenName)
+                    .keyboardType(.asciiCapable)
+            }
+            
+            // Error description under text field
+            HStack {
+                Text(vm.firstNameError.rawValue)
+                    .padding(.top, 5)
+                    .font(.caption)
+                    .foregroundColor(vm.firstNameError == .none ? .secondary : .red)
+                
+                Spacer(minLength: 0)
             }
         }
     }
     
     private var lastNamePart: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                ZStack {
-                    HStack {
-                        Text("Last name:")
-                            .lineLimit(1)
-                            .foregroundColor(.secondary)
-                            .font(.callout)
-                        TextField("", text: $vm.lastNameTextField)
-                            .autocorrectionDisabled(true)
-                            .textContentType(.familyName)
-                            .keyboardType(.asciiCapable)
-                    }
-                }
-                HStack {
-                    Text(vm.lastNameError.rawValue)
-                        .padding(.top, 5)
-                        .font(.caption)
-                        .foregroundColor(vm.lastNameError == .none ? .secondary : .red)
-                    Spacer(minLength: 0)
-                }
+        VStack(spacing: 0) {
+            
+            // Text field title
+            HStack {
+                Text("Last name:")
+                    .lineLimit(1)
+                    .foregroundColor(.secondary)
+                    .font(.callout)
+                TextField("", text: $vm.lastNameTextField)
+                    .autocorrectionDisabled(true)
+                    .textContentType(.familyName)
+                    .keyboardType(.asciiCapable)
+            }
+            
+            // Error description under text field
+            HStack {
+                Text(vm.lastNameError.rawValue)
+                    .padding(.top, 5)
+                    .font(.caption)
+                    .foregroundColor(vm.lastNameError == .none ? .secondary : .red)
+                Spacer(minLength: 0)
             }
         }
     }

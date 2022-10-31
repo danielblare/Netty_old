@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
         
+    // View Model
     @StateObject private var vm = HomeViewModel()
         
     var body: some View {
