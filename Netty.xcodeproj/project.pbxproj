@@ -36,7 +36,7 @@
 		BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC23288711EF008EDEFA /* LaunchView.swift */; };
 		BBA7CC26288714FD008EDEFA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */; };
 		BBBBF0AE28D1EF0F00FF7C65 /* DirectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBF0AD28D1EF0F00FF7C65 /* DirectViewModel.swift */; };
-		BBBBF0B028D202B500FF7C65 /* ChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBF0AF28D202B500FF7C65 /* ChatModel.swift */; };
+		BBBBF0B028D202B500FF7C65 /* ChatRowModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBF0AF28D202B500FF7C65 /* ChatRowModel.swift */; };
 		BBBBF0B428D22CC100FF7C65 /* ChatModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBF0B328D22CC100FF7C65 /* ChatModelService.swift */; };
 		BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A6288454E200F18140 /* NamePageView.swift */; };
 		BBBD05A92884556B00F18140 /* SignUpEmailPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBD05A82884556B00F18140 /* SignUpEmailPageView.swift */; };
@@ -95,7 +95,7 @@
 		BBA7CC23288711EF008EDEFA /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
 		BBA7CC25288714FD008EDEFA /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BBBBF0AD28D1EF0F00FF7C65 /* DirectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectViewModel.swift; sourceTree = "<group>"; };
-		BBBBF0AF28D202B500FF7C65 /* ChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModel.swift; sourceTree = "<group>"; };
+		BBBBF0AF28D202B500FF7C65 /* ChatRowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRowModel.swift; sourceTree = "<group>"; };
 		BBBBF0B328D22CC100FF7C65 /* ChatModelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModelService.swift; sourceTree = "<group>"; };
 		BBBD05A6288454E200F18140 /* NamePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePageView.swift; sourceTree = "<group>"; };
 		BBBD05A82884556B00F18140 /* SignUpEmailPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpEmailPageView.swift; sourceTree = "<group>"; };
@@ -387,7 +387,7 @@
 		BBE72AA22882CE8C00CBDEAD /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				BBBBF0AF28D202B500FF7C65 /* ChatModel.swift */,
+				BBBBF0AF28D202B500FF7C65 /* ChatRowModel.swift */,
 				BBF0375C28E74F5E006F89A1 /* UserModel.swift */,
 				BB10BA4B29102DD900B57CF5 /* ChatMessageModel.swift */,
 			);
@@ -561,7 +561,7 @@
 				BB3CAA86290EE27000180E9B /* ChatView.swift in Sources */,
 				BBF131CF288745880043A81E /* LogInView.swift in Sources */,
 				BBCD2B4628D2645F00C7E32A /* ProfileImageView.swift in Sources */,
-				BBBBF0B028D202B500FF7C65 /* ChatModel.swift in Sources */,
+				BBBBF0B028D202B500FF7C65 /* ChatRowModel.swift in Sources */,
 				BBC36EE228D0DD2E008D983B /* ForgotPasswordViewModel.swift in Sources */,
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,

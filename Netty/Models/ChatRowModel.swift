@@ -1,5 +1,5 @@
 //
-//  ChatModel.swift
+//  ChatRowModel.swift
 //  Netty
 //
 //  Created by Danny on 9/14/22.
@@ -10,7 +10,7 @@ import CloudKit
 import SwiftUI
 
 
-struct ChatModel: Identifiable {
+struct ChatRowModel: Identifiable {
     var id: CKRecord.ID
     let opponentId: CKRecord.ID
     

@@ -151,6 +151,26 @@ class FindUserViewModel: ObservableObject {
         }
     }
     
+    /// Adds user to recent list
+    func addToRecents(_ user: UserModel) {
+        guard let id = userId else { return }
+        if !recentsArray.contains(user) {
+            if recentsArray.count >= Limits.usersInRecentsLimit {
+                recentsArray.removeLast(recentsArray.count - Limits.usersInRecentsLimit + 1)
+            }
+            recentsArray.insert(user, at: 0)
+        } else {
+            if let index = recentsArray.firstIndex(of: user) {
+                recentsArray.move(fromOffsets: IndexSet(integer: index), toOffset: 0)
+            }
+        }
+        cacheManager.addTo(cacheManager.recentUsers, key: "users", value: RecentUsersHolder(recentsArray))
+        Task {
+            await dataService.saveRecents(recentsArray, id: id)
+        }
+
+    }
+    
     /// Shows alert
     private func showAlert(title: String, message: String) {
         isLoading = false

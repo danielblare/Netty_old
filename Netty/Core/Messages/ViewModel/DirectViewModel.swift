@@ -14,7 +14,7 @@ import Combine
 class DirectViewModel: ObservableObject {
     
     // User's chats array
-    @Published var chatsArray: [ChatModel] = []
+    @Published var chatsArray: [ChatRowModel] = []
     
     // Shows loading view if true
     @Published var isLoading: Bool = true
@@ -49,7 +49,7 @@ class DirectViewModel: ObservableObject {
     }
     
     /// Deletes chat
-    func delete(chat: ChatModel) async {
+    func delete(chat: ChatRowModel) async {
         if let id = userRecordId {
             let backup = chatsArray.first(where: { $0.id == chat.id }) // Saves chat before deleting
             chatsArray.removeAll(where: { $0.id == chat.id }) // Removes chat from array
@@ -91,7 +91,7 @@ class DirectViewModel: ObservableObject {
             case .success(let IDs):
                 switch await dataService.getChats(with: IDs) { // Fetches chats from IDs
                 case .success(let chats):
-                    var result: [ChatModel] = []
+                    var result: [ChatRowModel] = []
                     for chat in chats {
                         switch chat.value {
                         case .success(let record):

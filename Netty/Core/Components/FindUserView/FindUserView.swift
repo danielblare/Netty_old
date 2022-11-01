@@ -124,6 +124,7 @@ struct FindUserView: View {
     private var foundResultsSection: some View {
         ForEach(vm.foundArray.prefix(foundResultCount)) { userModel in
             Button {
+                vm.addToRecents(userModel)
                 showSheet = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     path.append(userModel)
@@ -139,6 +140,7 @@ struct FindUserView: View {
         Section {
             ForEach(vm.recentsArray) { userModel in
                 Button {
+                    vm.addToRecents(userModel)
                     showSheet = false
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         path.append(userModel)
@@ -149,7 +151,7 @@ struct FindUserView: View {
             }
         } header: {
             HStack {
-                Text("Recents")
+                Text("Recents (\(vm.recentsArray.count))")
                 
                 Spacer(minLength: 0)
                 
@@ -183,7 +185,7 @@ struct FindUserView: View {
 struct FindUserView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            FindUserView(id: .init(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089"), path: .constant(.init()), showSheet: .constant(true))
+            FindUserView(id: TestUser.id, path: .constant(.init()), showSheet: .constant(true))
         }
     }
 }

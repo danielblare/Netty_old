@@ -23,21 +23,27 @@ actor FindUserModelService {
                         CKContainer.default().publicCloudDatabase.fetch(withRecordIDs: recentsRefs.map({ $0.recordID })) { returnedResult in
                             switch returnedResult {
                             case .success(let results):
-                                var resultArray: [UserModel] = []
+                                var arrayToBeSorted: [UserModel] = []
                                 for result in results.values {
                                     switch result {
                                     case .success(let recentUser):
                                         if let firstName = recentUser[.firstNameRecordField] as? String,
                                            let lastName = recentUser[.lastNameRecordField] as? String,
                                            let nickname = recentUser[.nicknameRecordField] as? String {
-                                            resultArray.append(UserModel(id: recentUser.recordID, firstName: firstName, lastName: lastName, nickname: nickname))
+                                            arrayToBeSorted.append(UserModel(id: recentUser.recordID, firstName: firstName, lastName: lastName, nickname: nickname))
                                             
                                         }
                                     case .failure(let error):
                                         continuation.resume(returning: .failure(error))
                                     }
                                 }
-                                continuation.resume(returning: .success(resultArray.sorted(by: { $0.nickname.lowercased() < $1.nickname.lowercased() })))
+                                var resultArray: [UserModel] = []
+                                for ref in recentsRefs {
+                                    if let temp = arrayToBeSorted.first(where: { $0.id == ref.recordID }) {
+                                        resultArray.append(temp)
+                                    }
+                                }
+                                continuation.resume(returning: .success(resultArray))
                             case .failure(let error):
                                 continuation.resume(returning: .failure(error))
                             }
@@ -80,5 +86,9 @@ actor FindUserModelService {
                 }
             }
         }
+    }
+    
+    func saveRecents(_ users: [UserModel], id: CKRecord.ID) async -> Result<CKRecord, Error> {
+        await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .recentUsersInSearchRecordField, newData: users.map({ CKRecord.Reference(recordID: $0.id, action: .none) }))
     }
 }

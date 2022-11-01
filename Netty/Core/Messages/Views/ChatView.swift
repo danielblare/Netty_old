@@ -128,7 +128,7 @@ struct ChatView: View {
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            ChatView(for: UserModel(id: .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736"), firstName: "Anastasi", lastName: "Zavrak", nickname: "anastasi.a"), ownId: .init(recordName: "7C21B420-2449-22D0-1F26-387A189663EA"))
+            ChatView(for: UserModel(id: .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736"), firstName: "Anastasi", lastName: "Zavrak", nickname: "anastasi.a"), ownId: TestUser.id)
         }
     }
 }

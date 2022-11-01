@@ -97,7 +97,7 @@ struct DirectView: View {
     }
     
     // Chat view
-    private func chatRowView(for chat: ChatModel, with geo: GeometryProxy) -> some View {
+    private func chatRowView(for chat: ChatRowModel, with geo: GeometryProxy) -> some View {
         HStack {
             ProfileImageView(for: chat.opponentId)
                 .frame(width: 70, height: 70)
@@ -123,7 +123,7 @@ struct DirectView: View {
     }
     
     // Swipe actions for each chat
-    private func getSwipeActionsFor(_ chat: ChatModel) -> some View {
+    private func getSwipeActionsFor(_ chat: ChatRowModel) -> some View {
         Button("Delete", role: .destructive) {
             Task {
                 await vm.delete(chat: chat)
@@ -160,7 +160,7 @@ struct DirectView: View {
     }
     
     // Filters messages to satisfy search request
-    private var searchResults: [ChatModel] {
+    private var searchResults: [ChatRowModel] {
         if searchText.isEmpty {
             return vm.chatsArray
         } else {
@@ -174,7 +174,11 @@ struct DirectView: View {
 
 struct DirectView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectView(userRecordId: CKRecord.ID(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089"), path: .constant(.init()))
-        DirectView(userRecordId: CKRecord.ID(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089"), path: .constant(.init()))
+        DirectView(userRecordId: TestUser.id, path: .constant(.init()))
+        DirectView(userRecordId: TestUser.id, path: .constant(.init()))
     }
+}
+
+struct TestUser {
+    static let id: CKRecord.ID = .init(recordName: "A6244FDA-A0DA-47CB-8E12-8F2603271899")
 }

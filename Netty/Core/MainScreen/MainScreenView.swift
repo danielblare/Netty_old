@@ -55,7 +55,7 @@ struct MainScreenView: View {
 
 struct MainScreenView_Previews: PreviewProvider {
     static var previews: some View {
-        MainScreenView(userRecordId: .init(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089"), logOutFunc: LogInAndOutViewModel().logOut)
-        MainScreenView(userRecordId: .init(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089"), logOutFunc: LogInAndOutViewModel().logOut)
+        MainScreenView(userRecordId: TestUser.id, logOutFunc: LogInAndOutViewModel().logOut)
+        MainScreenView(userRecordId: TestUser.id, logOutFunc: LogInAndOutViewModel().logOut)
     }
 }
