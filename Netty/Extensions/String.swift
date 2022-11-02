@@ -26,6 +26,7 @@ extension String {
     static let dateOfBirthRecordField = "dateOfBirth"
     static let chatsRecordField = "chats"
     static let participantsRecordField = "participants"
+    static let messagesRecordField = "messages"
     static let recentUsersInSearchRecordField = "recentUsersInSearch"
     
 

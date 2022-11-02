@@ -18,7 +18,7 @@ struct PersonalInfoPage: View {
     // Confirmation dialog before saving changes
     @State private var confirmationDialogIsPresented: Bool = false
     
-    init(id: CKRecord.ID?) {
+    init(id: CKRecord.ID) {
         _vm = .init(wrappedValue: PersonalInfoViewModel(id: id))
     }
     

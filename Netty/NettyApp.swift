@@ -12,7 +12,7 @@ import CloudKit
 class LogInAndOutViewModel: ObservableObject {
     
     // Current user's recordID
-    @Published var userRecordId: CKRecord.ID?
+    @Published var userId: CKRecord.ID?
     
     // Log in and out manager
     private let manager = LogInAndOutManager.instance
@@ -29,14 +29,14 @@ class LogInAndOutViewModel: ObservableObject {
     var alertMessage: String = ""
         
     init(id: CKRecord.ID? = nil) {
-        userRecordId = id
+        userId = id
         Task {
             let result = await manager.checkLoggedInDevise()
             await MainActor.run(body: {
                 switch result {
                 case .success(let id):
                     withAnimation {
-                        userRecordId = id
+                        userId = id
                     }
                 case .failure(_):
                     print("")
@@ -66,7 +66,7 @@ class LogInAndOutViewModel: ObservableObject {
                 if let id = id {
                     await MainActor.run(body: {
                         withAnimation {
-                            userRecordId = id
+                            userId = id
                         }
                     })
                     await manager.addLoggedInDevice(for: id)
@@ -93,12 +93,12 @@ class LogInAndOutViewModel: ObservableObject {
     
     /// Logs user out
     func logOut() async {
-        if let id = userRecordId {
+        if let id = userId {
             switch await manager.logOut(for: id) {
             case .success(_):
                 await MainActor.run(body: {
                     withAnimation {
-                        userRecordId = nil
+                        userId = nil
                     }
                 })
             case .failure(let error):
@@ -147,8 +147,8 @@ struct NettyApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                if logInAndOutViewModel.userRecordId != nil {
-                    MainScreenView(userRecordId: logInAndOutViewModel.userRecordId, logOutFunc: logInAndOutViewModel.logOut)
+                if let id = logInAndOutViewModel.userId {
+                    MainScreenView(userId: id, logOutFunc: logInAndOutViewModel.logOut)
                         .transition(.opacity)
                 } else {
                     LogInView()

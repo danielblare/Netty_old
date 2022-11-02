@@ -13,7 +13,7 @@ struct ProfileImageView: View {
     // View Model
     @ObservedObject private var vm: ProfileImageViewModel
         
-    init(for id: CKRecord.ID?) {
+    init(for id: CKRecord.ID) {
         vm = ProfileImageViewModel(id: id)
     }
     

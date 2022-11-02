@@ -22,8 +22,8 @@ struct DirectView: View {
     // Navigation path for main screen
     @Binding private var path: NavigationPath
     
-    init(userRecordId: CKRecord.ID?, path: Binding<NavigationPath>) {
-        _vm = .init(wrappedValue: DirectViewModel(userRecordId: userRecordId))
+    init(userId: CKRecord.ID, path: Binding<NavigationPath>) {
+        _vm = .init(wrappedValue: DirectViewModel(userId: userId))
         self._path = path
     }
     
@@ -67,7 +67,7 @@ struct DirectView: View {
             Text(vm.alertMessage)
         })
         .sheet(isPresented: $showSheet) {
-            FindUserView(id: vm.userRecordId, path: $path, showSheet: $showSheet)
+            FindUserView(id: vm.userId, path: $path, showSheet: $showSheet)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .padding(.top)
@@ -174,8 +174,8 @@ struct DirectView: View {
 
 struct DirectView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectView(userRecordId: TestUser.id, path: .constant(.init()))
-        DirectView(userRecordId: TestUser.id, path: .constant(.init()))
+        DirectView(userId: TestUser.id, path: .constant(.init()))
+        DirectView(userId: TestUser.id, path: .constant(.init()))
     }
 }
 

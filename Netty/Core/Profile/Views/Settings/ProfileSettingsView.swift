@@ -24,7 +24,7 @@ struct ProfileSettingsView: View {
             // Settings section
             Section {
                 NavigationLink {
-                    PersonalInfoPage(id: vm.userRecordId)
+                    PersonalInfoPage(id: vm.userId)
                 } label: {
                     HStack {
                         Text("Personal Information")

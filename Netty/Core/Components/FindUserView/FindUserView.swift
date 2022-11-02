@@ -42,7 +42,7 @@ struct FindUserView: View {
     // Shows new message sheet
     @Binding private var showSheet: Bool
     
-    init(id: CKRecord.ID?, path: Binding<NavigationPath>, showSheet: Binding<Bool>) {
+    init(id: CKRecord.ID, path: Binding<NavigationPath>, showSheet: Binding<Bool>) {
         _vm = .init(wrappedValue: FindUserViewModel(id: id))
         self._path = path
         self._showSheet = showSheet

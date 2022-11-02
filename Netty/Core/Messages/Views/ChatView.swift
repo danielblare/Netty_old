@@ -17,7 +17,7 @@ struct ChatView: View {
     // View Model
     @StateObject private var vm: ChatViewModel
     
-    init(for user: UserModel, ownId: CKRecord.ID?) {
+    init(for user: UserModel, ownId: CKRecord.ID) {
         _vm = .init(wrappedValue: ChatViewModel(user: user, ownId: ownId))
     }
     
@@ -32,20 +32,18 @@ struct ChatView: View {
                     ScrollView(.vertical) {
                         VStack(spacing: 2) {
                             
-                            if let chatMessages = vm.chatMessages {
-                                ForEach(chatMessages) { chatMessage in
-                                    MessageView(chatMessage, geo: geo)
-                                        .id(chatMessage.id)
-                                        .transition(chatMessage.isCurrentUser ? .move(edge: .bottom) : .opacity)
-                                }
-                                .frame(maxWidth: .infinity)
+                            ForEach(vm.chatMessages) { chatMessage in
+                                MessageView(chatMessage, ownId: vm.ownId, geo: geo)
+                                    .id(chatMessage.id)
+                                    .transition(chatMessage.isCurrentUser(ownId: vm.ownId) ? .move(edge: .bottom) : .opacity)
                             }
+                            .frame(maxWidth: .infinity)
                         }
                     }
                     .onAppear { // Keeps scroll view on the last message
                         goDown(proxy)
                     }
-                    .onChange(of: vm.chatMessages?.count) { _ in // Keeps scroll view on the last message
+                    .onChange(of: vm.chatMessages.count) { _ in // Keeps scroll view on the last message
                         goDown(proxy, animated: true)
                         
                     }
@@ -89,7 +87,9 @@ struct ChatView: View {
                 }
             
             Button {
-                #warning("Action")
+                Task {
+                    await vm.sendMessage()
+                }
             } label: {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.title)
@@ -110,7 +110,7 @@ struct ChatView: View {
     // Scrolls messages to last one
     private func goDown(_ proxy: ScrollViewProxy, animated: Bool = false) {
         withAnimation(animated ? .default : .none) {
-            proxy.scrollTo(vm.chatMessages?.last?.id)
+            proxy.scrollTo(vm.chatMessages.last?.id)
         }
     }
 }

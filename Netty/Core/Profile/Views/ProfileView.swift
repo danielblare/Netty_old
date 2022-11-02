@@ -21,7 +21,7 @@ struct ProfileView: View {
     @State private var showProfilePhotoChangingConfirmationDialog: Bool = false
     
     // Current user record ID
-    let userRecordId: CKRecord.ID?
+    let userId: CKRecord.ID
     
     // Func passed from logInAndOutViewModel to let user log out
     let logOutFunc: () async -> ()
@@ -30,10 +30,10 @@ struct ProfileView: View {
     @StateObject private var vm: ProfileViewModel
     
     
-    init(userRecordId: CKRecord.ID?, logOutFunc: @escaping () async -> ()) {
-        self.userRecordId = userRecordId
+    init(userId: CKRecord.ID, logOutFunc: @escaping () async -> ()) {
+        self.userId = userId
         self.logOutFunc = logOutFunc
-        self._vm = .init(wrappedValue: ProfileViewModel(id: userRecordId, logOutFunc: logOutFunc))
+        self._vm = .init(wrappedValue: ProfileViewModel(id: userId, logOutFunc: logOutFunc))
     }
         
     var body: some View {
@@ -87,7 +87,7 @@ struct ProfileView: View {
                 })
                 .fullScreenCover(isPresented: $showPhotoImportSheet) {
                     ImagePicker(source: photoInputSource) { image in
-                        vm.uploadImage(image, for: userRecordId)
+                        vm.uploadImage(image, for: userId)
                     }
                     .ignoresSafeArea()
                 }
@@ -168,7 +168,7 @@ struct ProfileView: View {
     // Creates confirmation dialog with options to select new avatar
     @ViewBuilder private func getConfirmationActions() -> some View {
         Button("Remove current photo") {
-            vm.uploadImage(nil, for: userRecordId)
+            vm.uploadImage(nil, for: userId)
         }
         
         Button("Choose from library") {
@@ -199,9 +199,9 @@ struct ProfileView_Previews: PreviewProvider {
     
     static private let id = CKRecord.ID(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089")
     static var previews: some View {
-        ProfileView(userRecordId: id, logOutFunc: LogInAndOutViewModel(id: id).logOut)
+        ProfileView(userId: id, logOutFunc: LogInAndOutViewModel(id: id).logOut)
             .preferredColorScheme(.light)
-        ProfileView(userRecordId: id, logOutFunc: LogInAndOutViewModel(id: id).logOut)
+        ProfileView(userId: id, logOutFunc: LogInAndOutViewModel(id: id).logOut)
             .preferredColorScheme(.dark)
     }
 }

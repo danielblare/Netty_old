@@ -28,13 +28,13 @@ class DirectViewModel: ObservableObject {
     var alertMessage: String = ""
     
     // Current user's record ID
-    let userRecordId: CKRecord.ID?
+    let userId: CKRecord.ID
     
     // Chat data service
     private let dataService = ChatModelService.instance
     
-    init(userRecordId: CKRecord.ID?) {
-        self.userRecordId = userRecordId
+    init(userId: CKRecord.ID) {
+        self.userId = userId
         Task {
             isLoading = true
             await sync()
@@ -50,18 +50,16 @@ class DirectViewModel: ObservableObject {
     
     /// Deletes chat
     func delete(chat: ChatRowModel) async {
-        if let id = userRecordId {
-            let backup = chatsArray.first(where: { $0.id == chat.id }) // Saves chat before deleting
-            chatsArray.removeAll(where: { $0.id == chat.id }) // Removes chat from array
-            switch await dataService.deleteChat(with: chat.id, for: id) { // Deletes chat in database
-            case .success(_):
-                break
-            case .failure(let error):
-                if let backup = backup { // If failure restores chat from backup
-                    chatsArray.append(backup)
-                }
-                showAlert(title: "Error while deleting chat", message: error.localizedDescription)
+        let backup = chatsArray.first(where: { $0.id == chat.id }) // Saves chat before deleting
+        chatsArray.removeAll(where: { $0.id == chat.id }) // Removes chat from array
+        switch await dataService.deleteChat(with: chat.id, for: userId) { // Deletes chat in database
+        case .success(_):
+            break
+        case .failure(let error):
+            if let backup = backup { // If failure restores chat from backup
+                chatsArray.append(backup)
             }
+            showAlert(title: "Error while deleting chat", message: error.localizedDescription)
         }
     }
     
@@ -81,13 +79,12 @@ class DirectViewModel: ObservableObject {
     
     /// Downloads user's chats
     private func downloadData() async {
-        if let id = userRecordId {
             await MainActor.run(body: {
                 withAnimation {
                     isRefreshing = true
                 }
             })
-            switch await dataService.getChatsIDsListForUser(with: id) { // Gets IDs for all chats of current user
+            switch await dataService.getChatsIDsListForUser(with: userId) { // Gets IDs for all chats of current user
             case .success(let IDs):
                 switch await dataService.getChats(with: IDs) { // Fetches chats from IDs
                 case .success(let chats):
@@ -95,7 +92,7 @@ class DirectViewModel: ObservableObject {
                     for chat in chats {
                         switch chat.value {
                         case .success(let record):
-                            switch await dataService.downloadChatModel(for: record, currentUserId: id, chatId: chat.key, modificationDate: record.modificationDate) { // Downloads chat models
+                            switch await dataService.downloadChatModel(for: record, currentUserId: userId, chatId: chat.key, modificationDate: record.modificationDate) { // Downloads chat models
                             case .success(let chatModel):
                                 result.append(chatModel)
                             case .failure(let error):
@@ -123,14 +120,13 @@ class DirectViewModel: ObservableObject {
             case .failure(let failure):
                 showAlert(title: "Error while getting chats IDs", message: failure.localizedDescription)
             }
-        }
         await MainActor.run(body: {
             withAnimation {
                 isRefreshing = false
             }
         })
     }
-        
+    
     /// Shows alert
     private func showAlert(title: String, message: String) {
         alertTitle = title

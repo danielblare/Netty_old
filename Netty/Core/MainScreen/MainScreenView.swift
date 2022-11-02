@@ -11,7 +11,7 @@ import CloudKit
 struct MainScreenView: View {
     
     // Current user's recordID
-    let userRecordId: CKRecord.ID?
+    let userId: CKRecord.ID
     
     // Log out func passed from LogInAndOutViewModel
     let logOutFunc: () async -> ()
@@ -27,19 +27,19 @@ struct MainScreenView: View {
                         Image(systemName: "photo.on.rectangle")
                     }
                     .tag(0)
-                DirectView(userRecordId: userRecordId, path: $path)
+                DirectView(userId: userId, path: $path)
                     .tabItem {
                         Image(systemName: "ellipsis.bubble")
                     }
                     .tag(1)
-                ProfileView(userRecordId: userRecordId, logOutFunc: logOutFunc)
+                ProfileView(userId: userId, logOutFunc: logOutFunc)
                     .tabItem {
                         Image(systemName: "person")
                     }
                     .tag(2)
             }
             .navigationDestination(for: UserModel.self) { userModel in
-                ChatView(for: userModel, ownId: userRecordId)
+                ChatView(for: userModel, ownId: userId)
             }
             .toolbar(.hidden)
         }
@@ -55,7 +55,7 @@ struct MainScreenView: View {
 
 struct MainScreenView_Previews: PreviewProvider {
     static var previews: some View {
-        MainScreenView(userRecordId: TestUser.id, logOutFunc: LogInAndOutViewModel().logOut)
-        MainScreenView(userRecordId: TestUser.id, logOutFunc: LogInAndOutViewModel().logOut)
+        MainScreenView(userId: TestUser.id, logOutFunc: LogInAndOutViewModel().logOut)
+        MainScreenView(userId: TestUser.id, logOutFunc: LogInAndOutViewModel().logOut)
     }
 }

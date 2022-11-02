@@ -47,6 +47,51 @@ class ChatModelService {
         }
     }
     
+    func sendMessage(_ data: Data, in chat: CKRecord.ID) async -> Result<CKRecord?, Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: chat) { returnedRecord, error in
+                if let error = error {
+                    continuation.resume(returning: .failure(error))
+                } else if let chatRecord = returnedRecord,
+                          let messages = chatRecord[.messagesRecordField] as? [NSData] {
+                    print("2 \(messages)")
+                    var newMessages = messages
+                    newMessages.append(NSData(data: data))
+                    print("2 \(newMessages)")
+                    chatRecord[.messagesRecordField] = newMessages
+                    CKContainer.default().publicCloudDatabase.save(chatRecord) { returnedRecord, error in
+                        if let error = error {
+                            continuation.resume(returning: .failure(error))
+                        } else if let record = returnedRecord {
+                            continuation.resume(returning: .success(record))
+                        }
+                    }
+                } else {
+                    continuation.resume(returning: .success(nil))
+                }
+            }
+        }
+    }
+    
+    func getMessageModels(forChatWith id: CKRecord.ID) async -> Result<[ChatMessageModel], Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
+                if let error = error {
+                    continuation.resume(returning: .failure(error))
+                } else if let chatRecord = returnedRecord,
+                          let messagesDataArray = chatRecord[.messagesRecordField] as? [NSData] {
+                    do {
+                        continuation.resume(returning: .success(try messagesDataArray.map({ try JSONDecoder().decode(ChatMessageModel.self, from: Data(referencing: $0)) })))
+                    } catch {
+                        continuation.resume(returning: .failure(error))
+                    }
+                } else {
+                    continuation.resume(returning: .success([]))
+                }
+            }
+        }
+    }
+    
     func getChatsIDsListForUser(with id: CKRecord.ID) async -> Result<[CKRecord.ID], Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedUserRecord, error in

@@ -110,7 +110,7 @@ struct LogInView: View {
                         .font(.footnote)
                     
                     NavigationLink {
-                        NamePageView(userRecordId: $vm.userRecordId, path: $path)
+                        NamePageView(userId: $vm.userId, path: $path)
                     } label: {
                         Text("Sign Up")
                             .font(.footnote)

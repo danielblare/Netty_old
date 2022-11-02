@@ -12,7 +12,7 @@ import CloudKit
 class PersonalInfoViewModel: ObservableObject {
     
     // RecordID of current user
-    private let userId: CKRecord.ID?
+    private let userId: CKRecord.ID
     
     // Shows loading view if true
     @Published var isLoading: Bool = false
@@ -107,7 +107,7 @@ class PersonalInfoViewModel: ObservableObject {
     // Cache manager
     private let cacheManager = CacheManager.instance
     
-    init(id: CKRecord.ID?) {
+    init(id: CKRecord.ID) {
         userId = id
         fetchDataFromDatabase()
         addSubscribers()
@@ -208,7 +208,6 @@ class PersonalInfoViewModel: ObservableObject {
         
     /// Saves all changes to database and cache
     func saveChanges() async {
-        guard let id = userId else { return }
         
         // Starts loading view
         await MainActor.run(body: {
@@ -220,11 +219,11 @@ class PersonalInfoViewModel: ObservableObject {
         if nicknameTextField != actualNickname {
             
             // Updates record in database
-            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .nicknameRecordField, newData: nicknameTextField) {
+            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: userId, field: .nicknameRecordField, newData: nicknameTextField) {
             case .success(_):
                 await MainActor.run(body: {
                     actualNickname = nicknameTextField
-                    cacheManager.delete(from: cacheManager.textCache, "_nickname", for: id.recordName)
+                    cacheManager.delete(from: cacheManager.textCache, "_nickname", for: userId.recordName)
                     availabilityIsPassed = false
                     nicknameError = .none
                 })
@@ -237,11 +236,11 @@ class PersonalInfoViewModel: ObservableObject {
         if firstNameTextField != actualFirstName {
             
             // Updates record in database
-            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .firstNameRecordField, newData: firstNameTextField) {
+            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: userId, field: .firstNameRecordField, newData: firstNameTextField) {
             case .success(_):
                 await MainActor.run(body: {
                     actualFirstName = firstNameTextField
-                    cacheManager.delete(from: cacheManager.textCache, "_firstName", for: id.recordName)
+                    cacheManager.delete(from: cacheManager.textCache, "_firstName", for: userId.recordName)
                     firstNameError = .none
                 })
             case .failure(let error):
@@ -253,11 +252,11 @@ class PersonalInfoViewModel: ObservableObject {
         if lastNameTextField != actualLastName {
             
             // Updates record in database
-            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .lastNameRecordField, newData: lastNameTextField) {
+            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: userId, field: .lastNameRecordField, newData: lastNameTextField) {
             case .success(_):
                 await MainActor.run(body: {
                     actualLastName = lastNameTextField
-                    cacheManager.delete(from: cacheManager.textCache, "_lastName", for: id.recordName)
+                    cacheManager.delete(from: cacheManager.textCache, "_lastName", for: userId.recordName)
                     lastNameError = .none
                 })
             case .failure(let error):
@@ -269,7 +268,7 @@ class PersonalInfoViewModel: ObservableObject {
         if dateOfBirthPicker != actualDateOfBirth {
             
             // Updates record in database
-            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .dateOfBirthRecordField, newData: Calendar.current.startOfDay(for: dateOfBirthPicker)) {
+            switch await CloudKitManager.instance.updateFieldForUserWith(recordId: userId, field: .dateOfBirthRecordField, newData: Calendar.current.startOfDay(for: dateOfBirthPicker)) {
             case .success(_):
                 await MainActor.run(body: {
                     actualDateOfBirth = Calendar.current.startOfDay(for: dateOfBirthPicker)
@@ -398,9 +397,8 @@ class PersonalInfoViewModel: ObservableObject {
     
     /// Fetches current user's data from database
     private func fetchDataFromDatabase() {
-        guard let id = userId else { return }
         isLoading = true
-        CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { [weak self] user, error in
+        CKContainer.default().publicCloudDatabase.fetch(withRecordID: userId) { [weak self] user, error in
             if let self = self {
                 DispatchQueue.main.async {
                     if let user = user,

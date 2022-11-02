@@ -38,6 +38,23 @@ actor CloudKitManager {
             }
         }
     }
+    
+    func doesChatExistWith(participants: (CKRecord.Reference, CKRecord.Reference)) async -> Result<CKRecord.ID?, Error> {
+        await withCheckedContinuation { continuation in
+            let predicate1 = NSPredicate(format: "\(String.participantsRecordField) CONTAINS %@", participants.0)
+            let predicate2 = NSPredicate(format: "\(String.participantsRecordField) CONTAINS %@", participants.1)
+            let predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
+            let query = CKQuery(recordType: .chatsRecordType, predicate: predicate)
+            CKContainer.default().publicCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
+                switch completion {
+                case .success(let success):
+                    continuation.resume(returning: .success(success.matchResults.first?.0))
+                case .failure(let failure):
+                    continuation.resume(returning: .failure(failure))
+                }
+            }
+        }
+    }
 
     /// Saves `record` to public database.
     ///

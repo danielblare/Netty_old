@@ -21,13 +21,12 @@ class ProfileImageViewModel: ObservableObject {
     // Cache manager
     private let cacheManager = CacheManager.instance
     
-    init(id: CKRecord.ID?) {
+    init(id: CKRecord.ID) {
         getImage(for: id)
     }
 
     /// Gets image for record id from database
-    private func getImage(for id: CKRecord.ID?) {
-        guard let id = id else { return }
+    private func getImage(for id: CKRecord.ID) {
         if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(id.recordName)_avatar") {
             image = savedImage
             Task {

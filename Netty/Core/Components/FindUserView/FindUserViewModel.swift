@@ -30,7 +30,7 @@ class FindUserViewModel: ObservableObject {
     @Published var showFound: Bool = false
     
     // Current user id
-    private let userId: CKRecord.ID?
+    private let userId: CKRecord.ID
     
     // Alert
     @Published var showAlert: Bool = false
@@ -45,7 +45,7 @@ class FindUserViewModel: ObservableObject {
     // Search task
     private var searchTask: Task<(), Never>?
     
-    init(id: CKRecord.ID?) {
+    init(id: CKRecord.ID) {
         self.userId = id
         Task {
             await getResents()
@@ -54,8 +54,7 @@ class FindUserViewModel: ObservableObject {
     
     /// Clears all recent users
     func clearRecents() async {
-        guard let id = userId else { return }
-        switch await CloudKitManager.instance.updateFieldForUserWith(recordId: id, field: .recentUsersInSearchRecordField, newData: [CKRecord.Reference]()) {
+        switch await CloudKitManager.instance.updateFieldForUserWith(recordId: userId, field: .recentUsersInSearchRecordField, newData: [CKRecord.Reference]()) {
         case .success(_):
             await MainActor.run {
                 withAnimation {
@@ -86,13 +85,12 @@ class FindUserViewModel: ObservableObject {
     
     /// Performs actions if search process started
     func executeQuery() async {
-        guard let id = userId else { return }
         if !searchText.isEmpty {
             searchTask = Task {
                 await MainActor.run(body: {
                     isLoading = true
                 })
-                switch await dataService.downloadSearching(searchText, id: id) {
+                switch await dataService.downloadSearching(searchText, id: userId) {
                 case .success(let resultArray):
                     if let task = searchTask, !task.isCancelled {
                         await MainActor.run(body: {
@@ -110,7 +108,6 @@ class FindUserViewModel: ObservableObject {
     
     /// Gets recents from database
     private func getResents() async {
-        guard let id = userId else { return }
         if let savedRecents = cacheManager.getFrom(cacheManager.recentUsers, key: "users") { // Checks if there are any recents in cache
             await MainActor.run {
                 withAnimation {
@@ -118,7 +115,7 @@ class FindUserViewModel: ObservableObject {
                     showRecents = true
                 }
             }
-            switch await dataService.downloadRecents(for: id) { // Downloads recents in background
+            switch await dataService.downloadRecents(for: userId) { // Downloads recents in background
             case .success(let dataArray):
                 if savedRecents.users != dataArray {
                     cacheManager.addTo(cacheManager.recentUsers, key: "users", value: RecentUsersHolder(dataArray))
@@ -135,7 +132,7 @@ class FindUserViewModel: ObservableObject {
             await MainActor.run(body: {
                 isLoading = true
             })
-            switch await dataService.downloadRecents(for: id) {
+            switch await dataService.downloadRecents(for: userId) {
             case .success(let dataArray):
                 cacheManager.addTo(cacheManager.recentUsers, key: "users", value: RecentUsersHolder(dataArray))
                 await MainActor.run(body: {
@@ -153,7 +150,6 @@ class FindUserViewModel: ObservableObject {
     
     /// Adds user to recent list
     func addToRecents(_ user: UserModel) {
-        guard let id = userId else { return }
         if !recentsArray.contains(user) {
             if recentsArray.count >= Limits.usersInRecentsLimit {
                 recentsArray.removeLast(recentsArray.count - Limits.usersInRecentsLimit + 1)
@@ -166,7 +162,7 @@ class FindUserViewModel: ObservableObject {
         }
         cacheManager.addTo(cacheManager.recentUsers, key: "users", value: RecentUsersHolder(recentsArray))
         Task {
-            await dataService.saveRecents(recentsArray, id: id)
+            await dataService.saveRecents(recentsArray, id: userId)
         }
 
     }

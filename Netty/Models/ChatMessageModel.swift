@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import CloudKit
 
-
-struct ChatMessageModel: Identifiable {
-    let id = UUID()
-    let message: String
-    let isCurrentUser: Bool
+struct ChatMessageModel: Identifiable, Codable {
+    let id, message: String
+    let date: Date
    
+    func isCurrentUser(ownId: CKRecord.ID) -> Bool {
+        ownId.recordName == id
+    }
 }

@@ -19,8 +19,8 @@ struct NamePageView: View {
     // View Model
     @StateObject private var vm: SignUpViewModel
     
-    init(userRecordId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
-        _vm = .init(wrappedValue: SignUpViewModel(userRecordId: userRecordId, path: path))
+    init(userId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
+        _vm = .init(wrappedValue: SignUpViewModel(userId: userId, path: path))
     }
     
     var body: some View {

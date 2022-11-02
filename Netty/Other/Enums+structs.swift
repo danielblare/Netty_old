@@ -59,7 +59,7 @@ struct Limits {
     static let emailSymbolsLimit: Int = 64
     static let nicknameSymbolsLimit: Int = 20
     static let passwordSymbolsLimit: Int = 23
-    static let usersInRecentsLimit: Int = 10
+    static let usersInRecentsLimit: Int = 5
 }
 
 enum NicknameError: String {

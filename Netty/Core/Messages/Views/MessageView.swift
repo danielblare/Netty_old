@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CloudKit
 
 struct MessageView: View {
     
@@ -18,9 +19,9 @@ struct MessageView: View {
     // Geometry proxy
     let proxy: GeometryProxy
     
-    init(_ chatMessage: ChatMessageModel, geo: GeometryProxy) {
+    init(_ chatMessage: ChatMessageModel, ownId: CKRecord.ID, geo: GeometryProxy) {
         message = chatMessage.message
-        isCurrentUser = chatMessage.isCurrentUser
+        isCurrentUser = chatMessage.isCurrentUser(ownId: ownId)
         proxy = geo
     }
     
@@ -48,7 +49,7 @@ struct MessageView: View {
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader { geo in
-            MessageView(ChatMessageModel(message: "Hello", isCurrentUser: false), geo: geo)
+            MessageView(ChatMessageModel(id: "30E1675A-A59C-4FB4-8A2A-5E99D197E736", message: "Hello", date: Date()), ownId: .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736"), geo: geo)
             .previewLayout(.sizeThatFits)
         }
     }

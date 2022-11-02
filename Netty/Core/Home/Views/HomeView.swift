@@ -14,14 +14,30 @@ struct HomeView: View {
     @StateObject private var vm = HomeViewModel()
         
     var body: some View {
-        Button("Create 50 accounts") {
-            for _ in 0...50 {
-                Task {
-                    await createAccount()
+        VStack(spacing: 50) {
+            Button("Create 50 accounts") {
+                for _ in 0...50 {
+                    Task {
+                        await createAccount()
+                    }
+                }
+            }
+            
+            Button("Add bytes") {
+                CKContainer.default().publicCloudDatabase.fetch(withRecordID: .init(recordName: "A3B9378A-5265-B0C8-238D-DE97CAAF9B6C")) { record, error in
+                    if let record = record {
+                        record[.messagesRecordField] = try? JSONEncoder().encode("String")
+                        CKContainer.default().publicCloudDatabase.save(record) { record, error in
+                            if let record = record {
+                                print("Success")
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+    
     
     func createAccount() async {
         let firstName = randomString(length: 10)

@@ -33,7 +33,7 @@ class ProfileViewModel: ObservableObject {
     @Published var nickname: String? = nil
     
     // User's record ID
-    let userRecordId: CKRecord.ID?
+    let userId: CKRecord.ID
     
     // Log out function passed from LogInAndOutViewModel
     private var logOutFunc: () async -> ()
@@ -41,8 +41,8 @@ class ProfileViewModel: ObservableObject {
     // Cache manager to save some user's data in cache
     private let cacheManager = CacheManager.instance
     
-    init(id: CKRecord.ID?, logOutFunc: @escaping () async -> ()) {
-        userRecordId = id
+    init(id: CKRecord.ID, logOutFunc: @escaping () async -> ()) {
+        userId = id
         self.logOutFunc = logOutFunc
         Task {
             await getData()
@@ -64,20 +64,17 @@ class ProfileViewModel: ObservableObject {
     
     /// Deletes user's data from cache and downloads new fresh data from database
     func sync() async {
-        guard let id = userRecordId else { return }
-        cacheManager.delete(from: cacheManager.textCache, "_firstName", for: id.recordName)
-        cacheManager.delete(from: cacheManager.textCache, "_nickname", for: id.recordName)
-        cacheManager.delete(from: cacheManager.textCache, "_lastName", for: id.recordName)
-        cacheManager.delete(from: cacheManager.photoCache, "_avatar", for: id.recordName)
+        cacheManager.delete(from: cacheManager.textCache, "_firstName", for: userId.recordName)
+        cacheManager.delete(from: cacheManager.textCache, "_nickname", for: userId.recordName)
+        cacheManager.delete(from: cacheManager.textCache, "_lastName", for: userId.recordName)
+        cacheManager.delete(from: cacheManager.photoCache, "_avatar", for: userId.recordName)
         await getData()
     }
     
     /// Gets user's nickname
     private func getNickname() async {
-        guard let id = userRecordId else { return }
-        
         // Checks if user's nickname already saved in cache
-        if let savedNickname = cacheManager.getFrom(cacheManager.textCache, key: "\(id.recordName)_nickname") as? String {
+        if let savedNickname = cacheManager.getFrom(cacheManager.textCache, key: "\(userId.recordName)_nickname") as? String {
             await MainActor.run {
                 withAnimation {
                     nickname = savedNickname
@@ -86,14 +83,14 @@ class ProfileViewModel: ObservableObject {
         } else {
             
             // Downloads user's nickname from database
-            switch await UserInfoService.instance.fetchNicknameForUser(with: id) {
+            switch await UserInfoService.instance.fetchNicknameForUser(with: userId) {
             case .success(let returnedValue):
                 await MainActor.run {
                     withAnimation {
                         self.nickname = returnedValue
                     }
                     if let nickname = returnedValue { // Saves fetched data in the cache
-                        cacheManager.addTo(cacheManager.textCache, key: "\(id.recordName)_nickname", value: NSString(string: nickname))
+                        cacheManager.addTo(cacheManager.textCache, key: "\(userId.recordName)_nickname", value: NSString(string: nickname))
                     }
                 }
             case .failure(let error):
@@ -104,10 +101,9 @@ class ProfileViewModel: ObservableObject {
     
     /// Gets user's first name
     private func getFirstName() async {
-        guard let id = userRecordId else { return }
         
         // Checks if user's first name already saved in cache
-        if let savedName = cacheManager.getFrom(cacheManager.textCache, key: "\(id.recordName)_firstName") as? String {
+        if let savedName = cacheManager.getFrom(cacheManager.textCache, key: "\(userId.recordName)_firstName") as? String {
             await MainActor.run {
                 withAnimation {
                     firstName = savedName
@@ -116,14 +112,14 @@ class ProfileViewModel: ObservableObject {
         } else {
             
             // Downloads user's first name from database
-            switch await UserInfoService.instance.fetchFirstNameForUser(with: id) {
+            switch await UserInfoService.instance.fetchFirstNameForUser(with: userId) {
             case .success(let returnedValue):
                 await MainActor.run {
                     withAnimation {
                         self.firstName = returnedValue
                     }
                     if let firstName = returnedValue { // Saves fetched data in the cache
-                        cacheManager.addTo(cacheManager.textCache, key: "\(id.recordName)_firstName", value: NSString(string: firstName))
+                        cacheManager.addTo(cacheManager.textCache, key: "\(userId.recordName)_firstName", value: NSString(string: firstName))
                     }
                 }
             case .failure(let error):
@@ -134,10 +130,9 @@ class ProfileViewModel: ObservableObject {
     
     /// Gets user's last name
     private func getLastName() async {
-        guard let id = userRecordId else { return }
         
         // Checks if user's last name already saved in cache
-        if let savedName = cacheManager.getFrom(cacheManager.textCache, key: "\(id.recordName)_lastName") as? String {
+        if let savedName = cacheManager.getFrom(cacheManager.textCache, key: "\(userId.recordName)_lastName") as? String {
             await MainActor.run {
                 withAnimation {
                     lastName = savedName
@@ -146,14 +141,14 @@ class ProfileViewModel: ObservableObject {
         } else {
             
             // Downloads user's last name from database
-            switch await UserInfoService.instance.fetchLastNameForUser(with: id) {
+            switch await UserInfoService.instance.fetchLastNameForUser(with: userId) {
             case .success(let returnedValue):
                 await MainActor.run {
                     withAnimation {
                         self.lastName = returnedValue
                     }
                     if let lastName = returnedValue { // Saves fetched data in the cache
-                        cacheManager.addTo(cacheManager.textCache, key: "\(id.recordName)_lastName", value: NSString(string: lastName))
+                        cacheManager.addTo(cacheManager.textCache, key: "\(userId.recordName)_lastName", value: NSString(string: lastName))
                     }
                 }
             case .failure(let error):
@@ -164,10 +159,9 @@ class ProfileViewModel: ObservableObject {
     
     /// Gets current user's avatar
     private func getImage() async {
-        guard let id = userRecordId else { return }
         
         // Checks if user's avatar already saved in cache
-        if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(id.recordName)_avatar") {
+        if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(userId.recordName)_avatar") {
             await MainActor.run {
                 withAnimation {
                     image = savedImage
@@ -183,7 +177,7 @@ class ProfileViewModel: ObservableObject {
             }
             
             // Downloads user's avatar from database
-            switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
+            switch await AvatarImageService.instance.fetchAvatarForUser(with: userId) {
             case .success(let returnedValue):
                 await MainActor.run(body: {
                     withAnimation {
@@ -191,7 +185,7 @@ class ProfileViewModel: ObservableObject {
                         self.image = returnedValue
                     }
                     if let image = returnedValue { // Saves fetched data in the cache
-                        cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: image)
+                        cacheManager.addTo(cacheManager.photoCache, key: "\(userId.recordName)_avatar", value: image)
                     }
                 })
             case .failure(let error):
@@ -201,8 +195,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     /// Uploads new image as user's avatar to database
-    func uploadImage(_ image: UIImage?, for id: CKRecord.ID?) {
-        guard let id = id else { return }
+    func uploadImage(_ image: UIImage?, for id: CKRecord.ID) {
         
         // Removes old image from the screen, starts loading
         DispatchQueue.main.async {

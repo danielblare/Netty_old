@@ -12,8 +12,8 @@ import CloudKit
 
 class SignUpViewModel: ObservableObject {
     
-    init(userRecordId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
-        self._userRecordId = userRecordId
+    init(userId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
+        self._userId = userId
         self._path = path
         
         // Checking whether user is more than 18 y.o.
@@ -29,7 +29,7 @@ class SignUpViewModel: ObservableObject {
     @Binding var path: NavigationPath
     
     // Current user record id
-    @Binding var userRecordId: CKRecord.ID?
+    @Binding var userId: CKRecord.ID?
             
     // Name page
     @Published var firstNameTextField: String = "" {
@@ -263,7 +263,7 @@ class SignUpViewModel: ObservableObject {
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
-                        self.userRecordId = returnedRecord.recordID
+                        self.userId = returnedRecord.recordID
                         self.path = NavigationPath()
                     }
                 }
