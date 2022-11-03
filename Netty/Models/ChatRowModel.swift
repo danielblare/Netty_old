@@ -11,10 +11,8 @@ import SwiftUI
 
 
 struct ChatRowModel: Identifiable {
-    var id: CKRecord.ID
-    let opponentId: CKRecord.ID
-    
-    let userName: String
+    let id: CKRecord.ID
+    let user: UserModel
     let lastMessage: String?
     let modificationDate: Date?
 }

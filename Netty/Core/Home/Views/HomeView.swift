@@ -24,16 +24,30 @@ struct HomeView: View {
             }
             
             Button("Add bytes") {
-                CKContainer.default().publicCloudDatabase.fetch(withRecordID: .init(recordName: "A3B9378A-5265-B0C8-238D-DE97CAAF9B6C")) { record, error in
-                    if let record = record {
-                        record[.messagesRecordField] = try? JSONEncoder().encode("String")
-                        CKContainer.default().publicCloudDatabase.save(record) { record, error in
-                            if let record = record {
-                                print("Success")
-                            }
-                        }
-                    }
-                }
+//                CKContainer.default().publicCloudDatabase.fetch(withRecordID: .init(recordName: "A3B9378A-5265-B0C8-238D-DE97CAAF9B6C")) { returnedRecord, error in
+//                    if let record = returnedRecord {
+//                        let messages = record[.messagesRecordField] as? [Data]
+//                        print(messages)
+//                    }
+//                }
+//                CKContainer.default().publicCloudDatabase.fetch(withRecordID: .init(recordName: "A3B9378A-5265-B0C8-238D-DE97CAAF9B6C")) { returnedRecord, error in
+//                    if let error = error {
+//                        print(error.localizedDescription)
+//                    } else if let chatRecord = returnedRecord {
+//                        print(chatRecord)
+//                        print(chatRecord["messages"])
+//                        let a = try! JSONEncoder().encode(ChatMessageModel(id: "30E1675A-A59C-4FB4-8A2A-5E99D197E736", message: "hello", date: .now))
+//                        let b = try! JSONEncoder().encode(ChatMessageModel(id: "A6244FDA-A0DA-47CB-8E12-8F2603271899", message: "Hello", date: .now))
+//                        chatRecord["messages"] = [a, b]
+//                        CKContainer.default().publicCloudDatabase.save(chatRecord) { returnedRecord, error in
+//                            if let returnedRecord = returnedRecord {
+//                                print(returnedRecord)
+//                            }
+//                        }
+//                    } else {
+//                        print("Error")
+//                    }
+//                }
             }
         }
     }

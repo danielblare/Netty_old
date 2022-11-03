@@ -92,7 +92,7 @@ class DirectViewModel: ObservableObject {
                     for chat in chats {
                         switch chat.value {
                         case .success(let record):
-                            switch await dataService.downloadChatModel(for: record, currentUserId: userId, chatId: chat.key, modificationDate: record.modificationDate) { // Downloads chat models
+                            switch await dataService.downloadChatModel(for: record, currentUserId: userId, modificationDate: record.modificationDate) { // Downloads chat models
                             case .success(let chatModel):
                                 result.append(chatModel)
                             case .failure(let error):

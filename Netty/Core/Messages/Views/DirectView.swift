@@ -38,10 +38,14 @@ struct DirectView: View {
                     } else if !vm.chatsArray.isEmpty {
                         
                         List(searchResults) { chat in
-                            chatRowView(for: chat, with: geo)
-                                .swipeActions {
-                                    getSwipeActionsFor(chat)
-                                }
+                            Button {
+                                path.append(chat.user)
+                            } label: {
+                                chatRowView(for: chat, with: geo)
+                                    .swipeActions {
+                                        getSwipeActionsFor(chat)
+                                    }
+                            }
                         }
                         
                         .listStyle(.inset)
@@ -99,12 +103,12 @@ struct DirectView: View {
     // Chat view
     private func chatRowView(for chat: ChatRowModel, with geo: GeometryProxy) -> some View {
         HStack {
-            ProfileImageView(for: chat.opponentId)
+            ProfileImageView(for: chat.user.id)
                 .frame(width: 70, height: 70)
                 .padding(.trailing, 5)
             
             VStack(alignment: .leading) {
-                Text(chat.userName)
+                Text(chat.user.nickname)
                     .lineLimit(1)
                     .fontWeight(.semibold)
                     .padding(.top)
@@ -164,7 +168,7 @@ struct DirectView: View {
         if searchText.isEmpty {
             return vm.chatsArray
         } else {
-            return vm.chatsArray.filter { $0.userName.lowercased().contains(searchText.lowercased()) }
+            return vm.chatsArray.filter { $0.user.nickname.lowercased().contains(searchText.lowercased()) }
         }
     }
 }

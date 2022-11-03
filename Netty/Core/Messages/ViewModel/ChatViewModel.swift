@@ -43,10 +43,9 @@ final class ChatViewModel: ObservableObject {
     func sendMessage() async {
         guard let chatId = chatId else { return }
         if !messageTextField.isEmpty {
-            let message = ChatMessageModel(id: ownId.recordName, message: messageTextField, date: .now)
+            let message = ChatMessageModel(userId: ownId.recordName, message: messageTextField, date: .now)
             if let data = try? JSONEncoder().encode(message) {
-                print("1 \(data) decoded: \(try? JSONDecoder().decode(ChatMessageModel.self, from: data))")
-                switch await ChatModelService.instance.sendMessage(data, in: chatId) {
+                switch await ChatModelService.instance.sendMessage(data, in: chatId, ownId: ownId) {
                 case .success(let returnedRecord):
                     if returnedRecord != nil {
                         await MainActor.run {
@@ -69,7 +68,7 @@ final class ChatViewModel: ObservableObject {
     
     
     private func getChat(participants: (CKRecord.Reference, CKRecord.Reference)) async {
-        switch await CloudKitManager.instance.doesChatExistWith(participants: participants) {
+        switch await ChatModelService.instance.doesChatExistWith(participants: participants) {
         case .success(let returnedRecordId):
             if let recordId = returnedRecordId {
                 chatId = recordId

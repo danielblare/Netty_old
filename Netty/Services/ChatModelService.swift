@@ -47,18 +47,21 @@ class ChatModelService {
         }
     }
     
-    func sendMessage(_ data: Data, in chat: CKRecord.ID) async -> Result<CKRecord?, Error> {
-        await withCheckedContinuation { continuation in
-            CKContainer.default().publicCloudDatabase.fetch(withRecordID: chat) { returnedRecord, error in
+    func sendMessage(_ data: Data, in chatId: CKRecord.ID, ownId: CKRecord.ID) async -> Result<CKRecord?, Error> {
+        addChatToUsersList(chatId, userId: ownId)
+        return await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: chatId) { returnedRecord, error in
                 if let error = error {
                     continuation.resume(returning: .failure(error))
-                } else if let chatRecord = returnedRecord,
-                          let messages = chatRecord[.messagesRecordField] as? [NSData] {
-                    print("2 \(messages)")
-                    var newMessages = messages
-                    newMessages.append(NSData(data: data))
-                    print("2 \(newMessages)")
-                    chatRecord[.messagesRecordField] = newMessages
+                } else if let chatRecord = returnedRecord {
+                    if var messages = chatRecord[.messagesRecordField] as? [Data] {
+                        messages.append(data)
+                        chatRecord[.messagesRecordField] = messages
+                        
+                    } else {
+                        chatRecord[.messagesRecordField] = [data]
+                    }
+                    
                     CKContainer.default().publicCloudDatabase.save(chatRecord) { returnedRecord, error in
                         if let error = error {
                             continuation.resume(returning: .failure(error))
@@ -73,15 +76,31 @@ class ChatModelService {
         }
     }
     
+    private func addChatToUsersList(_ chatId: CKRecord.ID, userId: CKRecord.ID) {
+        CKContainer.default().publicCloudDatabase.fetch(withRecordID: userId) { returnedRecord, _ in
+            if let record = returnedRecord {
+                if var chats = record[.chatsRecordField] as? [CKRecord.Reference] {
+                    chats.append(CKRecord.Reference(recordID: chatId, action: .none))
+                    record[.chatsRecordField] = chats
+                } else {
+                    record[.chatsRecordField] = [CKRecord.Reference(recordID: chatId, action: .none)]
+                }
+                Task {
+                    try? await CKContainer.default().publicCloudDatabase.save(record)
+                }
+            }
+        }
+    }
+    
     func getMessageModels(forChatWith id: CKRecord.ID) async -> Result<[ChatMessageModel], Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
                 if let error = error {
                     continuation.resume(returning: .failure(error))
                 } else if let chatRecord = returnedRecord,
-                          let messagesDataArray = chatRecord[.messagesRecordField] as? [NSData] {
+                          let messagesDataArray = chatRecord[.messagesRecordField] as? [Data] {
                     do {
-                        continuation.resume(returning: .success(try messagesDataArray.map({ try JSONDecoder().decode(ChatMessageModel.self, from: Data(referencing: $0)) })))
+                        continuation.resume(returning: .success(try messagesDataArray.map({ try JSONDecoder().decode(ChatMessageModel.self, from: $0) })))
                     } catch {
                         continuation.resume(returning: .failure(error))
                     }
@@ -91,6 +110,24 @@ class ChatModelService {
             }
         }
     }
+    
+    func doesChatExistWith(participants: (CKRecord.Reference, CKRecord.Reference)) async -> Result<CKRecord.ID?, Error> {
+        await withCheckedContinuation { continuation in
+            let predicate1 = NSPredicate(format: "\(String.participantsRecordField) CONTAINS %@", participants.0)
+            let predicate2 = NSPredicate(format: "\(String.participantsRecordField) CONTAINS %@", participants.1)
+            let predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
+            let query = CKQuery(recordType: .chatsRecordType, predicate: predicate)
+            CKContainer.default().publicCloudDatabase.fetch(withQuery: query, inZoneWith: nil) { completion in
+                switch completion {
+                case .success(let success):
+                    continuation.resume(returning: .success(success.matchResults.first?.0))
+                case .failure(let failure):
+                    continuation.resume(returning: .failure(failure))
+                }
+            }
+        }
+    }
+
     
     func getChatsIDsListForUser(with id: CKRecord.ID) async -> Result<[CKRecord.ID], Error> {
         await withCheckedContinuation { continuation in
@@ -112,7 +149,7 @@ class ChatModelService {
             }
         }
     }
-        
+    
     func getChats(with IDs: [CKRecord.ID]) async -> Result<([CKRecord.ID : Result<CKRecord, Error>]), Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordIDs: IDs) { result in
@@ -125,23 +162,30 @@ class ChatModelService {
             }
         }
     }
-
-    func downloadChatModel(for record: CKRecord, currentUserId: CKRecord.ID, chatId: CKRecord.ID, modificationDate: Date?) async -> Result<ChatRowModel, Error> {
-    await withCheckedContinuation { continuation in
-        if let participantsArray = record[.participantsRecordField] as? [CKRecord.Reference],
-            let otherParticipant = participantsArray.first(where: { $0.recordID != currentUserId }) {
-            CKContainer.default().publicCloudDatabase.fetch(withRecordID: otherParticipant.recordID) { returnedRecord, error in
-                
-                if let record = returnedRecord,
-                    let nickname = record[.nicknameRecordField] as? String {
+    
+    func downloadChatModel(for chatRecord: CKRecord, currentUserId: CKRecord.ID, modificationDate: Date?) async -> Result<ChatRowModel, Error> {
+        await withCheckedContinuation { continuation in
+            if let participantsArray = chatRecord[.participantsRecordField] as? [CKRecord.Reference],
+               let otherParticipant = participantsArray.first(where: { $0.recordID != currentUserId }) {
+                CKContainer.default().publicCloudDatabase.fetch(withRecordID: otherParticipant.recordID) { returnedRecord, error in
                     
-                    continuation.resume(returning: .success(ChatRowModel(id: chatId, opponentId: otherParticipant.recordID, userName: nickname, lastMessage: nil, modificationDate: modificationDate)))
-                    
-                } else if let error = error {
-                    continuation.resume(returning: .failure(error))
+                    if let record = returnedRecord,
+                       let firstName = record[.firstNameRecordField] as? String,
+                       let lastName = record[.lastNameRecordField] as? String,
+                       let nickname = record[.nicknameRecordField] as? String {
+                        var lastMessage: String? = nil
+                        if let messages = chatRecord[.messagesRecordField] as? [Data],
+                           let lastData = messages.last,
+                           let messageModel = try? JSONDecoder().decode(ChatMessageModel.self, from: lastData) {
+                            lastMessage = "\(messageModel.isCurrentUser(ownId: currentUserId) ? "You" : "\(nickname)"): \(messageModel.message)"
+                        }
+                        continuation.resume(returning: .success(ChatRowModel(id: chatRecord.recordID, user: UserModel(id: record.recordID, firstName: firstName, lastName: lastName, nickname: nickname), lastMessage: lastMessage, modificationDate: modificationDate)))
+                        
+                    } else if let error = error {
+                        continuation.resume(returning: .failure(error))
+                    }
                 }
             }
         }
     }
-}
 }

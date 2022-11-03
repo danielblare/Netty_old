@@ -9,10 +9,11 @@ import Foundation
 import CloudKit
 
 struct ChatMessageModel: Identifiable, Codable {
-    let id, message: String
+    var id = UUID()
+    let userId, message: String
     let date: Date
    
     func isCurrentUser(ownId: CKRecord.ID) -> Bool {
-        ownId.recordName == id
+        ownId.recordName == userId
     }
 }
