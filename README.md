@@ -4,7 +4,9 @@ An iOS social network with ability to create your account with all personal data
 * Core data
 * CloudKit
 * MVVM
-* API 
+* APIs
 * Combine
 * Async/await, actors
 * Combining UIKit with SwiftUI
+* JSON Data
+* Cache and File manages
