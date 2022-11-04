@@ -32,7 +32,7 @@ class DirectViewModel: ObservableObject {
     
     // Chat data service
     private let dataService = ChatModelService.instance
-    
+        
     init(userId: CKRecord.ID) {
         self.userId = userId
         Task {

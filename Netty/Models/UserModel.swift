@@ -22,3 +22,4 @@ class RecentUsersHolder {
         self.users = users
     }
 }
+

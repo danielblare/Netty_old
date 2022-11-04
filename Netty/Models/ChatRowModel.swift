@@ -10,7 +10,7 @@ import CloudKit
 import SwiftUI
 
 
-struct ChatRowModel: Identifiable {
+struct ChatRowModel: Identifiable, Hashable, Equatable {
     let id: CKRecord.ID
     let user: UserModel
     let lastMessage: String?

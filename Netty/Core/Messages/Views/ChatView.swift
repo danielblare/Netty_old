@@ -91,11 +91,16 @@ struct ChatView: View {
                     await vm.sendMessage()
                 }
             } label: {
-                Image(systemName: "arrow.up.circle.fill")
+                Image(systemName: vm.isSending ? "circle.fill" : "arrow.up.circle.fill")
                     .font(.title)
             }
             .padding(.vertical, 1)
-            .disabled(vm.messageTextField.isEmpty)
+            .disabled(vm.messageTextField.isEmpty || vm.isSending)
+            .overlay {
+                if vm.isSending {
+                    ProgressView()
+                }
+            }
             
         }
         .overlay(

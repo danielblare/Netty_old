@@ -38,6 +38,14 @@ class CacheManager {
         return cache
     }()
     
+    var chatMessages: NSCache<NSString, ChatMessagesHolder> = {
+        
+        var cache = NSCache<NSString, ChatMessagesHolder>()
+        cache.countLimit = 10
+        cache.totalCostLimit = 1024 * 1024 * 10
+        return cache
+    }()
+    
     
     
     func delete(from cache: NSCache<NSString, UIImage>, _ strValue: String, for recordName: String) {
@@ -51,11 +59,7 @@ class CacheManager {
     func delete(from cache: NSCache<NSString, RecentUsersHolder>, _ strValue: String, for recordName: String) {
         cache.removeObject(forKey: "\(recordName)\(strValue)" as NSString)
     }
-        
-    
-    
-    
-    
+          
     func addTo(_ cache: NSCache<NSString, NSString>, key: String, value: NSString) {
         cache.setObject(value, forKey: key as NSString)
     }
@@ -64,6 +68,10 @@ class CacheManager {
         cache.setObject(value, forKey: key as NSString)
     }
     
+    func addTo(_ cache: NSCache<NSString, ChatMessagesHolder>, key: String, value: ChatMessagesHolder) {
+        cache.setObject(value, forKey: key as NSString)
+    }
+
     func addTo(_ cache: NSCache<NSString, UIImage>, key: String, value: UIImage?) {
         if let value = value {
             cache.setObject(value, forKey: key as NSString)
@@ -76,6 +84,10 @@ class CacheManager {
         cache.object(forKey: key as NSString)
     }
     
+    func getFrom(_ cache: NSCache<NSString, ChatMessagesHolder>, key: String) -> ChatMessagesHolder? {
+        cache.object(forKey: key as NSString)
+    }
+
     func getFrom(_ cache: NSCache<NSString, UIImage>, key: String) -> UIImage? {
         cache.object(forKey: key as NSString)
     }
