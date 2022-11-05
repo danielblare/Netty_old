@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CloudKit
+import Combine
 
 struct ForgotPasswordEmailPageView: View {
     
@@ -33,7 +34,6 @@ struct ForgotPasswordEmailPageView: View {
                 .foregroundColor(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-
             
             
             VStack(spacing: 30) {
@@ -54,6 +54,12 @@ struct ForgotPasswordEmailPageView: View {
                             
                         }
                         .padding()
+                        .onReceive(Just(vm.emailTextField)) { _ in
+                            if vm.emailTextField.count > Limits.emailSymbolsLimit {
+                                vm.emailTextField = String(vm.emailTextField.prefix(Limits.emailSymbolsLimit))
+                            }
+                        }
+
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                             activeField = .email
                         })
@@ -96,6 +102,11 @@ struct ForgotPasswordEmailPageView: View {
                                     .foregroundColor(.red)
                             }
                             
+                        }
+                        .onReceive(Just(vm.codeTextField)) { _ in
+                            if vm.codeTextField.count > Limits.oneTimePasscode {
+                                vm.codeTextField = String(vm.codeTextField.prefix(Limits.oneTimePasscode))
+                            }
                         }
                         .padding()
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {

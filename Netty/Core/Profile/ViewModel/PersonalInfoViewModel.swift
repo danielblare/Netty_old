@@ -45,13 +45,7 @@ class PersonalInfoViewModel: ObservableObject {
     @Published var availabilityIsPassed: Bool = false
     
     // Nickname text field
-    @Published var nicknameTextField: String = "" {
-        didSet { // Checks if nickname is longer than limit
-            if nicknameTextField.count > Limits.nicknameSymbolsLimit {
-                nicknameTextField = nicknameTextField.truncated(limit: Limits.nicknameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var nicknameTextField: String = "" 
     
     // FirstName
     // True if first name checks were passed
@@ -64,13 +58,7 @@ class PersonalInfoViewModel: ObservableObject {
     @Published var firstNameError: FirstNameError = .none
     
     // First name text field
-    @Published var firstNameTextField: String = "" {
-        didSet { // Checks if first name is longer than limit
-            if firstNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
-                firstNameTextField = firstNameTextField.truncated(limit: Limits.nameAndLastNameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var firstNameTextField: String = ""
     
     // LastName
     // True if last name checks were passed
@@ -83,13 +71,7 @@ class PersonalInfoViewModel: ObservableObject {
     @Published var lastNameError: LastNameError = .none
 
     // Last name text field
-    @Published var lastNameTextField: String = "" {
-        didSet { // Checks if last name is longer than limit
-            if lastNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
-                lastNameTextField = lastNameTextField.truncated(limit: Limits.nameAndLastNameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var lastNameTextField: String = ""
     
     // DateOfBirth
     // Current user's date of birth

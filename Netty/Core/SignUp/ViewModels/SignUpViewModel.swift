@@ -32,32 +32,14 @@ class SignUpViewModel: ObservableObject {
     @Binding var userId: CKRecord.ID?
             
     // Name page
-    @Published var firstNameTextField: String = "" {
-        didSet {
-            if firstNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
-                firstNameTextField = firstNameTextField.truncated(limit: Limits.nameAndLastNameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
-    @Published var lastNameTextField: String = "" {
-        didSet {
-            if lastNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
-                lastNameTextField = lastNameTextField.truncated(limit: Limits.nameAndLastNameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var firstNameTextField: String = ""
+    @Published var lastNameTextField: String = ""
     var birthDate: Date
     var dateRangeFor18yearsOld: ClosedRange<Date>
     @Published var nameNextButtonDisabled: Bool = true
     
     // Email page
-    @Published var emailTextField: String = "" {
-        didSet {
-            if emailTextField.count > Limits.emailSymbolsLimit {
-                emailTextField = emailTextField.truncated(limit: Limits.emailSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var emailTextField: String = ""
     private var savedEmail: String = ""
     private var oneTimePasscode: String? = nil
     @Published var emailButtonDisabled: Bool = true
@@ -75,9 +57,6 @@ class SignUpViewModel: ObservableObject {
             if codeTextField.containsSomethingExceptNumbers() && !oldValue.containsSomethingExceptNumbers() {
                 codeTextField = oldValue
             }
-            if codeTextField.count > 6 {
-                codeTextField = codeTextField.truncated(limit: 6, position: .tail, leader: "")
-            }
         }
     }
     @Published var showCodeTextField: Bool = false
@@ -87,13 +66,7 @@ class SignUpViewModel: ObservableObject {
     @Published var showFailStatusIcon: Bool = false
     
     // Nickname page
-    @Published var nicknameTextField: String = "" {
-        didSet {
-            if nicknameTextField.count > Limits.nicknameSymbolsLimit {
-                nicknameTextField = nicknameTextField.truncated(limit: Limits.nicknameSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var nicknameTextField: String = ""
     @Published var nicknameError: NicknameError = .none
     @Published var nicknameIsChecking: Bool = false // Progress view
     @Published var availabilityIsPassed: Bool = false
@@ -101,20 +74,8 @@ class SignUpViewModel: ObservableObject {
     @Published var nicknameNextButtonDisabled: Bool = true
     
     // Password page
-    @Published var passwordField: String = "" {
-        didSet {
-            if passwordField.count > Limits.passwordSymbolsLimit {
-                passwordField = passwordField.truncated(limit: Limits.passwordSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
-    @Published var passwordConfirmField: String = "" {
-        didSet {
-            if passwordConfirmField.count > Limits.passwordSymbolsLimit {
-                passwordConfirmField = passwordConfirmField.truncated(limit: Limits.passwordSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var passwordField: String = ""
+    @Published var passwordConfirmField: String = ""
     @Published var passwordMessage: PasswordWarningMessage = .short
     @Published var passwordNextButtonDisabled: Bool = true
     @Published var creatingAccountIsLoading: Bool = false

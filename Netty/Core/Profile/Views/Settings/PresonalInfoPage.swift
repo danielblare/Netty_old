@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import CloudKit
+import Combine
 
 struct PersonalInfoPage: View {
     
@@ -103,6 +104,11 @@ struct PersonalInfoPage: View {
                         .autocorrectionDisabled(true)
                         .textContentType(.nickname)
                         .keyboardType(.asciiCapable)
+                        .onReceive(Just(vm.nicknameTextField)) { _ in
+                            if vm.nicknameTextField.count > Limits.nicknameSymbolsLimit {
+                                vm.nicknameTextField = String(vm.nicknameTextField.prefix(Limits.nicknameSymbolsLimit))
+                            }
+                        }
                 }
                 
                 // Loading view
@@ -153,6 +159,11 @@ struct PersonalInfoPage: View {
                     .autocorrectionDisabled(true)
                     .textContentType(.givenName)
                     .keyboardType(.asciiCapable)
+                    .onReceive(Just(vm.firstNameTextField)) { _ in
+                        if vm.firstNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
+                            vm.firstNameTextField = String(vm.firstNameTextField.prefix(Limits.nameAndLastNameSymbolsLimit))
+                        }
+                    }
             }
             
             // Error description under text field
@@ -180,6 +191,11 @@ struct PersonalInfoPage: View {
                     .autocorrectionDisabled(true)
                     .textContentType(.familyName)
                     .keyboardType(.asciiCapable)
+                    .onReceive(Just(vm.lastNameTextField)) { _ in
+                        if vm.lastNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
+                            vm.lastNameTextField = String(vm.lastNameTextField.prefix(Limits.nameAndLastNameSymbolsLimit))
+                        }
+                    }
             }
             
             // Error description under text field

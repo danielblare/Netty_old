@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 import CloudKit
 
 struct NamePageView: View {
@@ -38,6 +39,11 @@ struct NamePageView: View {
                     .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                         activeField = .name
                     })
+                    .onReceive(Just(vm.firstNameTextField)) { _ in
+                        if vm.firstNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
+                            vm.firstNameTextField = String(vm.firstNameTextField.prefix(Limits.nameAndLastNameSymbolsLimit))
+                        }
+                    }
                 
                 
                 TextField("Last name", text: $vm.lastNameTextField) { UIApplication.shared.endEditing() }
@@ -48,6 +54,11 @@ struct NamePageView: View {
                     .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                         activeField = .lastName
                     })
+                    .onReceive(Just(vm.codeTextField)) { _ in
+                        if vm.lastNameTextField.count > Limits.nameAndLastNameSymbolsLimit {
+                            vm.lastNameTextField = String(vm.lastNameTextField.prefix(Limits.nameAndLastNameSymbolsLimit))
+                        }
+                    }
                 
                 DatePicker("Birthday", selection: $vm.birthDate, in: vm.dateRangeFor18yearsOld, displayedComponents: .date)
                     .padding()

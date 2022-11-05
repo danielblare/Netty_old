@@ -32,6 +32,7 @@ struct MessageView: View {
             }
             
             Text(message)
+                .textSelection(.enabled)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 10)
                 .background(isCurrentUser ? Color.theme.gradientDark.opacity(0.5).cornerRadius(15) : Color.theme.gradientLight.opacity(0.5).cornerRadius(15))

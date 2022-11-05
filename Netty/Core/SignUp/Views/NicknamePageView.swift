@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct NicknamePageView: View {
     
@@ -69,6 +70,11 @@ struct NicknamePageView: View {
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {
                             activeField = .nick
                         })
+                        .onReceive(Just(vm.nicknameTextField)) { _ in
+                            if vm.nicknameTextField.count > Limits.nicknameSymbolsLimit {
+                                vm.nicknameTextField = String(vm.nicknameTextField.prefix(Limits.nicknameSymbolsLimit))
+                            }
+                        }
                 }
                 
                 // Error description

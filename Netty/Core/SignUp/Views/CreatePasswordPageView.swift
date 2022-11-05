@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct CreatePasswordPageView: View {
     
@@ -33,11 +34,21 @@ struct CreatePasswordPageView: View {
                     
                     SecureInputView("Password", text: $vm.passwordField) { activeField = .confPass }
                         .focused($activeField, equals: .pass)
+                        .onReceive(Just(vm.passwordField)) { _ in
+                            if vm.passwordField.count > Limits.passwordSymbolsLimit {
+                                vm.passwordField = String(vm.passwordField.prefix(Limits.passwordSymbolsLimit))
+                            }
+                        }
                     
                     PasswordStrengthView(message: $vm.passwordMessage)
                     
                     SecureInputView("Confirm password", text: $vm.passwordConfirmField) { UIApplication.shared.endEditing() }
                         .focused($activeField, equals: .confPass)
+                        .onReceive(Just(vm.passwordConfirmField)) { _ in
+                            if vm.passwordConfirmField.count > Limits.passwordSymbolsLimit {
+                                vm.passwordConfirmField = String(vm.passwordConfirmField.prefix(Limits.passwordSymbolsLimit))
+                            }
+                        }
                 }
                 .padding(.horizontal)
                 
@@ -93,5 +104,6 @@ struct CreatePasswordPageView: View {
             UIApplication.shared.endEditing()
         })
     }
+    
 }
 

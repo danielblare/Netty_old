@@ -26,13 +26,7 @@ class ForgotPasswordViewModel: ObservableObject {
                 
     // Email page
     private let emailSymbolsLimit: Int = 64
-    @Published var emailTextField: String = "" {
-        didSet {
-            if emailTextField.count > emailSymbolsLimit {
-                emailTextField = emailTextField.truncated(limit: emailSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var emailTextField: String = ""
     private var savedEmail: String = ""
     private var oneTimePasscode: String? = nil
     @Published var emailButtonDisabled: Bool = true
@@ -45,16 +39,7 @@ class ForgotPasswordViewModel: ObservableObject {
     @Published var timeRemaining: String = ""
     
     // One time code
-    @Published var codeTextField: String = "" {
-        didSet {
-            if codeTextField.containsSomethingExceptNumbers() && !oldValue.containsSomethingExceptNumbers() {
-                codeTextField = oldValue
-            }
-            if codeTextField.count > 6 {
-                codeTextField = codeTextField.truncated(limit: 6, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var codeTextField: String = ""
     @Published var showCodeTextField: Bool = false
     @Published var codeCheckPassed: Bool = false
     @Published var confirmButtonDisabled: Bool = true
@@ -64,20 +49,8 @@ class ForgotPasswordViewModel: ObservableObject {
     
     // Password page
     private let passwordSymbolsLimit: Int = 23
-    @Published var passwordField: String = "" {
-        didSet {
-            if passwordField.count > passwordSymbolsLimit {
-                passwordField = passwordField.truncated(limit: passwordSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
-    @Published var passwordConfirmField: String = "" {
-        didSet {
-            if passwordConfirmField.count > passwordSymbolsLimit {
-                passwordConfirmField = passwordConfirmField.truncated(limit: passwordSymbolsLimit, position: .tail, leader: "")
-            }
-        }
-    }
+    @Published var passwordField: String = ""
+    @Published var passwordConfirmField: String = ""
     @Published var passwordMessage: PasswordWarningMessage = .short
     @Published var passwordNextButtonDisabled: Bool = true
     @Published var changingPasswordIsLoading: Bool = false

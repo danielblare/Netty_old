@@ -41,6 +41,37 @@ class DirectViewModel: ObservableObject {
             isLoading = false
         }
         requestNotificationPermission()
+        subscribeToNotifications()
+    }
+    
+    private func subscribeToNotifications() {
+                
+        guard !UserDefaults.standard.bool(forKey: "didCreateQuerySubscription") else { return }
+        
+        let predicate = NSPredicate(format: "\(String.participantsRecordField) CONTAINS %@", CKRecord.Reference(recordID: userId, action: .none))
+        
+        let subscription = CKQuerySubscription(recordType: .chatsRecordType, predicate: predicate, subscriptionID: "\(userId)_new_message", options: .firesOnRecordUpdate)
+
+        let notificationInfo = CKSubscription.NotificationInfo()
+        notificationInfo.title = "New message"
+        notificationInfo.alertBody = "Open the app to check new message"
+        notificationInfo.soundName = "default"
+        notificationInfo.shouldBadge = true
+        notificationInfo.shouldSendContentAvailable = true
+        
+        subscription.notificationInfo = notificationInfo
+        
+        CKContainer.default().publicCloudDatabase.save(subscription) { subscription, error in
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                UserDefaults.standard.setValue(true, forKey: "didCreateQuerySubscription")
+            }
+        }
+    }
+    
+    @objc func methodOfReceivedNotification(notification: Notification) {
+        
     }
     
     /// Syncs chats

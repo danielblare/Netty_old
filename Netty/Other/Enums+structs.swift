@@ -57,9 +57,11 @@ extension EmailSendingError: LocalizedError {
 struct Limits {
     static let nameAndLastNameSymbolsLimit: Int = 35
     static let emailSymbolsLimit: Int = 64
+    static let oneTimePasscode: Int = 6
     static let nicknameSymbolsLimit: Int = 20
     static let passwordSymbolsLimit: Int = 23
     static let usersInRecentsLimit: Int = 5
+    static let sendMessageFieldLength: Int = 300
 }
 
 enum NicknameError: String {

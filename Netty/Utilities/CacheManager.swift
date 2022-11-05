@@ -33,15 +33,15 @@ class CacheManager {
     var recentUsers: NSCache<NSString, RecentUsersHolder> = {
         
         var cache = NSCache<NSString, RecentUsersHolder>()
-        cache.countLimit = 10
-        cache.totalCostLimit = 1024 * 1024 * 10
+        cache.countLimit = Limits.usersInRecentsLimit
+        cache.totalCostLimit = 1024 * 50
         return cache
     }()
     
     var chatMessages: NSCache<NSString, ChatMessagesHolder> = {
         
         var cache = NSCache<NSString, ChatMessagesHolder>()
-        cache.countLimit = 10
+        cache.countLimit = 1000
         cache.totalCostLimit = 1024 * 1024 * 10
         return cache
     }()

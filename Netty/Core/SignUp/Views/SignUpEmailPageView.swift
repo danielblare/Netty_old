@@ -49,6 +49,11 @@ struct SignUpEmailPageView: View {
                             activeField = .email
                         })
                         .padding(.horizontal)
+                        .onReceive(Just(vm.emailTextField)) { _ in
+                            if vm.emailTextField.count > Limits.emailSymbolsLimit {
+                                vm.emailTextField = String(vm.emailTextField.prefix(Limits.emailSymbolsLimit))
+                            }
+                        }
                     
                     
                     HStack() {
@@ -88,6 +93,11 @@ struct SignUpEmailPageView: View {
                                     .foregroundColor(.red)
                             }
                             
+                        }
+                        .onReceive(Just(vm.codeTextField)) { _ in
+                            if vm.codeTextField.count > Limits.oneTimePasscode {
+                                vm.codeTextField = String(vm.codeTextField.prefix(Limits.oneTimePasscode))
+                            }
                         }
                         .padding()
                         .background(Color.secondary.opacity(0.3).cornerRadius(15).onTapGesture {

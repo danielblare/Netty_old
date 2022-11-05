@@ -7,7 +7,7 @@
 
 import SwiftUI
 import CloudKit
-
+import Combine
 
 struct ChatView: View {
     
@@ -51,6 +51,14 @@ struct ChatView: View {
                     .onTapGesture {
                         UIApplication.shared.endEditing()
                     }
+                    .overlay(alignment: .bottomTrailing) {
+                        if vm.messageTextField.count > Limits.sendMessageFieldLength - 20 {
+                            Text("\(vm.messageTextField.count)/\(Limits.sendMessageFieldLength)")
+                                .padding(.trailing)
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                     
                     // Message text field
                     getMessageTextField(proxy)
@@ -74,10 +82,20 @@ struct ChatView: View {
         }
     }
     
+    //Function to keep text length in limits
+    private func limitText(_ upper: Int) {
+        if vm.messageTextField.count > upper {
+            vm.messageTextField = String(vm.messageTextField.prefix(upper))
+        }
+    }
+    
     // New message text field with send button
     private func getMessageTextField(_ proxy: ScrollViewProxy) -> some View {
         HStack(alignment: .bottom) {
             TextField("Message", text: $vm.messageTextField, axis: .vertical)
+                .onReceive(Just(vm.messageTextField), perform: { _ in
+                    limitText(Limits.sendMessageFieldLength)
+                })
                 .padding(.vertical, 6)
                 .padding(.leading, 12)
                 .onTapGesture {
