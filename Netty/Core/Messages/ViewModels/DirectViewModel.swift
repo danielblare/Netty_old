@@ -158,9 +158,9 @@ class DirectViewModel: ObservableObject {
     
     /// Shows alert
     private func showAlert(title: String, message: String) {
-        alertTitle = title
-        alertMessage = message
         DispatchQueue.main.async {
+            self.alertTitle = title
+            self.alertMessage = message
             self.showAlert = true
         }
     }

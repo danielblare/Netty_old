@@ -13,6 +13,8 @@
 		BB1B8791290F211600F1030C /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1B8790290F211600F1030C /* MessageView.swift */; };
 		BB34BAC728848E3100636BE5 /* SecureInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC628848E3100636BE5 /* SecureInputView.swift */; };
 		BB34BAC92884A52D00636BE5 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34BAC82884A52D00636BE5 /* Character.swift */; };
+		BB34FB0329186108004D5AB6 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34FB0229186108004D5AB6 /* PostView.swift */; };
+		BB34FB0529186174004D5AB6 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34FB0429186174004D5AB6 /* PostViewModel.swift */; };
 		BB3CAA86290EE27000180E9B /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CAA85290EE27000180E9B /* ChatView.swift */; };
 		BB3CAA88290EE28B00180E9B /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CAA87290EE28B00180E9B /* ChatViewModel.swift */; };
 		BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAAD28915606003407FB /* MainScreenView.swift */; };
@@ -74,6 +76,8 @@
 		BB34BAC528848C6E00636BE5 /* Netty.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Netty.entitlements; sourceTree = "<group>"; };
 		BB34BAC628848E3100636BE5 /* SecureInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureInputView.swift; sourceTree = "<group>"; };
 		BB34BAC82884A52D00636BE5 /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
+		BB34FB0229186108004D5AB6 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
+		BB34FB0429186174004D5AB6 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		BB3CAA85290EE27000180E9B /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		BB3CAA87290EE28B00180E9B /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		BB4AFAAD28915606003407FB /* MainScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenView.swift; sourceTree = "<group>"; };
@@ -146,6 +150,31 @@
 			path = Other;
 			sourceTree = "<group>";
 		};
+		BB34FAFF291860D6004D5AB6 /* Post */ = {
+			isa = PBXGroup;
+			children = (
+				BB34FB01291860E2004D5AB6 /* ViewModels */,
+				BB34FB00291860DF004D5AB6 /* Views */,
+			);
+			path = Post;
+			sourceTree = "<group>";
+		};
+		BB34FB00291860DF004D5AB6 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BB34FB0229186108004D5AB6 /* PostView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BB34FB01291860E2004D5AB6 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				BB34FB0429186174004D5AB6 /* PostViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		BB4AFAAC289155D3003407FB /* MainScreen */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,18 +187,18 @@
 			isa = PBXGroup;
 			children = (
 				BB4AFAB12891587E003407FB /* Views */,
-				BB4AFAB028915878003407FB /* ViewModel */,
+				BB4AFAB028915878003407FB /* ViewModels */,
 			);
 			path = Messages;
 			sourceTree = "<group>";
 		};
-		BB4AFAB028915878003407FB /* ViewModel */ = {
+		BB4AFAB028915878003407FB /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				BBBBF0AD28D1EF0F00FF7C65 /* DirectViewModel.swift */,
 				BB3CAA87290EE28B00180E9B /* ChatViewModel.swift */,
 			);
-			path = ViewModel;
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		BB4AFAB12891587E003407FB /* Views */ = {
@@ -186,18 +215,18 @@
 			isa = PBXGroup;
 			children = (
 				BB4AFAB6289158A3003407FB /* Views */,
-				BB4AFAB52891589C003407FB /* ViewModel */,
+				BB4AFAB52891589C003407FB /* ViewModels */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
 		};
-		BB4AFAB52891589C003407FB /* ViewModel */ = {
+		BB4AFAB52891589C003407FB /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				BB7346362892BBFA00E07487 /* ProfileViewModel.swift */,
 				BB8F9A4728F2F840009101FB /* PersonalInfoViewModel.swift */,
 			);
-			path = ViewModel;
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		BB4AFAB6289158A3003407FB /* Views */ = {
@@ -403,6 +432,7 @@
 		BBE72AA32882CE9E00CBDEAD /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				BB34FAFF291860D6004D5AB6 /* Post */,
 				BB4AFAB428915897003407FB /* Profile */,
 				BB4AFAAF2891586A003407FB /* Messages */,
 				BB4AFAAC289155D3003407FB /* MainScreen */,
@@ -561,6 +591,7 @@
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBBBF0B428D22CC100FF7C65 /* ChatModelService.swift in Sources */,
+				BB34FB0529186174004D5AB6 /* PostViewModel.swift in Sources */,
 				BBBBF0AE28D1EF0F00FF7C65 /* DirectViewModel.swift in Sources */,
 				BB4AFAB328915889003407FB /* DirectView.swift in Sources */,
 				BB7346402893054500E07487 /* CacheManager.swift in Sources */,
@@ -596,6 +627,7 @@
 				BB3CAA88290EE28B00180E9B /* ChatViewModel.swift in Sources */,
 				BB1B8791290F211600F1030C /* MessageView.swift in Sources */,
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,
+				BB34FB0329186108004D5AB6 /* PostView.swift in Sources */,
 				BBF0375D28E74F5E006F89A1 /* UserModel.swift in Sources */,
 				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,
 				BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */,

@@ -57,36 +57,40 @@ class LogInAndOutViewModel: ObservableObject {
                 warningMessage = .passwordIsShort
             })
         } else {
-            await MainActor.run(body: {
+            await MainActor.run {
                 warningMessage = .none
                 isLoading = true
-            })
+            }
             switch await manager.logIn(username: username, password: password) {
             case .success(let id):
                 if let id = id {
-                    await MainActor.run(body: {
+                    await MainActor.run {
+                        isLoading = false
                         withAnimation {
                             userId = id
                         }
-                    })
+                    }
                     await manager.addLoggedInDevice(for: id)
                 } else {
+                    await MainActor.run {
+                        isLoading = false
+                    }
                     showAlert(title: "Error while logging in", message: "Password is incorrect")
                 }
             case .failure(let error):
+                await MainActor.run {
+                    isLoading = false
+                }
                 showAlert(title: "Error", message: error.localizedDescription)
             }
-            await MainActor.run(body: {
-                isLoading = false
-            })
         }
     }
     
     /// Shows alert
     func showAlert(title: String, message: String) {
-        alertTitle = title
-        alertMessage = message
         DispatchQueue.main.async {
+            self.alertTitle = title
+            self.alertMessage = message
             self.showAlert = true
         }
     }

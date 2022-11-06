@@ -99,7 +99,7 @@ class ForgotPasswordViewModel: ObservableObject {
                 do {
                     try await self.sendEmail()
                 } catch {
-                    self.showAlert(title: "Error while sending e-mail", message: error.localizedDescription)
+                    showAlert(title: "Error while sending e-mail", message: error.localizedDescription)
                 }
             } else {
                 showAlert(title: "Error", message: "Account with this e-mail does not exist")
@@ -113,9 +113,9 @@ class ForgotPasswordViewModel: ObservableObject {
     
     /// Shows alert
     private func showAlert(title: String, message: String) {
-        alertTitle = title
-        alertMessage = message
         DispatchQueue.main.async {
+            self.alertTitle = title
+            self.alertMessage = message
             self.showAlert = true
         }
     }
@@ -217,8 +217,8 @@ class ForgotPasswordViewModel: ObservableObject {
         case .failure(let error):
             await MainActor.run {
                 changingPasswordIsLoading = false
-                showAlert(title: "Error while finding user with this e-mail", message: error.localizedDescription)
             }
+            showAlert(title: "Error while finding user with this e-mail", message: error.localizedDescription)
         }
 
     }

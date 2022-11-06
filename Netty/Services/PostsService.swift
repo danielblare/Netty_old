@@ -45,10 +45,11 @@ actor PostsService {
                                    let imageURL = imageAsset.fileURL,
                                    let data = try? Data(contentsOf: imageURL),
                                    let image = UIImage(data: data) {
-                                    postModels.append(PostModel(id: postRecord.recordID, ownerId: owner.recordID, photo: Image(uiImage: image), creationDate: postRecord.creationDate ?? .now))
+                                    postModels.append(PostModel(id: postRecord.recordID, ownerId: owner.recordID, photo: image, creationDate: postRecord.creationDate ?? .now))
                                 }
                             case .failure(let error):
                                 continuation.resume(returning: .failure(error))
+                                return
                             }
                         }
                         continuation.resume(returning: .success(postModels.sorted(by: { $0.creationDate > $1.creationDate })))
@@ -98,7 +99,7 @@ actor PostsService {
                                 if let error = error {
                                     continuation.resume(returning: .failure(error))
                                 } else if let _ = returnedRecord {
-                                    continuation.resume(returning: .success(PostModel(id: returnedPost.recordID, ownerId: owner.recordID, photo: Image(uiImage: image), creationDate: returnedPost.creationDate ?? .now)))
+                                    continuation.resume(returning: .success(PostModel(id: returnedPost.recordID, ownerId: owner.recordID, photo: image, creationDate: returnedPost.creationDate ?? .now)))
                                 }
                             }
                         }

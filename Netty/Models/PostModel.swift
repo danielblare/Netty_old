@@ -8,9 +8,9 @@
 import SwiftUI
 import CloudKit
 
-struct PostModel: Identifiable, Equatable {
+struct PostModel: Identifiable, Equatable, Hashable {
     let id, ownerId: CKRecord.ID
-    let photo: Image
+    let photo: UIImage
     let creationDate: Date
 }
 

@@ -87,19 +87,22 @@ class FindUserViewModel: ObservableObject {
     func executeQuery() async {
         if !searchText.isEmpty {
             searchTask = Task {
-                await MainActor.run(body: {
+                await MainActor.run {
                     isLoading = true
-                })
+                }
                 switch await dataService.downloadSearching(searchText, id: userId) {
                 case .success(let resultArray):
                     if let task = searchTask, !task.isCancelled {
-                        await MainActor.run(body: {
+                        await MainActor.run {
                             isLoading = false
                             foundArray = resultArray
                             showFound = true
-                        })
+                        }
                     }
                 case .failure(let error):
+                    await MainActor.run {
+                        isLoading = false
+                    }
                     showAlert(title: "Error while searching", message: error.localizedDescription)
                 }
             }
@@ -129,20 +132,23 @@ class FindUserViewModel: ObservableObject {
                 break
             }
         } else {
-            await MainActor.run(body: {
+            await MainActor.run {
                 isLoading = true
-            })
+            }
             switch await dataService.downloadRecents(for: userId) {
             case .success(let dataArray):
                 cacheManager.addTo(cacheManager.recentUsers, key: "users", value: RecentUsersHolder(dataArray))
-                await MainActor.run(body: {
+                await MainActor.run {
                     withAnimation {
                         isLoading = false
                         recentsArray = dataArray
                         showRecents = true
                     }
-                })
+                }
             case .failure(let error):
+                await MainActor.run {
+                    isLoading = false
+                }
                 showAlert(title: "Error while fetching recents", message: error.localizedDescription)
             }
         }
@@ -169,10 +175,9 @@ class FindUserViewModel: ObservableObject {
     
     /// Shows alert
     private func showAlert(title: String, message: String) {
-        isLoading = false
-        alertTitle = title
-        alertMessage = message
         DispatchQueue.main.async {
+            self.alertTitle = title
+            self.alertMessage = message
             self.showAlert = true
         }
     }

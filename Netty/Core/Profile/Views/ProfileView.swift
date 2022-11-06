@@ -145,9 +145,11 @@ struct ProfileView: View {
                 } else {
                     LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
                         ForEach(vm.posts) { post in
-                            post.photo
-                                .resizable()
-                                .scaledToFit()
+                            NavigationLink(value: post) {
+                                Image(uiImage: post.photo)
+                                    .resizable()
+                                    .scaledToFit()
+                            }
                         }
                     }
                 }

@@ -124,7 +124,7 @@ class SignUpViewModel: ObservableObject {
                 do {
                     try await self.sendEmail()
                 } catch {
-                    self.showAlert(title: "Error while sending e-mail", message: error.localizedDescription)
+                    showAlert(title: "Error while sending e-mail", message: error.localizedDescription)
                 }
             } else {
                 showAlert(title: "Error", message: "Account with this e-mail already exists")
@@ -138,9 +138,9 @@ class SignUpViewModel: ObservableObject {
     
     /// Shows alert
     private func showAlert(title: String, message: String) {
-        alertTitle = title
-        alertMessage = message
         DispatchQueue.main.async {
+            self.alertTitle = title
+            self.alertMessage = message
             self.showAlert = true
         }
     }
