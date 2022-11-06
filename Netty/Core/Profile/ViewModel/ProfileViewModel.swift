@@ -20,8 +20,12 @@ class ProfileViewModel: ObservableObject {
     // Profile avatar image
     @Published var image: UIImage? = nil
     
+    @Published var posts: [PostModel] = []
+    
     // View is loading if true
-    @Published var isLoading: Bool = false
+    @Published var profileImageIsLoading: Bool = true
+    @Published var postsAreLoading: Bool = false
+    @Published var postIsUploading: Bool = false
     
     // User's first name
     @Published var firstName: String? = nil
@@ -44,9 +48,7 @@ class ProfileViewModel: ObservableObject {
     init(id: CKRecord.ID, logOutFunc: @escaping () async -> ()) {
         userId = id
         self.logOutFunc = logOutFunc
-        Task {
-            await getData()
-        }
+        getData()
     }
     
     /// Log out function for current user
@@ -55,11 +57,22 @@ class ProfileViewModel: ObservableObject {
     }
     
     /// Gets all user's data
-    func getData() async {
-        await getImage()
-        await getFirstName()
-        await getLastName()
-        await getNickname()
+    func getData() {
+        Task {
+            await getImage()
+        }
+        Task {
+            await getFirstName()
+        }
+        Task {
+            await getLastName()
+        }
+        Task {
+            await getNickname()
+        }
+        Task {
+            await getPosts()
+        }
     }
     
     /// Deletes user's data from cache and downloads new fresh data from database
@@ -68,7 +81,70 @@ class ProfileViewModel: ObservableObject {
         cacheManager.delete(from: cacheManager.textCache, "_nickname", for: userId.recordName)
         cacheManager.delete(from: cacheManager.textCache, "_lastName", for: userId.recordName)
         cacheManager.delete(from: cacheManager.photoCache, "_avatar", for: userId.recordName)
-        await getData()
+        getData()
+    }
+    
+    private func getPosts() async {
+        if let savedPostsHolder = cacheManager.getFrom(cacheManager.posts, key: "\(userId.recordName)_posts") {
+            await MainActor.run {
+                withAnimation {
+                    posts = savedPostsHolder.posts
+                }
+            }
+            switch await PostsService.instance.getPostsForUserWith(userId) {
+            case .success(let posts):
+                if self.posts != posts {
+                    cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)_posts", value: PostModelsHolder(posts))
+                    await MainActor.run {
+                        withAnimation {
+                            self.posts = posts
+                        }
+                    }
+                }
+            case .failure(_):
+                break
+            }
+        } else {
+            await MainActor.run {
+                postsAreLoading = true
+            }
+            switch await PostsService.instance.getPostsForUserWith(userId) {
+            case .success(let posts):
+                cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)_posts", value: PostModelsHolder(posts))
+                await MainActor.run {
+                    postsAreLoading = false
+                    withAnimation {
+                        self.posts = posts
+                    }
+                }
+            case .failure(let error):
+                await MainActor.run {
+                    postsAreLoading = false
+                    posts = []
+                }
+                showAlert(title: "Error while loading posts", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    func newPost(_ image: UIImage?) async {
+        if let image = image {
+            
+            await MainActor.run {
+                postIsUploading = true
+            }
+            
+            switch await PostsService.instance.addPostForUserWith(userId, image: image) {
+            case .success(let postModel):
+                posts.insert(postModel, at: 0)
+            case .failure(let error):
+                showAlert(title: "Error uploading new post", message: error.localizedDescription)
+            }
+            
+            await MainActor.run {
+                postIsUploading = false
+            }
+        }
     }
     
     /// Gets user's nickname
@@ -168,11 +244,11 @@ class ProfileViewModel: ObservableObject {
                 }
             }
         } else {
-
+            
             // Starts loading
             await MainActor.run {
                 withAnimation {
-                    isLoading = true
+                    profileImageIsLoading = true
                 }
             }
             
@@ -181,7 +257,7 @@ class ProfileViewModel: ObservableObject {
             case .success(let returnedValue):
                 await MainActor.run(body: {
                     withAnimation {
-                        isLoading = false
+                        profileImageIsLoading = false
                         self.image = returnedValue
                     }
                     if let image = returnedValue { // Saves fetched data in the cache
@@ -195,50 +271,50 @@ class ProfileViewModel: ObservableObject {
     }
     
     /// Uploads new image as user's avatar to database
-    func uploadImage(_ image: UIImage?, for id: CKRecord.ID) {
+    func uploadImage(_ image: UIImage?) {
         
         // Removes old image from the screen, starts loading
         DispatchQueue.main.async {
             withAnimation {
                 self.image = nil
-                self.isLoading = true
+                self.profileImageIsLoading = true
             }
         }
         
         // Fetches the user from database
-        CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { record, error in
+        CKContainer.default().publicCloudDatabase.fetch(withRecordID: userId) { record, error in
             if let record = record { // Checks if record exists
                 if let image = image { // Checks if image isn't nil
-                   if let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathExtension("avatar.jpg"),
-                      let data = image.jpegData(compressionQuality: 0.2) { // Compresses image
-                       do {
-                           try data.write(to: url) // Writes compressed data
-                           let asset = CKAsset(fileURL: url)
-                           record[.avatarRecordField] = asset // Sets new image to avatar record field
-                           
-                           // Saves updated with new image record
-                           Task {
-                               let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
-                               await MainActor.run {
-                                   withAnimation { // Stops loading and sets new image as avatar on the screen
-                                       self.image = UIImage(data: data)
-                                       self.isLoading = false
-                                   }
-                               }
-                               // Saves new image in the cache
-                               self.cacheManager.addTo(self.cacheManager.photoCache, key: "\(id.recordName)_avatar", value: image)
-                           }
-                       } catch {
-                           self.showAlert(title: "Error while writing image", message: error.localizedDescription)
-                       }
-                   }
+                    if let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathExtension("avatar.jpg"),
+                       let data = image.jpegData(compressionQuality: 0.2) { // Compresses image
+                        do {
+                            try data.write(to: url) // Writes compressed data
+                            let asset = CKAsset(fileURL: url)
+                            record[.avatarRecordField] = asset // Sets new image to avatar record field
+                            
+                            // Saves updated with new image record
+                            Task {
+                                let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
+                                await MainActor.run {
+                                    withAnimation { // Stops loading and sets new image as avatar on the screen
+                                        self.image = UIImage(data: data)
+                                        self.profileImageIsLoading = false
+                                    }
+                                }
+                                // Saves new image in the cache
+                                self.cacheManager.addTo(self.cacheManager.photoCache, key: "\(self.userId.recordName)_avatar", value: image)
+                            }
+                        } catch {
+                            self.showAlert(title: "Error while writing image", message: error.localizedDescription)
+                        }
+                    }
                 } else { // Sets user's image to nil because image is broken
                     record[.avatarRecordField] = nil
                     Task { // Saves updated user to database
                         let _ = await CloudKitManager.instance.saveRecordToPublicDatabase(record)
                         await MainActor.run {
                             withAnimation {
-                                self.isLoading = false
+                                self.profileImageIsLoading = false
                             }
                         }
                         

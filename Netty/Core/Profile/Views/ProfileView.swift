@@ -11,15 +11,25 @@ import PhotosUI
 
 struct ProfileView: View {
     
+    enum PhotoImport {
+        case avatar, post
+    }
+    
+    
     // Presenting sheet to let user choose new avatar photo
     @State private var showPhotoImportSheet: Bool = false
     
     // Source of input photo
     @State private var photoInputSource: UIImagePickerController.SourceType = .camera
+    @State private var importFor: PhotoImport = .post {
+        didSet {
+            showConfirmationDialog = true
+        }
+    }
     
     // Shows dialog with options to choose new photo from library, take new photo, remove current avatar
-    @State private var showProfilePhotoChangingConfirmationDialog: Bool = false
-    
+    @State private var showConfirmationDialog: Bool = false
+
     // Current user record ID
     let userId: CKRecord.ID
     
@@ -28,7 +38,6 @@ struct ProfileView: View {
     
     // View Model
     @StateObject private var vm: ProfileViewModel
-    
     
     init(userId: CKRecord.ID, logOutFunc: @escaping () async -> ()) {
         self.userId = userId
@@ -51,11 +60,9 @@ struct ProfileView: View {
                             .clipShape(Circle())
                             .padding(.horizontal)
                             .onTapGesture {
-                                showProfilePhotoChangingConfirmationDialog = true
+                                importFor = .avatar
                             }
-                            .confirmationDialog("", isPresented: $showProfilePhotoChangingConfirmationDialog, titleVisibility: .hidden) {
-                                getConfirmationActions()
-                            }
+                        
                         
                         UserInfo
                             .padding(.vertical)
@@ -66,12 +73,11 @@ struct ProfileView: View {
                     }
                     .padding(.vertical)
                     
-//                    LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
-//                        ForEach() { _ in
-//                            Image(_)
-//                                .resizable()
-//                        }
-//                    }
+                    AddPost
+                                        
+                    Divider()
+
+                    Posts
                     
                 }
                 .toolbar {
@@ -87,10 +93,67 @@ struct ProfileView: View {
                 })
                 .fullScreenCover(isPresented: $showPhotoImportSheet) {
                     ImagePicker(source: photoInputSource) { image in
-                        vm.uploadImage(image, for: userId)
+                        switch importFor {
+                        case .avatar:
+                            vm.uploadImage(image)
+                        case .post:
+                            Task {
+                                await vm.newPost(image)
+                            }
+                        }
                     }
                     .ignoresSafeArea()
                 }
+                .confirmationDialog("", isPresented: $showConfirmationDialog, titleVisibility: .hidden) {
+                    getConfirmationActions()
+                }
+            }
+        }
+    }
+    
+    private var AddPost: some View {
+        HStack {
+            Spacer(minLength: 0)
+            
+            if vm.postIsUploading {
+                ProgressView()
+                    .scaleEffect(0.7)
+            }
+            
+            Button {
+                importFor = .post
+            } label: {
+                Label("Add post", systemImage: "plus")
+                    .font(.callout)
+            }
+            .disabled(vm.postsAreLoading || vm.postIsUploading)
+        }
+        .padding(.horizontal)
+    }
+    
+    private var Posts: some View {
+        ZStack {
+            if !vm.postsAreLoading {
+
+                if vm.posts.isEmpty {
+
+                    Text("No posts yet")
+                        .font(.title2)
+                        .foregroundColor(.secondary.opacity(0.6))
+                        .padding(.top)
+
+                } else {
+                    LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
+                        ForEach(vm.posts) { post in
+                            post.photo
+                                .resizable()
+                                .scaledToFit()
+                        }
+                    }
+                }
+            } else {
+                ProgressView()
+                    .padding(.top, 100)
             }
         }
     }
@@ -123,7 +186,7 @@ struct ProfileView: View {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-            } else if vm.isLoading { // loading view
+            } else if vm.profileImageIsLoading { // loading view
                 Rectangle()
                     .foregroundColor(.secondary.opacity(0.3))
                     .overlay {
@@ -141,7 +204,7 @@ struct ProfileView: View {
     }
     
     private var UserInfo: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 5) {
             
             // User data
             if let firstName = vm.firstName,
@@ -155,20 +218,54 @@ struct ProfileView: View {
                 Text(nickname)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
+                
+                HStack(spacing: 30) {
+                                        
+                    VStack {
+                        Text("Posts")
+                            .fontWeight(.semibold)
+                            .font(.footnote)
+                        
+                        Text("***")
+                            .font(.callout)
+                    }
+                    
+                    VStack {
+                        Text("Followers")
+                            .fontWeight(.semibold)
+                            .font(.footnote)
+                        
+                        Text("***")
+                            .font(.callout)
+                    }
+                    
+                    VStack {
+                        Text("Following")
+                            .fontWeight(.semibold)
+                            .font(.footnote)
+                        
+                        Text("***")
+                            .font(.callout)
+                    }
+                }
+                .padding(.top)
+                
             } else { // loading view
                 LoadingAnimation()
                     .padding(.vertical)
             }
-            
-            
+
             Spacer(minLength: 0)
         }
     }
     
     // Creates confirmation dialog with options to select new avatar
     @ViewBuilder private func getConfirmationActions() -> some View {
-        Button("Remove current photo") {
-            vm.uploadImage(nil, for: userId)
+        
+        if importFor == .avatar {
+            Button("Remove current photo") {
+                vm.uploadImage(nil)
+            }
         }
         
         Button("Choose from library") {
@@ -197,7 +294,7 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     
-    static private let id = CKRecord.ID(recordName: "F56C48BA-49CE-404D-87CC-4B6407D35089")
+    static private let id = CKRecord.ID(recordName: "A6244FDA-A0DA-47CB-8E12-8F2603271899")
     static var previews: some View {
         ProfileView(userId: id, logOutFunc: LogInAndOutViewModel(id: id).logOut)
             .preferredColorScheme(.light)

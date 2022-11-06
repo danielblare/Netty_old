@@ -54,6 +54,9 @@ struct DirectView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .onAppear {
+                UIApplication.shared.applicationIconBadgeNumber = 0
+            }
             .disabled(vm.isLoading)
             .refreshable {
                 Task {

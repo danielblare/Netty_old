@@ -44,6 +44,7 @@ class DirectViewModel: ObservableObject {
         subscribeToNotifications()
     }
     
+    
     private func subscribeToNotifications() {
                 
         guard !UserDefaults.standard.bool(forKey: "didCreateQuerySubscription") else { return }
@@ -58,7 +59,8 @@ class DirectViewModel: ObservableObject {
         notificationInfo.soundName = "default"
         notificationInfo.shouldBadge = true
         notificationInfo.shouldSendContentAvailable = true
-        
+                
+            
         subscription.notificationInfo = notificationInfo
         
         CKContainer.default().publicCloudDatabase.save(subscription) { subscription, error in
@@ -68,10 +70,6 @@ class DirectViewModel: ObservableObject {
                 UserDefaults.standard.setValue(true, forKey: "didCreateQuerySubscription")
             }
         }
-    }
-    
-    @objc func methodOfReceivedNotification(notification: Notification) {
-        
     }
     
     /// Syncs chats

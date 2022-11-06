@@ -16,6 +16,7 @@ extension String {
     static let numbers = "0123456789"
     static let usersRecordType = "AllUsers"
     static let chatsRecordType = "AllChats"
+    static let postsRecordType = "AllPosts"
     static let emailRecordField = "email"
     static let avatarRecordField = "avatar"
     static let nicknameRecordField = "nickname"
@@ -28,6 +29,9 @@ extension String {
     static let participantsRecordField = "participants"
     static let messagesRecordField = "messages"
     static let recentUsersInSearchRecordField = "recentUsersInSearch"
+    static let postsRecordField = "posts"
+    static let imageRecordField = "image"
+    static let ownerRecordField = "owner"
     
 
     

@@ -18,9 +18,7 @@ struct MainScreenView: View {
     
     // Navigation path
     @State private var path: NavigationPath = NavigationPath()
-    
-    @State private var directBadge: Int = UIApplication.shared.applicationIconBadgeNumber
-    
+        
     var body: some View {
         NavigationStack(path: $path) {
             TabView {
@@ -30,23 +28,6 @@ struct MainScreenView: View {
                     }
                     .tag(0)
                 DirectView(userId: userId, path: $path)
-                    .onAppear {
-                        directBadge = 0
-                        let resetBadge = CKModifyBadgeOperation(badgeValue: 0)
-                        resetBadge.modifyBadgeCompletionBlock = { (error) -> Void in
-                            if let error = error {
-                                print(error.localizedDescription)
-                            } else {
-                                Task {
-                                    await MainActor.run {
-                                        UIApplication.shared.applicationIconBadgeNumber = 0
-                                    }
-                                }
-                            }
-                        }
-                        CKContainer.default().add(resetBadge)
-                    }
-                    .badge(directBadge)
                     .tabItem {
                         Image(systemName: "ellipsis.bubble")
                     }

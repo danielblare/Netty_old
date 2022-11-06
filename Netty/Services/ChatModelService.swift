@@ -9,7 +9,7 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-class ChatModelService {
+actor ChatModelService {
     static let instance = ChatModelService()
     
     private init() {}

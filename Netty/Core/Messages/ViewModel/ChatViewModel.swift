@@ -17,7 +17,7 @@ final class ChatViewModel: ObservableObject {
     @Published var chatMessages: [ChatMessageModel] = []
     
     // Shows loading view if true
-    @Published var isLoading: Bool = true
+    @Published var isLoading: Bool = false
     @Published var isSending: Bool = false
     
     // Current user's ID
@@ -94,8 +94,9 @@ final class ChatViewModel: ObservableObject {
                 chatId = recordId
                 if let savedMessages = cacheManager.getFrom(cacheManager.chatMessages, key: "\(recordId.recordName)_messages") {
                     await MainActor.run {
-                        chatMessages = savedMessages.messages
-                        isLoading = false
+                        withAnimation {
+                            chatMessages = savedMessages.messages
+                        }
                     }
                     switch await ChatModelService.instance.getMessageModels(forChatWith: recordId) {
                     case .success(let dataArray):
@@ -111,12 +112,17 @@ final class ChatViewModel: ObservableObject {
                         break
                     }
                 } else {
+                    await MainActor.run {
+                        isLoading = true
+                    }
                     switch await ChatModelService.instance.getMessageModels(forChatWith: recordId) {
                     case .success(let chatModels):
                         cacheManager.addTo(cacheManager.chatMessages, key: "\(recordId.recordName)_messages", value: ChatMessagesHolder(chatModels))
                         await MainActor.run {
-                            chatMessages = chatModels
                             isLoading = false
+                            withAnimation {
+                                chatMessages = chatModels
+                            }
                         }
                     case .failure(let error):
                         showAlert(title: "Error while fetching messages", message: error.localizedDescription)

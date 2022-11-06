@@ -33,16 +33,21 @@ class CacheManager {
     var recentUsers: NSCache<NSString, RecentUsersHolder> = {
         
         var cache = NSCache<NSString, RecentUsersHolder>()
-        cache.countLimit = Limits.usersInRecentsLimit
-        cache.totalCostLimit = 1024 * 50
+        cache.countLimit = 2
         return cache
     }()
     
     var chatMessages: NSCache<NSString, ChatMessagesHolder> = {
         
         var cache = NSCache<NSString, ChatMessagesHolder>()
-        cache.countLimit = 1000
-        cache.totalCostLimit = 1024 * 1024 * 10
+        cache.countLimit = 10
+        return cache
+    }()
+    
+    var posts: NSCache<NSString, PostModelsHolder> = {
+        
+        var cache = NSCache<NSString, PostModelsHolder>()
+        cache.countLimit = 10
         return cache
     }()
     
@@ -71,6 +76,10 @@ class CacheManager {
     func addTo(_ cache: NSCache<NSString, ChatMessagesHolder>, key: String, value: ChatMessagesHolder) {
         cache.setObject(value, forKey: key as NSString)
     }
+    
+    func addTo(_ cache: NSCache<NSString, PostModelsHolder>, key: String, value: PostModelsHolder) {
+        cache.setObject(value, forKey: key as NSString)
+    }
 
     func addTo(_ cache: NSCache<NSString, UIImage>, key: String, value: UIImage?) {
         if let value = value {
@@ -83,6 +92,11 @@ class CacheManager {
     func getFrom(_ cache: NSCache<NSString, RecentUsersHolder>, key: String) -> RecentUsersHolder? {
         cache.object(forKey: key as NSString)
     }
+    
+    func getFrom(_ cache: NSCache<NSString, PostModelsHolder>, key: String) -> PostModelsHolder? {
+        cache.object(forKey: key as NSString)
+    }
+
     
     func getFrom(_ cache: NSCache<NSString, ChatMessagesHolder>, key: String) -> ChatMessagesHolder? {
         cache.object(forKey: key as NSString)

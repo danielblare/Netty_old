@@ -55,6 +55,8 @@
 		BBE72AB42882E96700CBDEAD /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */; };
 		BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE72AB52882ED2200CBDEAD /* Color.swift */; };
 		BBE9E48E2883626900775325 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE9E48D2883626900775325 /* HapticManager.swift */; };
+		BBEFBFB029182492008E6DB2 /* PostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBEFBFAF29182492008E6DB2 /* PostModel.swift */; };
+		BBEFBFB229182E2E008E6DB2 /* PostsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBEFBFB129182E2E008E6DB2 /* PostsService.swift */; };
 		BBF0375928E74C16006F89A1 /* FindUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375828E74C16006F89A1 /* FindUserViewModel.swift */; };
 		BBF0375B28E74C39006F89A1 /* FindUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375A28E74C39006F89A1 /* FindUserView.swift */; };
 		BBF0375D28E74F5E006F89A1 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375C28E74F5E006F89A1 /* UserModel.swift */; };
@@ -115,6 +117,8 @@
 		BBE72AB32882E96700CBDEAD /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		BBE72AB52882ED2200CBDEAD /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		BBE9E48D2883626900775325 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		BBEFBFAF29182492008E6DB2 /* PostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostModel.swift; sourceTree = "<group>"; };
+		BBEFBFB129182E2E008E6DB2 /* PostsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsService.swift; sourceTree = "<group>"; };
 		BBF0375828E74C16006F89A1 /* FindUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserViewModel.swift; sourceTree = "<group>"; };
 		BBF0375A28E74C39006F89A1 /* FindUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserView.swift; sourceTree = "<group>"; };
 		BBF0375C28E74F5E006F89A1 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
@@ -380,6 +384,7 @@
 				BB81458F28CE09FF00B35A5D /* UserInfoService.swift */,
 				BBBBF0B328D22CC100FF7C65 /* ChatModelService.swift */,
 				BBF0375E28E75131006F89A1 /* FindUserModelService.swift */,
+				BBEFBFB129182E2E008E6DB2 /* PostsService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -390,6 +395,7 @@
 				BBBBF0AF28D202B500FF7C65 /* ChatRowModel.swift */,
 				BBF0375C28E74F5E006F89A1 /* UserModel.swift */,
 				BB10BA4B29102DD900B57CF5 /* ChatMessageModel.swift */,
+				BBEFBFAF29182492008E6DB2 /* PostModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -558,12 +564,14 @@
 				BBBBF0AE28D1EF0F00FF7C65 /* DirectViewModel.swift in Sources */,
 				BB4AFAB328915889003407FB /* DirectView.swift in Sources */,
 				BB7346402893054500E07487 /* CacheManager.swift in Sources */,
+				BBEFBFB229182E2E008E6DB2 /* PostsService.swift in Sources */,
 				BB3CAA86290EE27000180E9B /* ChatView.swift in Sources */,
 				BBF131CF288745880043A81E /* LogInView.swift in Sources */,
 				BBCD2B4628D2645F00C7E32A /* ProfileImageView.swift in Sources */,
 				BBBBF0B028D202B500FF7C65 /* ChatRowModel.swift in Sources */,
 				BBC36EE228D0DD2E008D983B /* ForgotPasswordViewModel.swift in Sources */,
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
+				BBEFBFB029182492008E6DB2 /* PostModel.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBF0375B28E74C39006F89A1 /* FindUserView.swift in Sources */,
 				BB8F9A4828F2F840009101FB /* PersonalInfoViewModel.swift in Sources */,
