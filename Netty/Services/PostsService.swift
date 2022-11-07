@@ -29,6 +29,35 @@ actor PostsService {
         }
     }
     
+    func deletePost(_ post: PostModel) async -> Result<CKRecord.ID?, Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: post.ownerId) { returnedUser, error in
+                if let error = error {
+                    continuation.resume(returning: .failure(error))
+                } else if let user = returnedUser,
+                          var posts = user[.postsRecordField] as? [CKRecord.Reference] {
+                    posts.removeAll(where: { $0.recordID == post.id })
+                    user[.postsRecordField] = posts
+                    CKContainer.default().publicCloudDatabase.save(user) { returnedUser, error in
+                        if let error = error {
+                            continuation.resume(returning: .failure(error))
+                        } else {
+                            CKContainer.default().publicCloudDatabase.delete(withRecordID: post.id) { returnedRecord, error in
+                                if let error = error {
+                                    continuation.resume(returning: .failure(error))
+                                } else {
+                                    continuation.resume(returning: .success(returnedRecord))
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    continuation.resume(returning: .success(nil))
+                }
+            }
+        }
+    }
+    
     func getPostsForUserWith(_ id: CKRecord.ID) async -> Result<[PostModel], Error> {
         switch await getPostsReferencesForUserWith(id) {
         case .success(let references):

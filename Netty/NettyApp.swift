@@ -30,18 +30,21 @@ class LogInAndOutViewModel: ObservableObject {
         
     init(id: CKRecord.ID? = nil) {
         userId = id
+        isLoading = true
         Task {
             let result = await manager.checkLoggedInDevise()
-            await MainActor.run(body: {
+            await MainActor.run {
                 switch result {
                 case .success(let id):
+                    isLoading = false
                     withAnimation {
                         userId = id
                     }
                 case .failure(_):
+                    isLoading = false
                     print("")
                 }
-            })
+            }
         }
         getiCloudStatus()
     }

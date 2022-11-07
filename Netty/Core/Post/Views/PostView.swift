@@ -10,13 +10,16 @@ import SwiftUI
 struct PostView: View {
     
     @StateObject private var vm: PostViewModel
-    
+    @Environment(\.presentationMode) var presentationMode
     private let isYours: Bool
+    private let deleteFunc: (PostModel) async -> ()
     @State private var showConfDialog: Bool = false
+    @State private var showDeletionConfDialog: Bool = false
     
-    init(postModel: PostModel, isYours: Bool) {
+    init(postModel: PostModel, isYours: Bool, deleteFunc: @escaping (PostModel) async -> ()) {
         _vm = .init(wrappedValue: PostViewModel(postModel: postModel))
         self.isYours = isYours
+        self.deleteFunc = deleteFunc
     }
     
     var body: some View {
@@ -83,7 +86,19 @@ struct PostView: View {
         .navigationTitle(vm.nickname ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .confirmationDialog("", isPresented: $showConfDialog, titleVisibility: .hidden) {
-            Button("Delete", role: .destructive, action: {})
+            Button("Delete", role: .destructive, action: {
+                showDeletionConfDialog = true
+            })
+            
+            Button("Cancel", role: .cancel, action: {})
+        }
+        .confirmationDialog("Are you sure?", isPresented: $showDeletionConfDialog, titleVisibility: .visible) {
+            Button("Permanently Delete", role: .destructive) {
+                Task {
+                    presentationMode.wrappedValue.dismiss()
+                    await deleteFunc(vm.postModel)
+                }
+            }
             
             Button("Cancel", role: .cancel, action: {})
         }
@@ -93,10 +108,13 @@ struct PostView: View {
 struct PostView_Previews: PreviewProvider {
     
     static let post = PostModel(id: .init(recordName: "3F744AF1-0FB3-4395-A0CA-C8AC9FC5722A"), ownerId: .init(recordName: "A6244FDA-A0DA-47CB-8E12-8F2603271899"), photo: UIImage(named: "testImage")!, creationDate: .now)
-
+    static func delete(_ post: PostModel) async {
+        
+    }
+    
     static var previews: some View {
         NavigationView {
-            PostView(postModel: post, isYours: true)
+            PostView(postModel: post, isYours: true, deleteFunc: delete)
                 .previewLayout(.sizeThatFits)
         }
     }

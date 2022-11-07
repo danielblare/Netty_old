@@ -29,6 +29,7 @@ struct ProfileView: View {
     
     // Shows dialog with options to choose new photo from library, take new photo, remove current avatar
     @State private var showConfirmationDialog: Bool = false
+    @State private var showPostDeletionConfirmationDialog: Bool = false
 
     // Current user record ID
     let userId: CKRecord.ID
@@ -38,6 +39,8 @@ struct ProfileView: View {
     
     // View Model
     @StateObject private var vm: ProfileViewModel
+    
+    @State private var postToDelete: PostModel? = nil
     
     init(userId: CKRecord.ID, logOutFunc: @escaping () async -> ()) {
         self.userId = userId
@@ -107,6 +110,18 @@ struct ProfileView: View {
                 .confirmationDialog("", isPresented: $showConfirmationDialog, titleVisibility: .hidden) {
                     getConfirmationActions()
                 }
+                .confirmationDialog("Are you sure?", isPresented: $showPostDeletionConfirmationDialog, titleVisibility: .visible) {
+                    Button("Permanently Delete", role: .destructive) {
+                        if let post = postToDelete {
+                            Task {
+                                await vm.deletePost(post)
+                                postToDelete = nil
+                            }
+                        }
+                    }
+                    
+                    Button("Cancel", role: .cancel) {}
+                }
             }
         }
     }
@@ -145,11 +160,22 @@ struct ProfileView: View {
                 } else {
                     LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
                         ForEach(vm.posts) { post in
-                            NavigationLink(value: post) {
+                            NavigationLink {
+                                PostView(postModel: post, isYours: true, deleteFunc: vm.deletePost)
+                            } label: {
                                 Image(uiImage: post.photo)
                                     .resizable()
                                     .scaledToFit()
                             }
+                            .contextMenu {
+                                Button("Delete", role: .destructive) {
+                                    postToDelete = post
+                                    showPostDeletionConfirmationDialog = true
+                                }
+                            } preview: {
+                                PostView(postModel: post, isYours: true, deleteFunc: vm.deletePost)
+                            }
+
                         }
                     }
                 }

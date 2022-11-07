@@ -41,9 +41,6 @@ struct MainScreenView: View {
             .navigationDestination(for: UserModel.self) { userModel in
                 ChatView(for: userModel, ownId: userId)
             }
-            .navigationDestination(for: PostModel.self) { post in
-                PostView(postModel: post, isYours: true)
-            }
             .toolbar(.hidden)
         }
     }

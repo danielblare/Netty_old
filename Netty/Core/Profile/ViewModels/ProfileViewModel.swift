@@ -75,6 +75,24 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
+    func deletePost(_ post: PostModel) async {
+        switch await PostsService.instance.deletePost(post) {
+        case .success(let recordId):
+            if let _ = recordId {
+                await MainActor.run {
+                    withAnimation {
+                        posts.removeAll(where: { $0.id == post.id })
+                        cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)_posts", value: PostModelsHolder(posts))
+                    }
+                }
+            } else {
+                showAlert(title: "Error deleting post", message: "")
+            }
+        case .failure(let error):
+            showAlert(title: "Error deleting post", message: error.localizedDescription)
+        }
+    }
+    
     /// Deletes user's data from cache and downloads new fresh data from database
     func sync() async {
         cacheManager.delete(from: cacheManager.textCache, "_firstName", for: userId.recordName)
