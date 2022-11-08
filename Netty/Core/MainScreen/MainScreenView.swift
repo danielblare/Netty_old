@@ -36,7 +36,7 @@ struct MainScreenView: View {
                 
     var body: some View {
         NavigationStack(path: $vm.path) {
-            TabView(selection: $selection) {
+            TabView {
                 HomeView(userId: userId)
                     .onAppear {
                         selection = .home
@@ -62,7 +62,7 @@ struct MainScreenView: View {
                     }
                     .tag(TabSelection.profile)
             }
-            .navigationDestination(for: UserModelHolder.self) { userModelHolder in
+            .navigationDestination(for: UserModelHolderWithDestination.self) { userModelHolder in
                 switch userModelHolder.destination {
                 case .chat:
                     ChatView(for: userModelHolder.userModel, ownId: userId)
@@ -70,8 +70,6 @@ struct MainScreenView: View {
                     PublicProfileView(for: userModelHolder.userModel)
                 }
             }
-            .navigationTitle("Main")
-            .toolbar(.hidden)
         }
         .environmentObject(vm)
     }

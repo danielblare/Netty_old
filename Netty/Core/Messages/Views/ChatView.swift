@@ -73,7 +73,7 @@ struct ChatView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.accentColor)
                         .onTapGesture {
-                            mainScreenVm.path.append(UserModelHolder(destination: .profile, userModel: vm.userModel))
+                            mainScreenVm.path.append(UserModelHolderWithDestination(destination: .profile, userModel: vm.userModel))
                         }
                 }
             }

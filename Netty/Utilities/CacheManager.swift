@@ -22,14 +22,6 @@ class CacheManager {
         return cache
     }()
     
-    var textCache: NSCache<NSString, NSString> = {
-        
-        var cache = NSCache<NSString, NSString>()
-        cache.countLimit = 200
-        cache.totalCostLimit = 1024 * 1024 * 20
-        return cache
-    }()
-    
     var recentUsers: NSCache<NSString, RecentUsersHolder> = {
         
         var cache = NSCache<NSString, RecentUsersHolder>()
@@ -51,6 +43,14 @@ class CacheManager {
         return cache
     }()
     
+    var userData: NSCache<NSString, UserModelHolder> = {
+        
+        var cache = NSCache<NSString, UserModelHolder>()
+        cache.countLimit = 50
+        return cache
+    }()
+
+    
     
     
     func delete(from cache: NSCache<NSString, UIImage>, _ strValue: String, for recordName: String) {
@@ -64,11 +64,7 @@ class CacheManager {
     func delete(from cache: NSCache<NSString, RecentUsersHolder>, _ strValue: String, for recordName: String) {
         cache.removeObject(forKey: "\(recordName)\(strValue)" as NSString)
     }
-          
-    func addTo(_ cache: NSCache<NSString, NSString>, key: String, value: NSString) {
-        cache.setObject(value, forKey: key as NSString)
-    }
-    
+              
     func addTo(_ cache: NSCache<NSString, RecentUsersHolder>, key: String, value: RecentUsersHolder) {
         cache.setObject(value, forKey: key as NSString)
     }
@@ -80,6 +76,11 @@ class CacheManager {
     func addTo(_ cache: NSCache<NSString, PostModelsHolder>, key: String, value: PostModelsHolder) {
         cache.setObject(value, forKey: key as NSString)
     }
+    
+    func addTo(_ cache: NSCache<NSString, UserModelHolder>, key: String, value: UserModelHolder) {
+        cache.setObject(value, forKey: key as NSString)
+    }
+
 
     func addTo(_ cache: NSCache<NSString, UIImage>, key: String, value: UIImage?) {
         if let value = value {
@@ -93,6 +94,10 @@ class CacheManager {
         cache.object(forKey: key as NSString)
     }
     
+    func getFrom(_ cache: NSCache<NSString, UserModelHolder>, key: String) -> UserModelHolder? {
+        cache.object(forKey: key as NSString)
+    }
+    
     func getFrom(_ cache: NSCache<NSString, PostModelsHolder>, key: String) -> PostModelsHolder? {
         cache.object(forKey: key as NSString)
     }
@@ -103,10 +108,6 @@ class CacheManager {
     }
 
     func getFrom(_ cache: NSCache<NSString, UIImage>, key: String) -> UIImage? {
-        cache.object(forKey: key as NSString)
-    }
-    
-    func getFrom(_ cache: NSCache<NSString, NSString>, key: String) -> NSString? {
         cache.object(forKey: key as NSString)
     }
 }

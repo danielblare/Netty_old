@@ -221,16 +221,16 @@ struct PrivateProfileView: View {
     private var UserInfo: some View {
         VStack(alignment: .leading, spacing: 5) {
             
-            // User data
-            if let firstName = vm.firstName,
-               let lastName = vm.lastName,
-               let nickname = vm.nickname {
-                Text("\(firstName) \(lastName)")
+            if vm.userInfoIsLoading {
+                LoadingAnimation()
+                    .padding(.vertical)
+            } else {
+                Text("\(vm.firstName) \(vm.lastName)")
                     .lineLimit(1)
                     .font(.title2)
                     .fontWeight(.semibold)
                 
-                Text(nickname)
+                Text(vm.nickname)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
                 
@@ -264,10 +264,6 @@ struct PrivateProfileView: View {
                     }
                 }
                 .padding(.top)
-                
-            } else { // loading view
-                LoadingAnimation()
-                    .padding(.vertical)
             }
             
             Spacer(minLength: 0)

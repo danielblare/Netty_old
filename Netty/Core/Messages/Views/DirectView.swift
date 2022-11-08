@@ -37,7 +37,7 @@ struct DirectView: View {
                         
                         List(searchResults) { chat in
                             Button {
-                                mainScreenVm.path.append(UserModelHolder(destination: .chat, userModel: chat.user))
+                                mainScreenVm.path.append(UserModelHolderWithDestination(destination: .chat, userModel: chat.user))
                             } label: {
                                 chatRowView(for: chat, with: geo)
                                     .swipeActions {

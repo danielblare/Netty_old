@@ -122,7 +122,7 @@ struct FindUserView: View {
                 vm.addToRecents(userModel)
                 if let finishPickingFunc = finishPickingFunc { finishPickingFunc() }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    mainScreenVm.path.append(UserModelHolder(destination: forDestination, userModel: userModel))
+                    mainScreenVm.path.append(UserModelHolderWithDestination(destination: forDestination, userModel: userModel))
                 }
             } label: {
                 UserRow(model: userModel)
@@ -138,7 +138,7 @@ struct FindUserView: View {
                     vm.addToRecents(userModel)
                     if let finishPickingFunc = finishPickingFunc { finishPickingFunc() }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        mainScreenVm.path.append(UserModelHolder(destination: forDestination, userModel: userModel))
+                        mainScreenVm.path.append(UserModelHolderWithDestination(destination: forDestination, userModel: userModel))
                     }
                 } label: {
                     UserRow(model: userModel)

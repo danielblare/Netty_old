@@ -23,18 +23,19 @@ class PrivateProfileViewModel: ObservableObject {
     @Published var posts: [PostModel] = []
     
     // View is loading if true
+    @Published var userInfoIsLoading: Bool = false
     @Published var profileImageIsLoading: Bool = true
     @Published var postsAreLoading: Bool = false
     @Published var postIsUploading: Bool = false
     
     // User's first name
-    @Published var firstName: String? = nil
+    @Published var firstName: String = ""
     
     // User's last name
-    @Published var lastName: String? = nil
+    @Published var lastName: String = ""
     
     // User's nickname
-    @Published var nickname: String? = nil
+    @Published var nickname: String = ""
     
     // User's record ID
     let userId: CKRecord.ID
@@ -53,13 +54,7 @@ class PrivateProfileViewModel: ObservableObject {
             await getImage()
         }
         Task {
-            await getFirstName()
-        }
-        Task {
-            await getLastName()
-        }
-        Task {
-            await getNickname()
+            await getUserData()
         }
         Task {
             await getPosts()
@@ -86,15 +81,12 @@ class PrivateProfileViewModel: ObservableObject {
     
     /// Deletes user's data from cache and downloads new fresh data from database
     func sync() async {
-        cacheManager.delete(from: cacheManager.textCache, "_firstName", for: userId.recordName)
-        cacheManager.delete(from: cacheManager.textCache, "_nickname", for: userId.recordName)
-        cacheManager.delete(from: cacheManager.textCache, "_lastName", for: userId.recordName)
         cacheManager.delete(from: cacheManager.photoCache, "_avatar", for: userId.recordName)
         getData()
     }
     
     private func getPosts() async {
-        if let savedPostsHolder = cacheManager.getFrom(cacheManager.posts, key: "\(userId.recordName)_posts") {
+        if let savedPostsHolder = cacheManager.getFrom(cacheManager.posts, key: userId.recordName) {
             await MainActor.run {
                 withAnimation {
                     posts = savedPostsHolder.posts
@@ -103,7 +95,7 @@ class PrivateProfileViewModel: ObservableObject {
             switch await PostsService.instance.getPostsForUserWith(userId) {
             case .success(let posts):
                 if self.posts != posts {
-                    cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)_posts", value: PostModelsHolder(posts))
+                    cacheManager.addTo(cacheManager.posts, key: userId.recordName, value: PostModelsHolder(posts))
                     await MainActor.run {
                         withAnimation {
                             self.posts = posts
@@ -119,7 +111,7 @@ class PrivateProfileViewModel: ObservableObject {
             }
             switch await PostsService.instance.getPostsForUserWith(userId) {
             case .success(let posts):
-                cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)_posts", value: PostModelsHolder(posts))
+                cacheManager.addTo(cacheManager.posts, key: userId.recordName, value: PostModelsHolder(posts))
                 await MainActor.run {
                     self.posts = posts
                     withAnimation {
@@ -156,88 +148,57 @@ class PrivateProfileViewModel: ObservableObject {
         }
     }
     
-    /// Gets user's nickname
-    private func getNickname() async {
-        // Checks if user's nickname already saved in cache
-        if let savedNickname = cacheManager.getFrom(cacheManager.textCache, key: "\(userId.recordName)_nickname") as? String {
-            await MainActor.run {
-                withAnimation {
-                    nickname = savedNickname
-                }
-            }
-        } else {
-            
-            // Downloads user's nickname from database
-            switch await UserInfoService.instance.fetchNicknameForUser(with: userId) {
-            case .success(let returnedValue):
-                await MainActor.run {
-                    withAnimation {
-                        self.nickname = returnedValue
-                    }
-                    if let nickname = returnedValue { // Saves fetched data in the cache
-                        cacheManager.addTo(cacheManager.textCache, key: "\(userId.recordName)_nickname", value: NSString(string: nickname))
-                    }
-                }
-            case .failure(let error):
-                showAlert(title: "Error while fetching nickname", message: error.localizedDescription)
-            }
+    private func getUserData() async {
+        await MainActor.run {
+            userInfoIsLoading = true
         }
-    }
-    
-    /// Gets user's first name
-    private func getFirstName() async {
         
-        // Checks if user's first name already saved in cache
-        if let savedName = cacheManager.getFrom(cacheManager.textCache, key: "\(userId.recordName)_firstName") as? String {
+        if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName) {
             await MainActor.run {
-                withAnimation {
-                    firstName = savedName
+                firstName = savedUser.user.firstName
+                lastName = savedUser.user.lastName
+                nickname = savedUser.user.nickname
+                
+                userInfoIsLoading = false
+            }
+            switch await UserInfoService.instance.fetchUserDataForUser(with: userId) {
+            case .success(let userModel):
+                if let userModel = userModel, userModel != savedUser.user {
+                    cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(userModel))
+                    await MainActor.run {
+                        firstName = userModel.firstName
+                        lastName = userModel.lastName
+                        nickname = userModel.nickname
+                        
+                        userInfoIsLoading = false
+                    }
                 }
+            case .failure(_):
+                break
             }
         } else {
-            
-            // Downloads user's first name from database
-            switch await UserInfoService.instance.fetchFirstNameForUser(with: userId) {
-            case .success(let returnedValue):
-                await MainActor.run {
-                    withAnimation {
-                        self.firstName = returnedValue
+            switch await UserInfoService.instance.fetchUserDataForUser(with: userId) {
+            case .success(let userModel):
+                if let userModel = userModel {
+                    cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(userModel))
+                    await MainActor.run {
+                        firstName = userModel.firstName
+                        lastName = userModel.lastName
+                        nickname = userModel.nickname
+                        
+                        userInfoIsLoading = false
                     }
-                    if let firstName = returnedValue { // Saves fetched data in the cache
-                        cacheManager.addTo(cacheManager.textCache, key: "\(userId.recordName)_firstName", value: NSString(string: firstName))
+                } else {
+                    showAlert(title: "Error while fetching user data", message: "Cannot fetch some parameters")
+                    await MainActor.run {
+                        userInfoIsLoading = false
                     }
                 }
             case .failure(let error):
-                showAlert(title: "Error while fetching first name", message: error.localizedDescription)
-            }
-        }
-    }
-    
-    /// Gets user's last name
-    private func getLastName() async {
-        
-        // Checks if user's last name already saved in cache
-        if let savedName = cacheManager.getFrom(cacheManager.textCache, key: "\(userId.recordName)_lastName") as? String {
-            await MainActor.run {
-                withAnimation {
-                    lastName = savedName
-                }
-            }
-        } else {
-            
-            // Downloads user's last name from database
-            switch await UserInfoService.instance.fetchLastNameForUser(with: userId) {
-            case .success(let returnedValue):
+                showAlert(title: "Error while fetching user data", message: error.localizedDescription)
                 await MainActor.run {
-                    withAnimation {
-                        self.lastName = returnedValue
-                    }
-                    if let lastName = returnedValue { // Saves fetched data in the cache
-                        cacheManager.addTo(cacheManager.textCache, key: "\(userId.recordName)_lastName", value: NSString(string: lastName))
-                    }
+                    userInfoIsLoading = false
                 }
-            case .failure(let error):
-                showAlert(title: "Error while fetching last name", message: error.localizedDescription)
             }
         }
     }

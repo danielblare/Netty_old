@@ -23,8 +23,9 @@ struct HomeView: View {
         NavigationView {
             ScrollViewReader { proxy in
                 ScrollView {
-                    ForEach(1..<100) { _ in
-                        Text("News")
+                    ForEach(vm.news) { new in
+                        Text(new.id.uuidString)
+                            .id(new.id)
                             .font(.title)
                             .fontWeight(.semibold)
                             .padding()
@@ -32,7 +33,7 @@ struct HomeView: View {
                     }
                 }
                 .refreshable {
-                    #warning("Refreshable")
+                    vm.createNews()
                 }
                 .toolbar { getToolbar(proxy) }
             }
@@ -60,8 +61,9 @@ struct HomeView: View {
         ToolbarItem(placement: .navigationBarLeading) {
             Text("Feed")
                 .onTapGesture {
-                    #warning("Scroll to top")
-//                    proxy.scrollTo()
+                    withAnimation {
+                        proxy.scrollTo(vm.news.first?.id)
+                    }
                 }
                 .fontWeight(.semibold)
                 .font(.title)

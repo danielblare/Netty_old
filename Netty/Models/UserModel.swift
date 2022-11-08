@@ -20,7 +20,15 @@ struct UserModel: Identifiable, Equatable, Hashable {
     
 }
 
-struct UserModelHolder: Hashable {
+class UserModelHolder {
+    let user: UserModel
+    
+    init(_ user: UserModel) {
+        self.user = user
+    }
+}
+
+struct UserModelHolderWithDestination: Hashable {
     let destination: UserModelDestination
     let userModel: UserModel
 }

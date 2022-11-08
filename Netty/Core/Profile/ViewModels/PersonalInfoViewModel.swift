@@ -205,7 +205,11 @@ class PersonalInfoViewModel: ObservableObject {
             case .success(_):
                 await MainActor.run(body: {
                     actualNickname = nicknameTextField
-                    cacheManager.delete(from: cacheManager.textCache, "_nickname", for: userId.recordName)
+                    if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName),
+                       savedUser.user.nickname != actualNickname {
+                        let actualUser = UserModel(id: savedUser.user.id, firstName: savedUser.user.firstName, lastName: savedUser.user.lastName, nickname: actualNickname)
+                        cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(actualUser))
+                    }
                     availabilityIsPassed = false
                     nicknameError = .none
                 })
@@ -222,7 +226,12 @@ class PersonalInfoViewModel: ObservableObject {
             case .success(_):
                 await MainActor.run(body: {
                     actualFirstName = firstNameTextField
-                    cacheManager.delete(from: cacheManager.textCache, "_firstName", for: userId.recordName)
+                    if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName),
+                       savedUser.user.firstName != actualFirstName {
+                        let actualUser = UserModel(id: savedUser.user.id, firstName: actualFirstName, lastName: savedUser.user.lastName, nickname: savedUser.user.firstName)
+                        cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(actualUser))
+                    }
+
                     firstNameError = .none
                 })
             case .failure(let error):
@@ -238,7 +247,11 @@ class PersonalInfoViewModel: ObservableObject {
             case .success(_):
                 await MainActor.run(body: {
                     actualLastName = lastNameTextField
-                    cacheManager.delete(from: cacheManager.textCache, "_lastName", for: userId.recordName)
+                    if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName),
+                       savedUser.user.lastName != actualLastName {
+                        let actualUser = UserModel(id: savedUser.user.id, firstName: savedUser.user.firstName, lastName: actualLastName, nickname: savedUser.user.firstName)
+                        cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(actualUser))
+                    }
                     lastNameError = .none
                 })
             case .failure(let error):
