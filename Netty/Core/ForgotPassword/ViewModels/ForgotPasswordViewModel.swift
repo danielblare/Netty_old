@@ -11,16 +11,8 @@ import Combine
 
 
 class ForgotPasswordViewModel: ObservableObject {
-    
-    // Shows alert on log in screen
-    private let showAlertOnLogInScreen: (_ title: String, _ message: String) -> ()
-    
-    // Path for navigation view
-    @Binding var path: NavigationPath
-    
-    init(path: Binding<NavigationPath>, showAlertOnLogInScreen: @escaping (String, String) -> ()) {
-        self._path = path
-        self.showAlertOnLogInScreen = showAlertOnLogInScreen
+        
+    init() {
         addSubscribers()
     }
                 
@@ -192,7 +184,7 @@ class ForgotPasswordViewModel: ObservableObject {
     }
     
     /// Updates password
-    func changePassword() async {
+    func changePassword(prMode: Binding<PresentationMode>) async {
         await MainActor.run(body: {
             changingPasswordIsLoading = true
         })
@@ -207,18 +199,23 @@ class ForgotPasswordViewModel: ObservableObject {
                     changingPasswordIsLoading = false
                     switch result {
                     case .success(_):
-                        path = NavigationPath()
-                        showAlertOnLogInScreen("Password reset", "Your password has been successfully changed")
+                        prMode.wrappedValue.dismiss()
+                        showAlert(title: "Password reset", message: "Your password has been successfully changed")
                     case .failure(let error):
-                        showAlert(title: "Error while updating password", message: error.localizedDescription)
+                        self.showAlert(title: "Error while updating password", message: error.localizedDescription)
                     }
                 }
+            } else {
+                await MainActor.run {
+                    changingPasswordIsLoading = false
+                }
+                self.showAlert(title: "Error while finding user with this e-mail", message: "Contact support")
             }
         case .failure(let error):
             await MainActor.run {
                 changingPasswordIsLoading = false
             }
-            showAlert(title: "Error while finding user with this e-mail", message: error.localizedDescription)
+            self.showAlert(title: "Error while finding user with this e-mail", message: error.localizedDescription)
         }
 
     }

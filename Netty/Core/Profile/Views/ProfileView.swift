@@ -14,8 +14,7 @@ struct ProfileView: View {
     enum PhotoImport {
         case avatar, post
     }
-    
-    
+        
     // Presenting sheet to let user choose new avatar photo
     @State private var showPhotoImportSheet: Bool = false
     
@@ -33,19 +32,15 @@ struct ProfileView: View {
 
     // Current user record ID
     let userId: CKRecord.ID
-    
-    // Func passed from logInAndOutViewModel to let user log out
-    let logOutFunc: () async -> ()
-    
+        
     // View Model
     @StateObject private var vm: ProfileViewModel
     
     @State private var postToDelete: PostModel? = nil
     
-    init(userId: CKRecord.ID, logOutFunc: @escaping () async -> ()) {
+    init(userId: CKRecord.ID) {
         self.userId = userId
-        self.logOutFunc = logOutFunc
-        self._vm = .init(wrappedValue: ProfileViewModel(id: userId, logOutFunc: logOutFunc))
+        self._vm = .init(wrappedValue: ProfileViewModel(id: userId))
     }
         
     var body: some View {
@@ -83,6 +78,7 @@ struct ProfileView: View {
                     Posts
                     
                 }
+                .scrollIndicators(.hidden)
                 .toolbar {
                     getToolbar()
                 }
@@ -324,9 +320,9 @@ struct ProfileView_Previews: PreviewProvider {
     
     static private let id = CKRecord.ID(recordName: "A6244FDA-A0DA-47CB-8E12-8F2603271899")
     static var previews: some View {
-        ProfileView(userId: id, logOutFunc: LogInAndOutViewModel(id: id).logOut)
+        ProfileView(userId: id)
             .preferredColorScheme(.light)
-        ProfileView(userId: id, logOutFunc: LogInAndOutViewModel(id: id).logOut)
+        ProfileView(userId: id)
             .preferredColorScheme(.dark)
     }
 }

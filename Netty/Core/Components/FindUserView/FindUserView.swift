@@ -10,6 +10,8 @@ import CloudKit
 
 struct FindUserView: View {
     
+    @EnvironmentObject private var mainScreenVm: MainScreenViewModel
+    
     // View Model
     @StateObject private var vm: FindUserViewModel
     
@@ -36,15 +38,11 @@ struct FindUserView: View {
         case none
     }
     
-    // Navigation path for navigation view
-    @Binding private var path: NavigationPath
-    
     // Shows new message sheet
     @Binding private var showSheet: Bool
     
-    init(id: CKRecord.ID, path: Binding<NavigationPath>, showSheet: Binding<Bool>) {
+    init(id: CKRecord.ID, showSheet: Binding<Bool>) {
         _vm = .init(wrappedValue: FindUserViewModel(id: id))
-        self._path = path
         self._showSheet = showSheet
     }
     
@@ -127,7 +125,7 @@ struct FindUserView: View {
                 vm.addToRecents(userModel)
                 showSheet = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    path.append(userModel)
+                    mainScreenVm.path.append(userModel)
                 }
             } label: {
                 UserRow(model: userModel)
@@ -143,7 +141,7 @@ struct FindUserView: View {
                     vm.addToRecents(userModel)
                     showSheet = false
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        path.append(userModel)
+                        mainScreenVm.path.append(userModel)
                     }
                 } label: {
                     UserRow(model: userModel)
@@ -185,7 +183,7 @@ struct FindUserView: View {
 struct FindUserView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            FindUserView(id: TestUser.id, path: .constant(.init()), showSheet: .constant(true))
+            FindUserView(id: TestUser.id, showSheet: .constant(true))
         }
     }
 }

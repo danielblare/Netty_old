@@ -12,26 +12,24 @@ import Combine
 struct ForgotPasswordEmailPageView: View {
     
     // View Model
-    @StateObject private var vm: ForgotPasswordViewModel
-    
+    @StateObject private var vm: ForgotPasswordViewModel = ForgotPasswordViewModel()
+    @Environment(\.presentationMode) var presentationMode
+
     // Focused field
     @FocusState private var activeField: FocusedValue?
     enum FocusedValue {
         case email, code
     }
-    
-    init(path: Binding<NavigationPath>, showAlertOnLogInScreen: @escaping (_ title: String, _ message: String) -> ()) {
-        _vm = .init(wrappedValue: ForgotPasswordViewModel(path: path, showAlertOnLogInScreen: showAlertOnLogInScreen))
-    }
-    
+        
     var body: some View {
         VStack {
             
             Spacer(minLength: 0)
 
             // Title
-            Text("Enter e-mail that is connected to your account:")
+            Text("Enter e-mail which is connected to your account:")
                 .foregroundColor(.secondary)
+                .font(.callout)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
             
@@ -155,7 +153,11 @@ struct ForgotPasswordEmailPageView: View {
             }
             
         }
-        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {
+            Button("OK") {
+                presentationMode.wrappedValue.dismiss()
+            }
+        }, message: {
             Text(vm.alertMessage)
         })
         .navigationTitle("E-mail verification")
@@ -166,12 +168,7 @@ struct ForgotPasswordEmailPageView: View {
 
 struct ForgotPasswordEmailPageView_Previews: PreviewProvider {
     static var previews: some View {
-        ForgotPasswordEmailPageView(path: .constant(.init()), showAlertOnLogInScreen: lol)
-        ForgotPasswordEmailPageView(path: .constant(.init()), showAlertOnLogInScreen: lol)
-    }
-    
-    static func lol(_ dawda: String, _ dawd: String) {
-        
+        ForgotPasswordEmailPageView()
+        ForgotPasswordEmailPageView()
     }
 }
-

@@ -39,21 +39,12 @@ class ProfileViewModel: ObservableObject {
     // User's record ID
     let userId: CKRecord.ID
     
-    // Log out function passed from LogInAndOutViewModel
-    private var logOutFunc: () async -> ()
-    
     // Cache manager to save some user's data in cache
     private let cacheManager = CacheManager.instance
     
-    init(id: CKRecord.ID, logOutFunc: @escaping () async -> ()) {
+    init(id: CKRecord.ID) {
         userId = id
-        self.logOutFunc = logOutFunc
         getData()
-    }
-    
-    /// Log out function for current user
-    func logOut() async {
-        await logOutFunc()
     }
     
     /// Gets all user's data
@@ -130,15 +121,15 @@ class ProfileViewModel: ObservableObject {
             case .success(let posts):
                 cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)_posts", value: PostModelsHolder(posts))
                 await MainActor.run {
-                    postsAreLoading = false
+                    self.posts = posts
                     withAnimation {
-                        self.posts = posts
+                        postsAreLoading = false
                     }
                 }
             case .failure(let error):
                 await MainActor.run {
-                    postsAreLoading = false
                     posts = []
+                    postsAreLoading = false
                 }
                 showAlert(title: "Error while loading posts", message: error.localizedDescription)
             }

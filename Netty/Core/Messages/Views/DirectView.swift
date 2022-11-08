@@ -10,6 +10,8 @@ import CloudKit
 
 struct DirectView: View {
     
+    @EnvironmentObject private var mainScreenVm: MainScreenViewModel
+    
     // View Model
     @StateObject private var vm: DirectViewModel
     
@@ -18,13 +20,9 @@ struct DirectView: View {
     
     // Shows new message sheet
     @State private var showSheet: Bool = false
-    
-    // Navigation path for main screen
-    @Binding private var path: NavigationPath
-    
-    init(userId: CKRecord.ID, path: Binding<NavigationPath>) {
+        
+    init(userId: CKRecord.ID) {
         _vm = .init(wrappedValue: DirectViewModel(userId: userId))
-        self._path = path
     }
     
     var body: some View {
@@ -39,7 +37,7 @@ struct DirectView: View {
                         
                         List(searchResults) { chat in
                             Button {
-                                path.append(chat.user)
+                                mainScreenVm.path.append(chat.user)
                             } label: {
                                 chatRowView(for: chat, with: geo)
                                     .swipeActions {
@@ -74,7 +72,7 @@ struct DirectView: View {
             Text(vm.alertMessage)
         })
         .sheet(isPresented: $showSheet) {
-            FindUserView(id: vm.userId, path: $path, showSheet: $showSheet)
+            FindUserView(id: vm.userId, showSheet: $showSheet)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .padding(.top)
@@ -181,8 +179,8 @@ struct DirectView: View {
 
 struct DirectView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectView(userId: TestUser.id, path: .constant(.init()))
-        DirectView(userId: TestUser.id, path: .constant(.init()))
+        DirectView(userId: TestUser.id)
+        DirectView(userId: TestUser.id)
     }
 }
 

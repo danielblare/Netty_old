@@ -8,31 +8,31 @@
 import SwiftUI
 import CloudKit
 
+class MainScreenViewModel: ObservableObject {
+    @Published var path: NavigationPath = NavigationPath()
+} 
+
 struct MainScreenView: View {
+    
+    @StateObject private var vm = MainScreenViewModel()
     
     // Current user's recordID
     let userId: CKRecord.ID
-    
-    // Log out func passed from LogInAndOutViewModel
-    let logOutFunc: () async -> ()
-    
-    // Navigation path
-    @State private var path: NavigationPath = NavigationPath()
-        
+                
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $vm.path) {
             TabView {
                 HomeView()
                     .tabItem {
                         Image(systemName: "photo.on.rectangle")
                     }
                     .tag(0)
-                DirectView(userId: userId, path: $path)
+                DirectView(userId: userId)
                     .tabItem {
                         Image(systemName: "ellipsis.bubble")
                     }
                     .tag(1)
-                ProfileView(userId: userId, logOutFunc: logOutFunc)
+                ProfileView(userId: userId)
                     .tabItem {
                         Image(systemName: "person")
                     }
@@ -43,6 +43,7 @@ struct MainScreenView: View {
             }
             .toolbar(.hidden)
         }
+        .environmentObject(vm)
     }
 }
 
@@ -55,7 +56,7 @@ struct MainScreenView: View {
 
 struct MainScreenView_Previews: PreviewProvider {
     static var previews: some View {
-        MainScreenView(userId: TestUser.id, logOutFunc: LogInAndOutViewModel().logOut)
-        MainScreenView(userId: TestUser.id, logOutFunc: LogInAndOutViewModel().logOut)
+        MainScreenView(userId: TestUser.id)
+        MainScreenView(userId: TestUser.id)
     }
 }

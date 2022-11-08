@@ -12,10 +12,7 @@ import CloudKit
 
 class SignUpViewModel: ObservableObject {
     
-    init(userId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) {
-        self._userId = userId
-        self._path = path
-        
+    init() {
         // Checking whether user is more than 18 y.o.
         let startingDate: Date = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
         let endingDate: Date = Calendar.current.date(byAdding: .year, value: -18, to: Date())!
@@ -25,11 +22,6 @@ class SignUpViewModel: ObservableObject {
         addSubscribers()
     }
     
-    // Path for log in page navigation view
-    @Binding var path: NavigationPath
-    
-    // Current user record id
-    @Binding var userId: CKRecord.ID?
             
     // Name page
     @Published var firstNameTextField: String = ""
@@ -192,7 +184,7 @@ class SignUpViewModel: ObservableObject {
     }
     
     /// Creates account for user
-    func createAccount() async {
+    func createAccount(userId: Binding<CKRecord.ID?>, path: Binding<NavigationPath>) async {
         await MainActor.run(body: {
             creatingAccountIsLoading = true
         })
@@ -224,8 +216,8 @@ class SignUpViewModel: ObservableObject {
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
-                        self.userId = returnedRecord.recordID
-                        self.path = NavigationPath()
+                        userId.wrappedValue = returnedRecord.recordID
+                        path.wrappedValue = NavigationPath()
                     }
                 }
             case .failure(let error):

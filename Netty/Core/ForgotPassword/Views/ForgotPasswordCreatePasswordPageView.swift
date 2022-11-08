@@ -9,9 +9,10 @@ import SwiftUI
 import Combine
 
 struct ForgotPasswordCreatePasswordPageView: View {
-    
+        
     // View Model
     @ObservedObject private var vm: ForgotPasswordViewModel
+    @Environment(\.presentationMode) var presentationMode
     
     init(vm: ForgotPasswordViewModel) {
         self.vm = vm
@@ -78,7 +79,7 @@ struct ForgotPasswordCreatePasswordPageView: View {
                 // Next button
                 Button(action: {
                     Task {
-                        await vm.changePassword()
+                        await vm.changePassword(prMode: presentationMode)
                     }
                 }, label: {
                     Text("Change password")
@@ -96,9 +97,6 @@ struct ForgotPasswordCreatePasswordPageView: View {
                 ProgressView()
             }
         }
-        .alert(vm.alertTitle, isPresented: $vm.showAlert, actions: {}, message: {
-            Text(vm.alertMessage)
-        })
         .navigationTitle("Create new Password")
         .background(Color(uiColor: .systemBackground).onTapGesture {
             UIApplication.shared.endEditing()
@@ -113,10 +111,6 @@ struct ForgotPasswordCreatePasswordPageView: View {
 
 struct ForgotPasswordCreatePasswordPageView_Previews: PreviewProvider {
     static var previews: some View {
-        ForgotPasswordCreatePasswordPageView(vm: ForgotPasswordViewModel(path: .constant(NavigationPath()), showAlertOnLogInScreen: lol))
-    }
-    
-    static func lol(_ dawda: String, _ dawd: String) {
-        
+        ForgotPasswordCreatePasswordPageView(vm: ForgotPasswordViewModel())
     }
 }

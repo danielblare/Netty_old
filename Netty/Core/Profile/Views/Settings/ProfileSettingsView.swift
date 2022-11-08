@@ -10,6 +10,8 @@ import CloudKit
 
 struct ProfileSettingsView: View {
     
+    @EnvironmentObject private var logInAndOutVm: LogInAndOutViewModel
+    
     // View model
     @ObservedObject var vm: ProfileViewModel
     
@@ -36,17 +38,37 @@ struct ProfileSettingsView: View {
                     .foregroundColor(.accentColor)
                 }
             }
+            Section {
+                NavigationLink {
+                    PrivacyAndSecurityPage()
+                } label: {
+                    HStack {
+                        Text("Privacy & Security")
+                        
+                        Image(systemName: "lock.shield")
+                        
+                        Spacer(minLength: 0)
+                    }
+                    .foregroundColor(.accentColor)
+                }
+            }
             
             // Log Out section
             Section {
-                Button(role: .destructive, action: {
+                Button(role: .destructive) {
                     Task {
                         isLoading = true
-                        await vm.logOut()
+                        await logInAndOutVm.logOut()
                         isLoading = false
                     }
-                }) {
-                    Text("Log Out")
+                } label: {
+                    HStack {
+                        Text("Log Out")
+                        
+                        Spacer(minLength: 0)
+                        
+                        Image(systemName: "iphone.and.arrow.forward")
+                    }
                 }
             }
         }
@@ -67,7 +89,7 @@ struct ProfileSettingsView_Previews: PreviewProvider {
     
     static var previews: some View {
         NavigationStack {
-            ProfileSettingsView(vm: ProfileViewModel(id: id, logOutFunc: LogInAndOutViewModel(id: id).logOut))
+            ProfileSettingsView(vm: ProfileViewModel(id: id))
         }
     }
 }

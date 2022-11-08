@@ -10,6 +10,9 @@ import Combine
 
 struct CreatePasswordPageView: View {
     
+    @EnvironmentObject private var logInAndOutVm: LogInAndOutViewModel
+    @EnvironmentObject private var logInVm: LogInViewModel
+    
     // View Model
     @ObservedObject private var vm: SignUpViewModel
     
@@ -78,7 +81,7 @@ struct CreatePasswordPageView: View {
                     // Next button
                     Button(action: {
                         Task {
-                            await vm.createAccount()
+                            await vm.createAccount(userId: $logInAndOutVm.userId, path: $logInVm.path)
                         }
                     }, label: {
                         Text("Create account")

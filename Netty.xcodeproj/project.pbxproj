@@ -20,6 +20,7 @@
 		BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAAD28915606003407FB /* MainScreenView.swift */; };
 		BB4AFAB328915889003407FB /* DirectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB228915889003407FB /* DirectView.swift */; };
 		BB4AFAB8289158AE003407FB /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB7289158AE003407FB /* ProfileView.swift */; };
+		BB5E1BE82919510C00A740D5 /* PostsFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5E1BE72919510C00A740D5 /* PostsFeed.swift */; };
 		BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */; };
 		BB6F2D4528CF549000B901BE /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6F2D4428CF549000B901BE /* ImagePicker.swift */; };
 		BB7346372892BBFA00E07487 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7346362892BBFA00E07487 /* ProfileViewModel.swift */; };
@@ -33,6 +34,7 @@
 		BB9067FD2888137400962B21 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9067FC2888137400962B21 /* HomeView.swift */; };
 		BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9068002888194A00962B21 /* LogInAndOutManager.swift */; };
 		BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB90680328881A5F00962B21 /* HomeViewModel.swift */; };
+		BB97C117291AB60B002BB141 /* PrivacyAndSecurityPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB97C116291AB60B002BB141 /* PrivacyAndSecurityPage.swift */; };
 		BBA71B952883024A0089D613 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B942883024A0089D613 /* String.swift */; };
 		BBA71B97288307390089D613 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA71B96288307390089D613 /* UIApplication.swift */; };
 		BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA7CC23288711EF008EDEFA /* LaunchView.swift */; };
@@ -83,6 +85,7 @@
 		BB4AFAAD28915606003407FB /* MainScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenView.swift; sourceTree = "<group>"; };
 		BB4AFAB228915889003407FB /* DirectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectView.swift; sourceTree = "<group>"; };
 		BB4AFAB7289158AE003407FB /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		BB5E1BE72919510C00A740D5 /* PostsFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsFeed.swift; sourceTree = "<group>"; };
 		BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingsView.swift; sourceTree = "<group>"; };
 		BB6F2D4428CF549000B901BE /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		BB7346362892BBFA00E07487 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
@@ -96,6 +99,7 @@
 		BB9067FC2888137400962B21 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		BB9068002888194A00962B21 /* LogInAndOutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInAndOutManager.swift; sourceTree = "<group>"; };
 		BB90680328881A5F00962B21 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		BB97C116291AB60B002BB141 /* PrivacyAndSecurityPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyAndSecurityPage.swift; sourceTree = "<group>"; };
 		BBA71B942883024A0089D613 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		BBA71B96288307390089D613 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		BBA7CC23288711EF008EDEFA /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
@@ -163,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				BB34FB0229186108004D5AB6 /* PostView.swift */,
+				BB5E1BE72919510C00A740D5 /* PostsFeed.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -344,6 +349,7 @@
 			children = (
 				BB6F2D4128CF50DD00B901BE /* ProfileSettingsView.swift */,
 				BB8F9A4928F2F8DC009101FB /* PresonalInfoPage.swift */,
+				BB97C116291AB60B002BB141 /* PrivacyAndSecurityPage.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -606,6 +612,7 @@
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBF0375B28E74C39006F89A1 /* FindUserView.swift in Sources */,
 				BB8F9A4828F2F840009101FB /* PersonalInfoViewModel.swift in Sources */,
+				BB5E1BE82919510C00A740D5 /* PostsFeed.swift in Sources */,
 				BBF0375F28E75131006F89A1 /* FindUserModelService.swift in Sources */,
 				BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */,
 				BBE36D1928D346A200AC1DF9 /* UIScreen.swift in Sources */,
@@ -633,6 +640,7 @@
 				BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */,
 				BBBD05A92884556B00F18140 /* SignUpEmailPageView.swift in Sources */,
 				BBBD05A7288454E200F18140 /* NamePageView.swift in Sources */,
+				BB97C117291AB60B002BB141 /* PrivacyAndSecurityPage.swift in Sources */,
 				BB9068012888194A00962B21 /* LogInAndOutManager.swift in Sources */,
 				BBC36EE628D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift in Sources */,
 				BBC36EE428D0E810008D983B /* ForgotPasswordEmailPageView.swift in Sources */,
