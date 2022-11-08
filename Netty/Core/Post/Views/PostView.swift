@@ -96,7 +96,7 @@ struct PostView: View {
             Button("TestButton") {
                 print("Test")
             }
-            if deleteFunc == nil {
+            if deleteFunc != nil {
                 Button("Delete", role: .destructive, action: {
                     showDeletionConfDialog = true
                 })

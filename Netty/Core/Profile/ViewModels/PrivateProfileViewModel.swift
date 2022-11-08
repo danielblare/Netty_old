@@ -68,7 +68,7 @@ class PrivateProfileViewModel: ObservableObject {
                 await MainActor.run {
                     withAnimation {
                         posts.removeAll(where: { $0.id == post.id })
-                        cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)_posts", value: PostModelsHolder(posts))
+                        cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)", value: PostModelsHolder(posts))
                     }
                 }
             } else {
@@ -137,7 +137,11 @@ class PrivateProfileViewModel: ObservableObject {
             
             switch await PostsService.instance.addPostForUserWith(userId, image: image) {
             case .success(let postModel):
-                posts.insert(postModel, at: 0)
+                await MainActor.run {
+                    withAnimation {
+                        posts.insert(postModel, at: 0)
+                    }
+                }
             case .failure(let error):
                 showAlert(title: "Error uploading new post", message: error.localizedDescription)
             }

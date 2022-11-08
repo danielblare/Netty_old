@@ -137,6 +137,8 @@ class LogInAndOutViewModel: ObservableObject {
     }
 }
 
+
+#warning("Alert if icloud isn't active")
 @main
 struct NettyApp: App {
     
