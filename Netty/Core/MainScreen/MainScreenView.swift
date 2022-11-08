@@ -10,6 +10,8 @@ import CloudKit
 
 struct TestUser {
     static let id: CKRecord.ID = .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736")
+    
+    static let userModel: UserModel = UserModel(id: id, firstName: "TestName", lastName: "TestLastNake", nickname: "TestNickname")
 }
 
 class MainScreenViewModel: ObservableObject {
@@ -65,7 +67,7 @@ struct MainScreenView: View {
                 case .chat:
                     ChatView(for: userModelHolder.userModel, ownId: userId)
                 case .profile:
-                    Text(userModelHolder.userModel.nickname + "'s Profile")
+                    PublicProfileView(for: userModelHolder.userModel)
                 }
             }
             .navigationTitle("Main")

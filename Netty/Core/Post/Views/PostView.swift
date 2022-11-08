@@ -7,19 +7,26 @@
 
 import SwiftUI
 
+struct FunctionsForPost {
+    
+}
+
 struct PostView: View {
     
     @StateObject private var vm: PostViewModel
     @Environment(\.presentationMode) var presentationMode
-    private let isYours: Bool
-    private let deleteFunc: (PostModel) async -> ()
+    private let deleteFunc: ((PostModel) async -> ())?
     @State private var showConfDialog: Bool = false
     @State private var showDeletionConfDialog: Bool = false
     
-    init(postModel: PostModel, isYours: Bool, deleteFunc: @escaping (PostModel) async -> ()) {
+    init(postModel: PostModel, deleteFunc: @escaping (PostModel) async -> ()) {
         _vm = .init(wrappedValue: PostViewModel(postModel: postModel))
-        self.isYours = isYours
         self.deleteFunc = deleteFunc
+    }
+    
+    init(postModel: PostModel) {
+        _vm = .init(wrappedValue: PostViewModel(postModel: postModel))
+        self.deleteFunc = nil
     }
     
     var body: some View {
@@ -86,17 +93,24 @@ struct PostView: View {
         .navigationTitle(vm.nickname ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .confirmationDialog("", isPresented: $showConfDialog, titleVisibility: .hidden) {
-            Button("Delete", role: .destructive, action: {
-                showDeletionConfDialog = true
-            })
-            
+            Button("TestButton") {
+                print("Test")
+            }
+            if deleteFunc == nil {
+                Button("Delete", role: .destructive, action: {
+                    showDeletionConfDialog = true
+                })
+            }
             Button("Cancel", role: .cancel, action: {})
         }
         .confirmationDialog("Are you sure?", isPresented: $showDeletionConfDialog, titleVisibility: .visible) {
             Button("Permanently Delete", role: .destructive) {
                 Task {
                     presentationMode.wrappedValue.dismiss()
-                    await deleteFunc(vm.postModel)
+                    
+                    if let deleteFunc = deleteFunc {
+                        await deleteFunc(vm.postModel)
+                    }
                 }
             }
             
@@ -114,7 +128,7 @@ struct PostView_Previews: PreviewProvider {
     
     static var previews: some View {
         NavigationView {
-            PostView(postModel: post, isYours: true, deleteFunc: delete)
+            PostView(postModel: post, deleteFunc: delete)
                 .previewLayout(.sizeThatFits)
         }
     }

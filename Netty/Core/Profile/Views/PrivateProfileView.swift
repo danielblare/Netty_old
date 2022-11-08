@@ -14,7 +14,7 @@ struct PrivateProfileView: View {
     enum PhotoImport {
         case avatar, post
     }
-        
+    
     // Presenting sheet to let user choose new avatar photo
     @State private var showPhotoImportSheet: Bool = false
     
@@ -29,7 +29,7 @@ struct PrivateProfileView: View {
     // Shows dialog with options to choose new photo from library, take new photo, remove current avatar
     @State private var showConfirmationDialog: Bool = false
     @State private var showPostDeletionConfirmationDialog: Bool = false
-
+    
     // View Model
     @StateObject private var vm: PrivateProfileViewModel
     
@@ -38,82 +38,78 @@ struct PrivateProfileView: View {
     init(userId: CKRecord.ID) {
         self._vm = .init(wrappedValue: PrivateProfileViewModel(id: userId))
     }
-        
+    
     var body: some View {
-        GeometryReader { proxy in
-
-            NavigationView {
+        NavigationView {
+            
+            ScrollView {
                 
-                ScrollView {
+                // Image and user info
+                HStack {
                     
-                    // Image and user info
-                    HStack {
-                        
-                        ProfileImage
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            .padding(.horizontal)
-                            .onTapGesture {
-                                importFor = .avatar
-                            }
-                        
-                        
-                        UserInfo
-                            .padding(.vertical)
-                            .frame(height: 100)
-                        
-                        Spacer(minLength: 0)
-                        
-                    }
-                    .padding(.vertical)
+                    ProfileImage
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                        .padding(.horizontal)
+                        .onTapGesture {
+                            importFor = .avatar
+                        }
                     
-                    AddPost
-                                        
-                    Divider()
-
-                    Posts
+                    
+                    UserInfo
+                        .padding(.vertical)
+                        .frame(height: 100)
+                    
+                    Spacer(minLength: 0)
                     
                 }
-                .scrollIndicators(.hidden)
-                .toolbar {
-                    getToolbar()
+                .padding(.vertical)
+                
+                AddPost
+                
+                Divider()
+                
+                Posts
+                
+            }
+            .toolbar {
+                getToolbar()
+            }
+            .refreshable {
+                Task {
+                    await vm.sync()
                 }
-                .refreshable {
-                    Task {
-                        await vm.sync()
-                    }
-                }
-                .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
-                    Text(vm.alertMessage)
-                })
-                .fullScreenCover(isPresented: $showPhotoImportSheet) {
-                    ImagePicker(source: photoInputSource) { image in
-                        switch importFor {
-                        case .avatar:
-                            vm.uploadImage(image)
-                        case .post:
-                            Task {
-                                await vm.newPost(image)
-                            }
+            }
+            .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+                Text(vm.alertMessage)
+            })
+            .fullScreenCover(isPresented: $showPhotoImportSheet) {
+                ImagePicker(source: photoInputSource) { image in
+                    switch importFor {
+                    case .avatar:
+                        vm.uploadImage(image)
+                    case .post:
+                        Task {
+                            await vm.newPost(image)
                         }
                     }
-                    .ignoresSafeArea()
                 }
-                .confirmationDialog("", isPresented: $showConfirmationDialog, titleVisibility: .hidden) {
-                    getConfirmationActions()
-                }
-                .confirmationDialog("Are you sure?", isPresented: $showPostDeletionConfirmationDialog, titleVisibility: .visible) {
-                    Button("Permanently Delete", role: .destructive) {
-                        if let post = postToDelete {
-                            Task {
-                                await vm.deletePost(post)
-                                postToDelete = nil
-                            }
+                .ignoresSafeArea()
+            }
+            .confirmationDialog("", isPresented: $showConfirmationDialog, titleVisibility: .hidden) {
+                getConfirmationActions()
+            }
+            .confirmationDialog("Are you sure?", isPresented: $showPostDeletionConfirmationDialog, titleVisibility: .visible) {
+                Button("Permanently Delete", role: .destructive) {
+                    if let post = postToDelete {
+                        Task {
+                            await vm.deletePost(post)
+                            postToDelete = nil
                         }
                     }
-                    
-                    Button("Cancel", role: .cancel) {}
                 }
+                
+                Button("Cancel", role: .cancel) {}
             }
         }
     }
@@ -138,43 +134,42 @@ struct PrivateProfileView: View {
         .padding(.horizontal)
     }
     
+    @ViewBuilder
     private var Posts: some View {
-        ZStack {
-            if !vm.postsAreLoading {
-
-                if vm.posts.isEmpty {
-
-                    Text("No posts yet")
-                        .font(.title2)
-                        .foregroundColor(.secondary.opacity(0.6))
-                        .padding(.top)
-
-                } else {
-                    LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
-                        ForEach(vm.posts) { post in
-                            NavigationLink {
-                                PostView(postModel: post, isYours: true, deleteFunc: vm.deletePost)
-                            } label: {
-                                Image(uiImage: post.photo)
-                                    .resizable()
-                                    .scaledToFit()
-                            }
-                            .contextMenu {
-                                Button("Delete", role: .destructive) {
-                                    postToDelete = post
-                                    showPostDeletionConfirmationDialog = true
-                                }
-                            } preview: {
-                                PostView(postModel: post, isYours: true, deleteFunc: vm.deletePost)
-                            }
-
+        if !vm.postsAreLoading {
+            
+            if vm.posts.isEmpty {
+                
+                Text("No posts yet")
+                    .font(.title2)
+                    .foregroundColor(.secondary.opacity(0.6))
+                    .padding(.top)
+                
+            } else {
+                LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
+                    ForEach(vm.posts) { post in
+                        NavigationLink {
+                            PostView(postModel: post)
+                        } label: {
+                            Image(uiImage: post.photo)
+                                .resizable()
+                                .scaledToFit()
                         }
+                        .contextMenu {
+                            Button("Delete", role: .destructive) {
+                                postToDelete = post
+                                showPostDeletionConfirmationDialog = true
+                            }
+                        } preview: {
+                            PostView(postModel: post)
+                        }
+                        
                     }
                 }
-            } else {
-                ProgressView()
-                    .padding(.top, 100)
             }
+        } else {
+            ProgressView()
+                .padding(.top, 100)
         }
     }
     
@@ -240,7 +235,7 @@ struct PrivateProfileView: View {
                     .lineLimit(1)
                 
                 HStack(spacing: 30) {
-                                        
+                    
                     VStack {
                         Text("Posts")
                             .fontWeight(.semibold)
@@ -274,7 +269,7 @@ struct PrivateProfileView: View {
                 LoadingAnimation()
                     .padding(.vertical)
             }
-
+            
             Spacer(minLength: 0)
         }
     }
