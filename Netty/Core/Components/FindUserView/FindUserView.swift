@@ -38,69 +38,66 @@ struct FindUserView: View {
         case none
     }
     
-    // Shows new message sheet
-    @Binding private var showSheet: Bool
+    private let finishPickingFunc: (() -> Void)?
+    private let forDestination: UserModelDestination
     
-    init(id: CKRecord.ID, showSheet: Binding<Bool>) {
+    init(id: CKRecord.ID, forDestination: UserModelDestination, finishPickingFunc: (() -> Void)? = nil) {
         _vm = .init(wrappedValue: FindUserViewModel(id: id))
-        self._showSheet = showSheet
+        self.finishPickingFunc = finishPickingFunc
+        self.forDestination = forDestination
     }
     
     var body: some View {
-        NavigationStack {
+        
+        List {
             
-            List {
+            if vm.showRecents && !vm.recentsArray.isEmpty {
                 
-                if vm.showRecents && !vm.recentsArray.isEmpty {
+                recentsSection
+                
+            } else if vm.showFound {
+                
+                if vm.foundArray.isEmpty {
                     
-                    recentsSection
+                    nothingFound
                     
-                } else if vm.showFound {
+                } else {
                     
-                    if vm.foundArray.isEmpty {
+                    foundResultsSection
+                    
+                    if buttonText != .none {
                         
-                        nothingFound
+                        buttonView
                         
-                    } else {
-                        
-                        foundResultsSection
-                        
-                        if buttonText != .none {
-                            
-                            buttonView
-                            
-                        }
                     }
                 }
             }
-            .confirmationDialog("Are you sure you clear all recents?", isPresented: $showConfirmationDialog, titleVisibility: .visible) {
-                Button("Clear") {
-                    Task {
-                        await vm.clearRecents()
-                    }
-                }
-            }
-            .overlay {
-                if vm.isLoading {
-                    ProgressView()
-                }
-            }
-            .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
-            .onReceive(vm.$searchText.debounce(for: 0.5, scheduler: RunLoop.main), perform: { _ in
-                Task {
-                    await vm.executeQuery()
-                }
-            })
-            .onReceive(vm.$searchText, perform: { _ in
-                vm.searchTextChanged()
-            })
-            .listStyle(.plain)
-            .navigationTitle("New message")
-            .navigationBarTitleDisplayMode(.inline)
-            .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
-                Text(vm.alertMessage)
-            })
         }
+        .confirmationDialog("Are you sure you clear all recents?", isPresented: $showConfirmationDialog, titleVisibility: .visible) {
+            Button("Clear") {
+                Task {
+                    await vm.clearRecents()
+                }
+            }
+        }
+        .overlay {
+            if vm.isLoading {
+                ProgressView()
+            }
+        }
+        .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
+        .onReceive(vm.$searchText.debounce(for: 0.5, scheduler: RunLoop.main), perform: { _ in
+            Task {
+                await vm.executeQuery()
+            }
+        })
+        .onReceive(vm.$searchText, perform: { _ in
+            vm.searchTextChanged()
+        })
+        .listStyle(.plain)
+        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+            Text(vm.alertMessage)
+        })
     }
     
     // Show more/less button
@@ -123,9 +120,9 @@ struct FindUserView: View {
         ForEach(vm.foundArray.prefix(foundResultCount)) { userModel in
             Button {
                 vm.addToRecents(userModel)
-                showSheet = false
+                if let finishPickingFunc = finishPickingFunc { finishPickingFunc() }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    mainScreenVm.path.append(userModel)
+                    mainScreenVm.path.append(UserModelHolder(destination: forDestination, userModel: userModel))
                 }
             } label: {
                 UserRow(model: userModel)
@@ -139,9 +136,9 @@ struct FindUserView: View {
             ForEach(vm.recentsArray) { userModel in
                 Button {
                     vm.addToRecents(userModel)
-                    showSheet = false
+                    if let finishPickingFunc = finishPickingFunc { finishPickingFunc() }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        mainScreenVm.path.append(userModel)
+                        mainScreenVm.path.append(UserModelHolder(destination: forDestination, userModel: userModel))
                     }
                 } label: {
                     UserRow(model: userModel)
@@ -183,7 +180,7 @@ struct FindUserView: View {
 struct FindUserView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            FindUserView(id: TestUser.id, showSheet: .constant(true))
+            FindUserView(id: TestUser.id, forDestination: .profile)
         }
     }
 }

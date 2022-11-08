@@ -1,5 +1,5 @@
 //
-//  ProfileViewModel.swift
+//  PrivateProfileViewModel.swift
 //  Netty
 //
 //  Created by Danny on 7/28/22.
@@ -10,7 +10,7 @@ import CloudKit
 import Combine
 import SwiftUI
 
-class ProfileViewModel: ObservableObject {
+class PrivateProfileViewModel: ObservableObject {
     
     // Alert data
     var alertTitle: String = ""

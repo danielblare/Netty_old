@@ -37,7 +37,7 @@ struct DirectView: View {
                         
                         List(searchResults) { chat in
                             Button {
-                                mainScreenVm.path.append(chat.user)
+                                mainScreenVm.path.append(UserModelHolder(destination: .chat, userModel: chat.user))
                             } label: {
                                 chatRowView(for: chat, with: geo)
                                     .swipeActions {
@@ -72,11 +72,19 @@ struct DirectView: View {
             Text(vm.alertMessage)
         })
         .sheet(isPresented: $showSheet) {
-            FindUserView(id: vm.userId, showSheet: $showSheet)
+            NavigationStack {
+                FindUserView(id: vm.userId, forDestination: .chat, finishPickingFunc: findUserFinishPicking)
+                    .navigationTitle("New message")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .padding(.top)
         }
+    }
+    
+    private func findUserFinishPicking() {
+        showSheet = false
     }
     
     // Creates toolbar for navigation view
@@ -184,6 +192,3 @@ struct DirectView_Previews: PreviewProvider {
     }
 }
 
-struct TestUser {
-    static let id: CKRecord.ID = .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736")
-}

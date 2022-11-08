@@ -1,5 +1,5 @@
 //
-//  ProfileView.swift
+//  PrivateProfileView.swift
 //  Netty
 //
 //  Created by Danny on 7/27/22.
@@ -9,7 +9,7 @@ import SwiftUI
 import CloudKit
 import PhotosUI
 
-struct ProfileView: View {
+struct PrivateProfileView: View {
     
     enum PhotoImport {
         case avatar, post
@@ -30,17 +30,13 @@ struct ProfileView: View {
     @State private var showConfirmationDialog: Bool = false
     @State private var showPostDeletionConfirmationDialog: Bool = false
 
-    // Current user record ID
-    let userId: CKRecord.ID
-        
     // View Model
-    @StateObject private var vm: ProfileViewModel
+    @StateObject private var vm: PrivateProfileViewModel
     
     @State private var postToDelete: PostModel? = nil
     
     init(userId: CKRecord.ID) {
-        self.userId = userId
-        self._vm = .init(wrappedValue: ProfileViewModel(id: userId))
+        self._vm = .init(wrappedValue: PrivateProfileViewModel(id: userId))
     }
         
     var body: some View {
@@ -320,9 +316,9 @@ struct ProfileView_Previews: PreviewProvider {
     
     static private let id = CKRecord.ID(recordName: "A6244FDA-A0DA-47CB-8E12-8F2603271899")
     static var previews: some View {
-        ProfileView(userId: id)
+        PrivateProfileView(userId: id)
             .preferredColorScheme(.light)
-        ProfileView(userId: id)
+        PrivateProfileView(userId: id)
             .preferredColorScheme(.dark)
     }
 }

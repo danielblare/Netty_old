@@ -11,6 +11,8 @@ import Combine
 
 struct ChatView: View {
     
+    @EnvironmentObject private var mainScreenVm: MainScreenViewModel
+    
     // Presentation mode to dismiss view if error occurred
     @Environment(\.presentationMode) var presentationMode
     
@@ -64,7 +66,17 @@ struct ChatView: View {
                     getMessageTextField(proxy)
                 }
             }
-            .navigationTitle(vm.userModel.nickname)
+            .navigationTitle("Chat")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(vm.userModel.nickname)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.accentColor)
+                        .onTapGesture {
+                            mainScreenVm.path.append(UserModelHolder(destination: .profile, userModel: vm.userModel))
+                        }
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .disabled(vm.isLoading)
             .overlay {

@@ -8,10 +8,21 @@
 import Foundation
 import CloudKit
 
+
+enum UserModelDestination {
+    case chat, profile
+}
+
+
 struct UserModel: Identifiable, Equatable, Hashable {
     let id: CKRecord.ID
     let firstName, lastName, nickname: String
     
+}
+
+struct UserModelHolder: Hashable {
+    let destination: UserModelDestination
+    let userModel: UserModel
 }
 
 class RecentUsersHolder {

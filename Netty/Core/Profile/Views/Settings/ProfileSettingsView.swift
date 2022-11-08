@@ -13,7 +13,7 @@ struct ProfileSettingsView: View {
     @EnvironmentObject private var logInAndOutVm: LogInAndOutViewModel
     
     // View model
-    @ObservedObject var vm: ProfileViewModel
+    @ObservedObject var vm: PrivateProfileViewModel
     
     // Shows loading view if true
     @State private var isLoading: Bool = false
@@ -89,7 +89,7 @@ struct ProfileSettingsView_Previews: PreviewProvider {
     
     static var previews: some View {
         NavigationStack {
-            ProfileSettingsView(vm: ProfileViewModel(id: id))
+            ProfileSettingsView(vm: PrivateProfileViewModel(id: id))
         }
     }
 }
