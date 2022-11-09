@@ -34,6 +34,7 @@ struct PrivateProfileView: View {
     @StateObject private var vm: PrivateProfileViewModel
     
     @State private var postToDelete: PostModel? = nil
+
     
     init(userId: CKRecord.ID) {
         self._vm = .init(wrappedValue: PrivateProfileViewModel(id: userId))
@@ -234,36 +235,59 @@ struct PrivateProfileView: View {
                     .foregroundColor(.secondary)
                     .lineLimit(1)
                 
-                HStack(spacing: 30) {
+                HStack {
                     
                     VStack {
                         Text("Posts")
                             .fontWeight(.semibold)
                             .font(.footnote)
                         
-                        Text("***")
+                        Text(vm.postsNumber ?? "***")
                             .font(.callout)
                     }
                     
-                    VStack {
-                        Text("Followers")
-                            .fontWeight(.semibold)
-                            .font(.footnote)
-                        
-                        Text("***")
-                            .font(.callout)
-                    }
+                    Spacer(minLength: 0)
                     
-                    VStack {
-                        Text("Following")
-                            .fontWeight(.semibold)
-                            .font(.footnote)
-                        
-                        Text("***")
-                            .font(.callout)
+                    NavigationLink(value: RefsHolderWithDestination(destination: .followers, refs: vm.followers ?? [])) {
+                        VStack {
+                            Text("Followers")
+                                .fontWeight(.semibold)
+                                .font(.footnote)
+                            
+                            if let followersCount = vm.followers?.count {
+                                Text("\(followersCount)")
+                                    .font(.callout)
+                            } else {
+                                Text("***")
+                                    .font(.callout)
+                            }
+                                
+                        }
                     }
+                    .foregroundColor(.primary)
+                    .disabled(vm.followers == nil)
+                    
+                    Spacer(minLength: 0)
+                    
+                    NavigationLink(value: RefsHolderWithDestination(destination: .following, refs: vm.following ?? [])) {
+                        VStack {
+                            Text("Following")
+                                .fontWeight(.semibold)
+                                .font(.footnote)
+                            
+                            if let followingCount = vm.following?.count {
+                                Text("\(followingCount)")
+                                    .font(.callout)
+                            } else {
+                                Text("***")
+                                    .font(.callout)
+                            }
+                        }
+                    }
+                    .foregroundColor(.primary)
+                    .disabled(vm.following == nil)
                 }
-                .padding(.top)
+                .padding([.top, .trailing])
             }
             
             Spacer(minLength: 0)

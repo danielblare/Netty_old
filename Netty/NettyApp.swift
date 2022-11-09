@@ -30,23 +30,32 @@ class LogInAndOutViewModel: ObservableObject {
         
     init(id: CKRecord.ID? = nil) {
         userId = id
-        isLoading = true
         Task {
-            let result = await manager.checkLoggedInDevise()
             await MainActor.run {
-                switch result {
-                case .success(let id):
-                    isLoading = false
-                    withAnimation {
-                        userId = id
+                isLoading = true
+            }
+            
+            let status = await getiCloudStatus()
+            
+            if status == .available {
+                let result = await manager.checkLoggedInDevise()
+                await MainActor.run {
+                    switch result {
+                    case .success(let id):
+                        isLoading = false
+                        withAnimation {
+                            userId = id
+                        }
+                    case .failure(_):
+                        isLoading = false
                     }
-                case .failure(_):
+                }
+            } else {
+                await MainActor.run {
                     isLoading = false
-                    print("")
                 }
             }
         }
-        getiCloudStatus()
     }
     
     /// Logs user in
@@ -115,30 +124,16 @@ class LogInAndOutViewModel: ObservableObject {
     }
     
     /// Gets user's iCloud status
-    private func getiCloudStatus() {
-        CKContainer.default().accountStatus {  returnedStatus, returnedError in
-            DispatchQueue.main.async {
-                switch returnedStatus {
-                case .couldNotDetermine:
-                    print("Could not determine")
-                case .available:
-                    print("iCloud is available")
-                case .restricted:
-                    print("iCloud is restricted")
-                case .noAccount:
-                    print("No account")
-                case .temporarilyUnavailable:
-                    print("Temporariry unavailable")
-                @unknown default:
-                    print("iCloud default")
-                }
+    private func getiCloudStatus() async -> CKAccountStatus? {
+        await withCheckedContinuation { cont in
+            CKContainer.default().accountStatus { returnedStatus, returnedError in
+                cont.resume(returning: returnedStatus)
             }
         }
     }
 }
 
 
-#warning("Alert if icloud isn't active")
 @main
 struct NettyApp: App {
     

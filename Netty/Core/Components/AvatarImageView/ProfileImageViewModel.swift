@@ -22,42 +22,44 @@ class ProfileImageViewModel: ObservableObject {
     private let cacheManager = CacheManager.instance
     
     init(id: CKRecord.ID) {
-        getImage(for: id)
+        Task {
+            await getImage(for: id)
+        }
     }
-
+    
     /// Gets image for record id from database
-    private func getImage(for id: CKRecord.ID) {
+    private func getImage(for id: CKRecord.ID) async {
         if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(id.recordName)_avatar") {
-            image = savedImage
-            Task {
-                switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
-                case .success(let returnedValue):
-                    await MainActor.run(body: {
-                        cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: returnedValue)
-                        self.image = returnedValue
-                    })
-                case .failure(_):
-                    break
+            await MainActor.run {
+                image = savedImage
+            }
+            switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
+            case .success(let returnedValue):
+                cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: returnedValue)
+                await MainActor.run {
+                    self.image = returnedValue
                 }
+            case .failure(_):
+                break
             }
         } else {
-            isLoading = true
-            Task {
-                switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
-                case .success(let returnedValue):
-                    await MainActor.run(body: {
-                        withAnimation {
-                            isLoading = false
-                            self.image = returnedValue
-                        }
-                        if let image = returnedValue {
-                            cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: image)
-                        }
-                    })
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+            await MainActor.run {
+                isLoading = true
+            }
+            switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
+            case .success(let returnedValue):
+                await MainActor.run(body: {
+                    self.image = returnedValue
+                    withAnimation {
+                        isLoading = false
+                    }
+                    if let image = returnedValue {
+                        cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: image)
+                    }
+                })
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
-    }   
+    }
 }

@@ -30,7 +30,9 @@ actor FindUserModelService {
                                         if let firstName = recentUser[.firstNameRecordField] as? String,
                                            let lastName = recentUser[.lastNameRecordField] as? String,
                                            let nickname = recentUser[.nicknameRecordField] as? String {
-                                            arrayToBeSorted.append(UserModel(id: recentUser.recordID, firstName: firstName, lastName: lastName, nickname: nickname))
+                                            let followers = recentUser[.followersRecordField] as? [CKRecord.Reference] ?? []
+                                            let following = record[.followingRecordField] as? [CKRecord.Reference] ?? []
+                                            arrayToBeSorted.append(UserModel(id: recentUser.recordID, firstName: firstName, lastName: lastName, nickname: nickname, followers: followers, following: following))
                                             
                                         }
                                     case .failure(let error):
@@ -72,7 +74,9 @@ actor FindUserModelService {
                                let lastName = userRecord[.lastNameRecordField] as? String,
                                let nickname = userRecord[.nicknameRecordField] as? String {
                                 if userRecord.recordID != id && (firstName.lowercased().starts(with: searchText.lowercased()) || lastName.lowercased().starts(with: searchText.lowercased()) || nickname.lowercased().starts(with: searchText.lowercased())) {
-                                    resultArray.append(UserModel(id: userRecord.recordID, firstName: firstName, lastName: lastName, nickname: nickname))
+                                    let followers = userRecord[.followersRecordField] as? [CKRecord.Reference] ?? []
+                                    let following = userRecord[.followingRecordField] as? [CKRecord.Reference] ?? []
+                                    resultArray.append(UserModel(id: userRecord.recordID, firstName: firstName, lastName: lastName, nickname: nickname, followers: followers, following: following))
                                 }
                             }
                             

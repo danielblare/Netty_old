@@ -242,7 +242,9 @@ actor ChatModelService {
                            let messageModel = try? JSONDecoder().decode(ChatMessageModel.self, from: lastData) {
                             lastMessage = "\(messageModel.isCurrentUser(ownId: currentUserId) ? "You" : "\(nickname)"): \(messageModel.message)"
                         }
-                        continuation.resume(returning: .success(ChatRowModel(id: chatRecord.recordID, user: UserModel(id: record.recordID, firstName: firstName, lastName: lastName, nickname: nickname), lastMessage: lastMessage, modificationDate: modificationDate)))
+                        let followers = record[.followersRecordField] as? [CKRecord.Reference] ?? []
+                        let following = record[.followingRecordField] as? [CKRecord.Reference] ?? []
+                        continuation.resume(returning: .success(ChatRowModel(id: chatRecord.recordID, user: UserModel(id: record.recordID, firstName: firstName, lastName: lastName, nickname: nickname, followers: followers, following: following), lastMessage: lastMessage, modificationDate: modificationDate)))
                         
                     } else if let error = error {
                         continuation.resume(returning: .failure(error))

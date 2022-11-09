@@ -76,7 +76,10 @@ struct LogInView: View {
                     NavigationLink {
                         ForgotPasswordEmailPageView()
                     } label: {
-                        Text("Forgot password?")
+                        HStack(spacing: 2) {
+                            Text("Forgot password")
+                            Image(systemName: "questionmark.key.filled")
+                        }
                             .font(.footnote)
                     }
                     
@@ -110,7 +113,11 @@ struct LogInView: View {
                     NavigationLink {
                         NamePageView()
                     } label: {
-                        Text("Sign Up")
+                        HStack(spacing: 4) {
+                            Text("Sign Up")
+                            Image(systemName: "person.fill.checkmark")
+                        }
+
                             .font(.footnote)
                     }
                 }

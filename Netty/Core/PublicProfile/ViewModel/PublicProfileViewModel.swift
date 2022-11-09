@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 import CloudKit
 
 class PublicProfileViewModel: ObservableObject {
@@ -17,7 +18,7 @@ class PublicProfileViewModel: ObservableObject {
 
     let user: UserModel
     
-    @Published var userInfoIsLoading: Bool = true
+    @Published var userInfoIsLoading: Bool = false
     @Published var postsAreLoading: Bool = true
     
     // Posts array
@@ -32,29 +33,35 @@ class PublicProfileViewModel: ObservableObject {
     // User's nickname
     @Published var nickname: String = ""
     
+    @Published var postsNumber: String? = nil
+    
     private let cacheManager = CacheManager.instance
+    
+    private var cancellables = Set<AnyCancellable>()
     
     init(_ userModel: UserModel) {
         user = userModel
-        
+        addSubs()
+        Task {
+            await getUserPosts()
+        }
         Task {
             await getUserData()
-            await getUserPosts()
         }
     }
     
+    private func addSubs() {
+        $posts
+            .sink(receiveValue: { self.postsNumber = "\($0.count)" })
+            .store(in: &cancellables)
+    }
+    
     private func getUserData() async {
-        await MainActor.run {
-            userInfoIsLoading = true
-        }
-        
         if let savedUser = cacheManager.getFrom(cacheManager.userData, key: user.id.recordName) {
             await MainActor.run {
                 firstName = savedUser.user.firstName
                 lastName = savedUser.user.lastName
                 nickname = savedUser.user.nickname
-                
-                userInfoIsLoading = false
             }
             switch await UserInfoService.instance.fetchUserDataForUser(with: user.id) {
             case .success(let userModel):
@@ -64,14 +71,17 @@ class PublicProfileViewModel: ObservableObject {
                         firstName = userModel.firstName
                         lastName = userModel.lastName
                         nickname = userModel.nickname
-                        
-                        userInfoIsLoading = false
                     }
                 }
             case .failure(_):
                 break
             }
         } else {
+            await MainActor.run {
+                userInfoIsLoading = true
+            }
+            
+
             switch await UserInfoService.instance.fetchUserDataForUser(with: user.id) {
             case .success(let userModel):
                 if let userModel = userModel {
@@ -98,9 +108,6 @@ class PublicProfileViewModel: ObservableObject {
         }    }
     
     private func getUserPosts() async {
-        await MainActor.run {
-            postsAreLoading = true
-        }
         
         if let savedPosts = cacheManager.getFrom(cacheManager.posts, key: user.id.recordName) {
             await MainActor.run {
@@ -136,6 +143,9 @@ class PublicProfileViewModel: ObservableObject {
                 }
             case .failure(let error):
                 showAlert(title: "Error while fetching posts", message: error.localizedDescription)
+                await MainActor.run {
+                    postsAreLoading = false
+                }
             }
         }
     }

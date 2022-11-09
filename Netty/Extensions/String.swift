@@ -32,6 +32,8 @@ extension String {
     static let postsRecordField = "posts"
     static let imageRecordField = "image"
     static let ownerRecordField = "owner"
+    static let followersRecordField = "followers"
+    static let followingRecordField = "following"
     
 
     

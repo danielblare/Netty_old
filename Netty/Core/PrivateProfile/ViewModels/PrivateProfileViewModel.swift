@@ -22,6 +22,10 @@ class PrivateProfileViewModel: ObservableObject {
     
     @Published var posts: [PostModel] = []
     
+    @Published var followers: [CKRecord.Reference]? = nil
+    
+    @Published var following: [CKRecord.Reference]? = nil
+    
     // View is loading if true
     @Published var userInfoIsLoading: Bool = false
     @Published var profileImageIsLoading: Bool = true
@@ -37,15 +41,28 @@ class PrivateProfileViewModel: ObservableObject {
     // User's nickname
     @Published var nickname: String = ""
     
+    
+    @Published var postsNumber: String? = nil
+
+        
     // User's record ID
     let userId: CKRecord.ID
     
     // Cache manager to save some user's data in cache
     private let cacheManager = CacheManager.instance
     
+    private var cancellables = Set<AnyCancellable>()
+    
     init(id: CKRecord.ID) {
         userId = id
+        addSubs()
         getData()
+    }
+    
+    private func addSubs() {
+        $posts
+            .sink(receiveValue: { self.postsNumber = "\($0.count.formatNumberToKType())" })
+            .store(in: &cancellables)
     }
     
     /// Gets all user's data
@@ -153,17 +170,14 @@ class PrivateProfileViewModel: ObservableObject {
     }
     
     private func getUserData() async {
-        await MainActor.run {
-            userInfoIsLoading = true
-        }
         
         if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName) {
             await MainActor.run {
                 firstName = savedUser.user.firstName
                 lastName = savedUser.user.lastName
                 nickname = savedUser.user.nickname
-                
-                userInfoIsLoading = false
+                followers = savedUser.user.followers
+                following = savedUser.user.following
             }
             switch await UserInfoService.instance.fetchUserDataForUser(with: userId) {
             case .success(let userModel):
@@ -173,14 +187,19 @@ class PrivateProfileViewModel: ObservableObject {
                         firstName = userModel.firstName
                         lastName = userModel.lastName
                         nickname = userModel.nickname
-                        
-                        userInfoIsLoading = false
+                        followers = userModel.followers
+                        following = userModel.following
                     }
                 }
             case .failure(_):
                 break
             }
         } else {
+            
+            await MainActor.run {
+                userInfoIsLoading = true
+            }
+
             switch await UserInfoService.instance.fetchUserDataForUser(with: userId) {
             case .success(let userModel):
                 if let userModel = userModel {
@@ -189,6 +208,8 @@ class PrivateProfileViewModel: ObservableObject {
                         firstName = userModel.firstName
                         lastName = userModel.lastName
                         nickname = userModel.nickname
+                        followers = userModel.followers
+                        following = userModel.following
                         
                         userInfoIsLoading = false
                     }

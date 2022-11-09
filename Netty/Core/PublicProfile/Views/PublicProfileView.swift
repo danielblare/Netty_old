@@ -115,7 +115,7 @@ struct PublicProfileView: View {
                             .fontWeight(.semibold)
                             .font(.footnote)
                         
-                        Text("***")
+                        Text(vm.postsNumber ?? "***")
                             .font(.callout)
                     }
                     

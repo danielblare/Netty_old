@@ -207,7 +207,7 @@ class PersonalInfoViewModel: ObservableObject {
                     actualNickname = nicknameTextField
                     if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName),
                        savedUser.user.nickname != actualNickname {
-                        let actualUser = UserModel(id: savedUser.user.id, firstName: savedUser.user.firstName, lastName: savedUser.user.lastName, nickname: actualNickname)
+                        let actualUser = UserModel(id: savedUser.user.id, firstName: savedUser.user.firstName, lastName: savedUser.user.lastName, nickname: actualNickname, followers: savedUser.user.followers, following: savedUser.user.following)
                         cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(actualUser))
                     }
                     availabilityIsPassed = false
@@ -228,7 +228,7 @@ class PersonalInfoViewModel: ObservableObject {
                     actualFirstName = firstNameTextField
                     if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName),
                        savedUser.user.firstName != actualFirstName {
-                        let actualUser = UserModel(id: savedUser.user.id, firstName: actualFirstName, lastName: savedUser.user.lastName, nickname: savedUser.user.firstName)
+                        let actualUser = UserModel(id: savedUser.user.id, firstName: actualFirstName, lastName: savedUser.user.lastName, nickname: savedUser.user.firstName, followers: savedUser.user.followers, following: savedUser.user.following)
                         cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(actualUser))
                     }
 
@@ -249,7 +249,7 @@ class PersonalInfoViewModel: ObservableObject {
                     actualLastName = lastNameTextField
                     if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName),
                        savedUser.user.lastName != actualLastName {
-                        let actualUser = UserModel(id: savedUser.user.id, firstName: savedUser.user.firstName, lastName: actualLastName, nickname: savedUser.user.firstName)
+                        let actualUser = UserModel(id: savedUser.user.id, firstName: savedUser.user.firstName, lastName: actualLastName, nickname: savedUser.user.firstName, followers: savedUser.user.followers, following: savedUser.user.following)
                         cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(actualUser))
                     }
                     lastNameError = .none

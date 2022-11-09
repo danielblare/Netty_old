@@ -33,7 +33,7 @@ struct UserRow: View {
 
 struct UserRow_Previews: PreviewProvider {
     static var previews: some View {
-        UserRow(model: .init(id: .init(recordName: "B63BEF34-814C-4259-6901-8677FF665F76"), firstName: "Danylo", lastName: "Siefierov", nickname: "stuffeddanny"))
+        UserRow(model: .init(id: .init(recordName: "B63BEF34-814C-4259-6901-8677FF665F76"), firstName: "Danylo", lastName: "Siefierov", nickname: "stuffeddanny", followers: [], following: []))
             .padding()
             .previewLayout(.sizeThatFits)
     }

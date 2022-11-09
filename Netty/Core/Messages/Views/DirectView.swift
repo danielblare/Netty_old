@@ -36,9 +36,7 @@ struct DirectView: View {
                     } else if !vm.chatsArray.isEmpty {
                         
                         List(searchResults) { chat in
-                            Button {
-                                mainScreenVm.path.append(UserModelHolderWithDestination(destination: .chat, userModel: chat.user))
-                            } label: {
+                        NavigationLink(value: UserModelHolderWithDestination(destination: .chat, userModel: chat.user)) {
                                 chatRowView(for: chat, with: geo)
                                     .swipeActions {
                                         getSwipeActionsFor(chat)

@@ -69,6 +69,11 @@
 		BBF0375F28E75131006F89A1 /* FindUserModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0375E28E75131006F89A1 /* FindUserModelService.swift */; };
 		BBF0376128E75E6B006F89A1 /* UserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF0376028E75E6B006F89A1 /* UserRow.swift */; };
 		BBF131CF288745880043A81E /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF131CE288745880043A81E /* LogInView.swift */; };
+		BBF64892291C1D1D0086CB5A /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF64891291C1D1D0086CB5A /* Double.swift */; };
+		BBF64894291C1D380086CB5A /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF64893291C1D380086CB5A /* Int.swift */; };
+		BBF6489A291C22640086CB5A /* FollowersPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF64899291C22640086CB5A /* FollowersPageView.swift */; };
+		BBF6489C291C281D0086CB5A /* FollowersPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF6489B291C281D0086CB5A /* FollowersPageViewModel.swift */; };
+		BBF6489E291C2FB80086CB5A /* FollowerRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF6489D291C2FB80086CB5A /* FollowerRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -137,6 +142,11 @@
 		BBF0375E28E75131006F89A1 /* FindUserModelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUserModelService.swift; sourceTree = "<group>"; };
 		BBF0376028E75E6B006F89A1 /* UserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRow.swift; sourceTree = "<group>"; };
 		BBF131CE288745880043A81E /* LogInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
+		BBF64891291C1D1D0086CB5A /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		BBF64893291C1D380086CB5A /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
+		BBF64899291C22640086CB5A /* FollowersPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersPageView.swift; sourceTree = "<group>"; };
+		BBF6489B291C281D0086CB5A /* FollowersPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersPageViewModel.swift; sourceTree = "<group>"; };
+		BBF6489D291C2FB80086CB5A /* FollowerRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,13 +230,13 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		BB4AFAB428915897003407FB /* Profile */ = {
+		BB4AFAB428915897003407FB /* PrivateProfile */ = {
 			isa = PBXGroup;
 			children = (
 				BB4AFAB6289158A3003407FB /* Views */,
 				BB4AFAB52891589C003407FB /* ViewModels */,
 			);
-			path = Profile;
+			path = PrivateProfile;
 			sourceTree = "<group>";
 		};
 		BB4AFAB52891589C003407FB /* ViewModels */ = {
@@ -297,13 +307,13 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
-		BB97C119291AD72E002BB141 /* PublicProfileView */ = {
+		BB97C119291AD72E002BB141 /* PublicProfile */ = {
 			isa = PBXGroup;
 			children = (
 				BB97C11C291AD74A002BB141 /* ViewModel */,
 				BB97C11A291AD731002BB141 /* Views */,
 			);
-			path = PublicProfileView;
+			path = PublicProfile;
 			sourceTree = "<group>";
 		};
 		BB97C11A291AD731002BB141 /* Views */ = {
@@ -437,6 +447,8 @@
 				BBA71B96288307390089D613 /* UIApplication.swift */,
 				BB34BAC82884A52D00636BE5 /* Character.swift */,
 				BBE36D1828D346A200AC1DF9 /* UIScreen.swift */,
+				BBF64891291C1D1D0086CB5A /* Double.swift */,
+				BBF64893291C1D380086CB5A /* Int.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -467,9 +479,10 @@
 		BBE72AA32882CE9E00CBDEAD /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				BB97C119291AD72E002BB141 /* PublicProfileView */,
+				BBF64895291C22380086CB5A /* Followers&following */,
+				BB97C119291AD72E002BB141 /* PublicProfile */,
 				BB34FAFF291860D6004D5AB6 /* Post */,
-				BB4AFAB428915897003407FB /* Profile */,
+				BB4AFAB428915897003407FB /* PrivateProfile */,
 				BB4AFAAF2891586A003407FB /* Messages */,
 				BB4AFAAC289155D3003407FB /* MainScreen */,
 				BB9067F92888135700962B21 /* Home */,
@@ -549,6 +562,32 @@
 			path = FindUserView;
 			sourceTree = "<group>";
 		};
+		BBF64895291C22380086CB5A /* Followers&following */ = {
+			isa = PBXGroup;
+			children = (
+				BBF64898291C22520086CB5A /* ViewModels */,
+				BBF64896291C22430086CB5A /* Views */,
+			);
+			path = "Followers&following";
+			sourceTree = "<group>";
+		};
+		BBF64896291C22430086CB5A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BBF64899291C22640086CB5A /* FollowersPageView.swift */,
+				BBF6489D291C2FB80086CB5A /* FollowerRowView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BBF64898291C22520086CB5A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				BBF6489B291C281D0086CB5A /* FollowersPageViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -624,6 +663,7 @@
 				BBA71B952883024A0089D613 /* String.swift in Sources */,
 				BBBD05B1288459B200F18140 /* PasswordStrengthView.swift in Sources */,
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
+				BBF64894291C1D380086CB5A /* Int.swift in Sources */,
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBBBF0B428D22CC100FF7C65 /* ChatModelService.swift in Sources */,
@@ -645,6 +685,7 @@
 				BB5E1BE82919510C00A740D5 /* PostsFeed.swift in Sources */,
 				BBF0375F28E75131006F89A1 /* FindUserModelService.swift in Sources */,
 				BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */,
+				BBF6489E291C2FB80086CB5A /* FollowerRowView.swift in Sources */,
 				BBE36D1928D346A200AC1DF9 /* UIScreen.swift in Sources */,
 				BB97C120291AD78A002BB141 /* PublicProfileViewModel.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
@@ -652,6 +693,7 @@
 				BBCD2B4828D2646A00C7E32A /* ProfileImageViewModel.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BB81459228CE0D1300B35A5D /* LoadingAnimation.swift in Sources */,
+				BBF6489A291C22640086CB5A /* FollowersPageView.swift in Sources */,
 				BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */,
 				BB7346372892BBFA00E07487 /* PrivateProfileViewModel.swift in Sources */,
 				BB10BA4C29102DD900B57CF5 /* ChatMessageModel.swift in Sources */,
@@ -667,6 +709,7 @@
 				BBBD05AD2884563800F18140 /* CreatePasswordPageView.swift in Sources */,
 				BB34FB0329186108004D5AB6 /* PostView.swift in Sources */,
 				BBF0375D28E74F5E006F89A1 /* UserModel.swift in Sources */,
+				BBF64892291C1D1D0086CB5A /* Double.swift in Sources */,
 				BB97C11E291AD758002BB141 /* PublicProfileView.swift in Sources */,
 				BBE72AB62882ED2200CBDEAD /* Color.swift in Sources */,
 				BB90680428881A5F00962B21 /* HomeViewModel.swift in Sources */,
@@ -677,6 +720,7 @@
 				BBC36EE628D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift in Sources */,
 				BBC36EE428D0E810008D983B /* ForgotPasswordEmailPageView.swift in Sources */,
 				BB8F9A4A28F2F8DC009101FB /* PresonalInfoPage.swift in Sources */,
+				BBF6489C291C281D0086CB5A /* FollowersPageViewModel.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
 				BB10BA4F29102E2F00B57CF5 /* Enums+structs.swift in Sources */,
 			);
