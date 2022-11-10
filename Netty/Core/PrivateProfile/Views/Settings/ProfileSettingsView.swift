@@ -84,12 +84,10 @@ struct ProfileSettingsView: View {
 }
 
 struct ProfileSettingsView_Previews: PreviewProvider {
-    
-    static private let id = CKRecord.ID(recordName: "2BF042AD-D7B5-4AEE-9328-D328E942B0FF")
-    
+        
     static var previews: some View {
         NavigationStack {
-            ProfileSettingsView(vm: PrivateProfileViewModel(id: id))
+            ProfileSettingsView(vm: PrivateProfileViewModel(id: TestUser.daniel.id))
         }
     }
 }

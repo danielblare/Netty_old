@@ -16,7 +16,11 @@ actor AvatarImageService {
     
     private init() {}
     
-    func fetchAvatarForUser(with id: CKRecord.ID) async -> Result<UIImage?, Error> {
+    enum CustomError: Error {
+        case decodeData
+    }
+    
+    func fetchAvatarForUser(with id: CKRecord.ID) async -> Result<UIImage, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
                 if let returnedRecord = returnedRecord {
@@ -26,7 +30,7 @@ actor AvatarImageService {
                        let image = UIImage(data: data) {
                         continuation.resume(returning: .success(image))
                     } else {
-                        continuation.resume(returning: .success(nil))
+                        continuation.resume(returning: .failure(CustomError.decodeData))
                     }
                 } else if let error = error {
                     continuation.resume(returning: .failure(error))

@@ -17,6 +17,7 @@
 		BB34FB0529186174004D5AB6 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB34FB0429186174004D5AB6 /* PostViewModel.swift */; };
 		BB3CAA86290EE27000180E9B /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CAA85290EE27000180E9B /* ChatView.swift */; };
 		BB3CAA88290EE28B00180E9B /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3CAA87290EE28B00180E9B /* ChatViewModel.swift */; };
+		BB3E64E2291D699D0054916C /* TestUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3E64E1291D699D0054916C /* TestUser.swift */; };
 		BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAAD28915606003407FB /* MainScreenView.swift */; };
 		BB4AFAB328915889003407FB /* DirectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB228915889003407FB /* DirectView.swift */; };
 		BB4AFAB8289158AE003407FB /* PrivateProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4AFAB7289158AE003407FB /* PrivateProfileView.swift */; };
@@ -71,9 +72,9 @@
 		BBF131CF288745880043A81E /* LogInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF131CE288745880043A81E /* LogInView.swift */; };
 		BBF64892291C1D1D0086CB5A /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF64891291C1D1D0086CB5A /* Double.swift */; };
 		BBF64894291C1D380086CB5A /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF64893291C1D380086CB5A /* Int.swift */; };
-		BBF6489A291C22640086CB5A /* FollowersPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF64899291C22640086CB5A /* FollowersPageView.swift */; };
-		BBF6489C291C281D0086CB5A /* FollowersPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF6489B291C281D0086CB5A /* FollowersPageViewModel.swift */; };
-		BBF6489E291C2FB80086CB5A /* FollowerRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF6489D291C2FB80086CB5A /* FollowerRowView.swift */; };
+		BBF6489A291C22640086CB5A /* FollowersAndFollowingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF64899291C22640086CB5A /* FollowersAndFollowingPageView.swift */; };
+		BBF6489C291C281D0086CB5A /* FollowersAndFollowingPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF6489B291C281D0086CB5A /* FollowersAndFollowingPageViewModel.swift */; };
+		BBF6489E291C2FB80086CB5A /* UserWithFollowButtonRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF6489D291C2FB80086CB5A /* UserWithFollowButtonRowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +90,7 @@
 		BB34FB0429186174004D5AB6 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		BB3CAA85290EE27000180E9B /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		BB3CAA87290EE28B00180E9B /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		BB3E64E1291D699D0054916C /* TestUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUser.swift; sourceTree = "<group>"; };
 		BB4AFAAD28915606003407FB /* MainScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenView.swift; sourceTree = "<group>"; };
 		BB4AFAB228915889003407FB /* DirectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectView.swift; sourceTree = "<group>"; };
 		BB4AFAB7289158AE003407FB /* PrivateProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateProfileView.swift; sourceTree = "<group>"; };
@@ -144,9 +146,9 @@
 		BBF131CE288745880043A81E /* LogInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInView.swift; sourceTree = "<group>"; };
 		BBF64891291C1D1D0086CB5A /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		BBF64893291C1D380086CB5A /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
-		BBF64899291C22640086CB5A /* FollowersPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersPageView.swift; sourceTree = "<group>"; };
-		BBF6489B291C281D0086CB5A /* FollowersPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersPageViewModel.swift; sourceTree = "<group>"; };
-		BBF6489D291C2FB80086CB5A /* FollowerRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerRowView.swift; sourceTree = "<group>"; };
+		BBF64899291C22640086CB5A /* FollowersAndFollowingPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersAndFollowingPageView.swift; sourceTree = "<group>"; };
+		BBF6489B291C281D0086CB5A /* FollowersAndFollowingPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowersAndFollowingPageViewModel.swift; sourceTree = "<group>"; };
+		BBF6489D291C2FB80086CB5A /* UserWithFollowButtonRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWithFollowButtonRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -472,6 +474,7 @@
 				BBF0375C28E74F5E006F89A1 /* UserModel.swift */,
 				BB10BA4B29102DD900B57CF5 /* ChatMessageModel.swift */,
 				BBEFBFAF29182492008E6DB2 /* PostModel.swift */,
+				BB3E64E1291D699D0054916C /* TestUser.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -565,7 +568,7 @@
 		BBF64895291C22380086CB5A /* Followers&following */ = {
 			isa = PBXGroup;
 			children = (
-				BBF64898291C22520086CB5A /* ViewModels */,
+				BBF64898291C22520086CB5A /* ViewModel */,
 				BBF64896291C22430086CB5A /* Views */,
 			);
 			path = "Followers&following";
@@ -574,18 +577,18 @@
 		BBF64896291C22430086CB5A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				BBF64899291C22640086CB5A /* FollowersPageView.swift */,
-				BBF6489D291C2FB80086CB5A /* FollowerRowView.swift */,
+				BBF64899291C22640086CB5A /* FollowersAndFollowingPageView.swift */,
+				BBF6489D291C2FB80086CB5A /* UserWithFollowButtonRowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		BBF64898291C22520086CB5A /* ViewModels */ = {
+		BBF64898291C22520086CB5A /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				BBF6489B291C281D0086CB5A /* FollowersPageViewModel.swift */,
+				BBF6489B291C281D0086CB5A /* FollowersAndFollowingPageViewModel.swift */,
 			);
-			path = ViewModels;
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -678,6 +681,7 @@
 				BBBBF0B028D202B500FF7C65 /* ChatRowModel.swift in Sources */,
 				BBC36EE228D0DD2E008D983B /* ForgotPasswordViewModel.swift in Sources */,
 				BB4AFAAE28915606003407FB /* MainScreenView.swift in Sources */,
+				BB3E64E2291D699D0054916C /* TestUser.swift in Sources */,
 				BBEFBFB029182492008E6DB2 /* PostModel.swift in Sources */,
 				BBDBBB612885B9E8004BFEF8 /* EmailSendManager.swift in Sources */,
 				BBF0375B28E74C39006F89A1 /* FindUserView.swift in Sources */,
@@ -685,7 +689,7 @@
 				BB5E1BE82919510C00A740D5 /* PostsFeed.swift in Sources */,
 				BBF0375F28E75131006F89A1 /* FindUserModelService.swift in Sources */,
 				BB6F2D4228CF50DD00B901BE /* ProfileSettingsView.swift in Sources */,
-				BBF6489E291C2FB80086CB5A /* FollowerRowView.swift in Sources */,
+				BBF6489E291C2FB80086CB5A /* UserWithFollowButtonRowView.swift in Sources */,
 				BBE36D1928D346A200AC1DF9 /* UIScreen.swift in Sources */,
 				BB97C120291AD78A002BB141 /* PublicProfileViewModel.swift in Sources */,
 				BBA7CC24288711EF008EDEFA /* LaunchView.swift in Sources */,
@@ -693,7 +697,7 @@
 				BBCD2B4828D2646A00C7E32A /* ProfileImageViewModel.swift in Sources */,
 				BB34BAC92884A52D00636BE5 /* Character.swift in Sources */,
 				BB81459228CE0D1300B35A5D /* LoadingAnimation.swift in Sources */,
-				BBF6489A291C22640086CB5A /* FollowersPageView.swift in Sources */,
+				BBF6489A291C22640086CB5A /* FollowersAndFollowingPageView.swift in Sources */,
 				BB19A677288967D50042AA65 /* CloudKitManager.swift in Sources */,
 				BB7346372892BBFA00E07487 /* PrivateProfileViewModel.swift in Sources */,
 				BB10BA4C29102DD900B57CF5 /* ChatMessageModel.swift in Sources */,
@@ -720,7 +724,7 @@
 				BBC36EE628D0FA51008D983B /* ForgotPasswordCreatePasswordPageView.swift in Sources */,
 				BBC36EE428D0E810008D983B /* ForgotPasswordEmailPageView.swift in Sources */,
 				BB8F9A4A28F2F8DC009101FB /* PresonalInfoPage.swift in Sources */,
-				BBF6489C291C281D0086CB5A /* FollowersPageViewModel.swift in Sources */,
+				BBF6489C291C281D0086CB5A /* FollowersAndFollowingPageViewModel.swift in Sources */,
 				BBE72A922882CE0600CBDEAD /* NettyApp.swift in Sources */,
 				BB10BA4F29102E2F00B57CF5 /* Enums+structs.swift in Sources */,
 			);

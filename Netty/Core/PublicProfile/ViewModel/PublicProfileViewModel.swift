@@ -18,6 +18,8 @@ class PublicProfileViewModel: ObservableObject {
 
     let user: UserModel
     
+    private let ownId: CKRecord.ID
+    
     @Published var userInfoIsLoading: Bool = false
     @Published var postsAreLoading: Bool = true
     
@@ -33,20 +35,23 @@ class PublicProfileViewModel: ObservableObject {
     // User's nickname
     @Published var nickname: String = ""
     
-    @Published var postsNumber: String? = nil
+    @Published var followers: [CKRecord.Reference]? = nil
     
+    @Published var following: [CKRecord.Reference]? = nil
+
+    
+    @Published var postsNumber: String? = nil
+        
     private let cacheManager = CacheManager.instance
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(_ userModel: UserModel) {
+    init(_ userModel: UserModel, ownId: CKRecord.ID) {
         user = userModel
+        self.ownId = ownId
         addSubs()
         Task {
-            await getUserPosts()
-        }
-        Task {
-            await getUserData()
+            await sync()
         }
     }
     
@@ -62,15 +67,21 @@ class PublicProfileViewModel: ObservableObject {
                 firstName = savedUser.user.firstName
                 lastName = savedUser.user.lastName
                 nickname = savedUser.user.nickname
+                followers = savedUser.user.followers.filter({ $0.recordID != ownId })
+                following = savedUser.user.following.filter({ $0.recordID != ownId })
+
             }
             switch await UserInfoService.instance.fetchUserDataForUser(with: user.id) {
             case .success(let userModel):
-                if let userModel = userModel, userModel != savedUser.user {
+                if userModel != savedUser.user {
                     cacheManager.addTo(cacheManager.userData, key: user.id.recordName, value: UserModelHolder(userModel))
                     await MainActor.run {
                         firstName = userModel.firstName
                         lastName = userModel.lastName
                         nickname = userModel.nickname
+                        followers = userModel.followers.filter({ $0.recordID != ownId })
+                        following = userModel.following.filter({ $0.recordID != ownId })
+
                     }
                 }
             case .failure(_):
@@ -84,20 +95,15 @@ class PublicProfileViewModel: ObservableObject {
 
             switch await UserInfoService.instance.fetchUserDataForUser(with: user.id) {
             case .success(let userModel):
-                if let userModel = userModel {
-                    cacheManager.addTo(cacheManager.userData, key: user.id.recordName, value: UserModelHolder(userModel))
-                    await MainActor.run {
-                        firstName = userModel.firstName
-                        lastName = userModel.lastName
-                        nickname = userModel.nickname
-                        
-                        userInfoIsLoading = false
-                    }
-                } else {
-                    showAlert(title: "Error while fetching user data", message: "Cannot fetch some parameters")
-                    await MainActor.run {
-                        userInfoIsLoading = false
-                    }
+                cacheManager.addTo(cacheManager.userData, key: user.id.recordName, value: UserModelHolder(userModel))
+                await MainActor.run {
+                    firstName = userModel.firstName
+                    lastName = userModel.lastName
+                    nickname = userModel.nickname
+                    followers = userModel.followers.filter({ $0.recordID != ownId })
+                    following = userModel.following.filter({ $0.recordID != ownId })
+
+                    userInfoIsLoading = false
                 }
             case .failure(let error):
                 showAlert(title: "Error while fetching user data", message: error.localizedDescription)
@@ -110,12 +116,16 @@ class PublicProfileViewModel: ObservableObject {
     private func getUserPosts() async {
         
         if let savedPosts = cacheManager.getFrom(cacheManager.posts, key: user.id.recordName) {
+            
             await MainActor.run {
-                posts = savedPosts.posts
+                if savedPosts.posts != posts {
+                    posts = savedPosts.posts
+                }
                 withAnimation {
                     postsAreLoading = false
                 }
             }
+            
             
             switch await PostsService.instance.getPostsForUserWith(user.id) {
             case .success(let postArray):
@@ -145,6 +155,25 @@ class PublicProfileViewModel: ObservableObject {
                 showAlert(title: "Error while fetching posts", message: error.localizedDescription)
                 await MainActor.run {
                     postsAreLoading = false
+                }
+            }
+        }
+    }
+    
+    func updateValuesFromCache() {
+        if let savedUser = cacheManager.getFrom(cacheManager.userData, key: user.id.recordName) {
+            withAnimation {
+                firstName = savedUser.user.firstName
+                lastName = savedUser.user.lastName
+                nickname = savedUser.user.nickname
+                followers = savedUser.user.followers
+                following = savedUser.user.following
+            }
+        }
+        if let savedPostsHolder = cacheManager.getFrom(cacheManager.posts, key: user.id.recordName) {
+            if savedPostsHolder.posts != posts {
+                withAnimation {
+                    posts = savedPostsHolder.posts
                 }
             }
         }

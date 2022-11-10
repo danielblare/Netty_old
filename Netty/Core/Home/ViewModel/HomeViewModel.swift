@@ -20,14 +20,18 @@ class HomeViewModel: ObservableObject {
     
     init(_ userId: CKRecord.ID) {
         self.userId = userId
-        
-        createNews()
+        Task {
+            await createNews()
+        }
     }
     
-    func createNews() {
-        news = []
-        for _ in 1...100 {
-            news.append(New(id: UUID()))
+    func createNews() async {
+        try? await Task.sleep(for: .seconds(1))
+        await MainActor.run {
+            news = []
+            for _ in 1...100 {
+                news.append(New(id: UUID()))
+            }
         }
     }
 }

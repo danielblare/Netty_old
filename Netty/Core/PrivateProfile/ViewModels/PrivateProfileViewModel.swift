@@ -43,8 +43,7 @@ class PrivateProfileViewModel: ObservableObject {
     
     
     @Published var postsNumber: String? = nil
-
-        
+    
     // User's record ID
     let userId: CKRecord.ID
     
@@ -56,7 +55,9 @@ class PrivateProfileViewModel: ObservableObject {
     init(id: CKRecord.ID) {
         userId = id
         addSubs()
-        getData()
+        Task {
+            await sync()
+        }
     }
     
     private func addSubs() {
@@ -66,30 +67,20 @@ class PrivateProfileViewModel: ObservableObject {
     }
     
     /// Gets all user's data
-    func getData() {
-        Task {
-            await getImage()
-        }
-        Task {
-            await getUserData()
-        }
-        Task {
-            await getPosts()
-        }
+    private func getData() async {
+        await getImage()
+        await getUserData()
+        await getPosts()
     }
     
     func deletePost(_ post: PostModel) async {
         switch await PostsService.instance.deletePost(post) {
-        case .success(let recordId):
-            if let _ = recordId {
-                await MainActor.run {
-                    withAnimation {
-                        posts.removeAll(where: { $0.id == post.id })
-                        cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)", value: PostModelsHolder(posts))
-                    }
+        case .success(_):
+            await MainActor.run {
+                withAnimation {
+                    posts.removeAll(where: { $0.id == post.id })
+                    cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)", value: PostModelsHolder(posts))
                 }
-            } else {
-                showAlert(title: "Error deleting post", message: "")
             }
         case .failure(let error):
             showAlert(title: "Error deleting post", message: error.localizedDescription)
@@ -99,14 +90,42 @@ class PrivateProfileViewModel: ObservableObject {
     /// Deletes user's data from cache and downloads new fresh data from database
     func sync() async {
         cacheManager.delete(from: cacheManager.photoCache, "_avatar", for: userId.recordName)
-        getData()
+        await getData()
+    }
+    
+    func updateValuesFromCache() {
+        if let savedUser = cacheManager.getFrom(cacheManager.userData, key: userId.recordName) {
+            withAnimation {
+                firstName = savedUser.user.firstName
+                lastName = savedUser.user.lastName
+                nickname = savedUser.user.nickname
+                followers = savedUser.user.followers
+                following = savedUser.user.following
+            }
+        }
+        if let savedPostsHolder = cacheManager.getFrom(cacheManager.posts, key: userId.recordName) {
+            if savedPostsHolder.posts != posts {
+                withAnimation {
+                    posts = savedPostsHolder.posts
+                }
+            }
+        }
+        if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(userId.recordName)_avatar") {
+            if savedImage != image {
+                withAnimation {
+                    image = savedImage
+                }
+            }
+        }
     }
     
     private func getPosts() async {
         if let savedPostsHolder = cacheManager.getFrom(cacheManager.posts, key: userId.recordName) {
             await MainActor.run {
-                withAnimation {
-                    posts = savedPostsHolder.posts
+                if savedPostsHolder.posts != posts {
+                    withAnimation {
+                        posts = savedPostsHolder.posts
+                    }
                 }
             }
             switch await PostsService.instance.getPostsForUserWith(userId) {
@@ -181,7 +200,7 @@ class PrivateProfileViewModel: ObservableObject {
             }
             switch await UserInfoService.instance.fetchUserDataForUser(with: userId) {
             case .success(let userModel):
-                if let userModel = userModel, userModel != savedUser.user {
+                if userModel != savedUser.user {
                     cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(userModel))
                     await MainActor.run {
                         firstName = userModel.firstName
@@ -202,22 +221,15 @@ class PrivateProfileViewModel: ObservableObject {
 
             switch await UserInfoService.instance.fetchUserDataForUser(with: userId) {
             case .success(let userModel):
-                if let userModel = userModel {
-                    cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(userModel))
-                    await MainActor.run {
-                        firstName = userModel.firstName
-                        lastName = userModel.lastName
-                        nickname = userModel.nickname
-                        followers = userModel.followers
-                        following = userModel.following
-                        
-                        userInfoIsLoading = false
-                    }
-                } else {
-                    showAlert(title: "Error while fetching user data", message: "Cannot fetch some parameters")
-                    await MainActor.run {
-                        userInfoIsLoading = false
-                    }
+                cacheManager.addTo(cacheManager.userData, key: userId.recordName, value: UserModelHolder(userModel))
+                await MainActor.run {
+                    firstName = userModel.firstName
+                    lastName = userModel.lastName
+                    nickname = userModel.nickname
+                    followers = userModel.followers
+                    following = userModel.following
+                    
+                    userInfoIsLoading = false
                 }
             case .failure(let error):
                 showAlert(title: "Error while fetching user data", message: error.localizedDescription)
@@ -233,9 +245,11 @@ class PrivateProfileViewModel: ObservableObject {
         
         // Checks if user's avatar already saved in cache
         if let savedImage = cacheManager.getFrom(cacheManager.photoCache, key: "\(userId.recordName)_avatar") {
-            await MainActor.run {
-                withAnimation {
-                    image = savedImage
+            if savedImage != image {
+                await MainActor.run {
+                    withAnimation {
+                        image = savedImage
+                    }
                 }
             }
         } else {
@@ -250,17 +264,17 @@ class PrivateProfileViewModel: ObservableObject {
             // Downloads user's avatar from database
             switch await AvatarImageService.instance.fetchAvatarForUser(with: userId) {
             case .success(let returnedValue):
-                await MainActor.run(body: {
-                    withAnimation {
-                        profileImageIsLoading = false
-                        self.image = returnedValue
-                    }
-                    if let image = returnedValue { // Saves fetched data in the cache
-                        cacheManager.addTo(cacheManager.photoCache, key: "\(userId.recordName)_avatar", value: image)
-                    }
-                })
-            case .failure(let error):
-                print(error.localizedDescription)
+                cacheManager.addTo(cacheManager.photoCache, key: "\(userId.recordName)_avatar", value: returnedValue)
+                await MainActor.run {
+                    self.image = returnedValue
+                }
+            case .failure(_):
+                break
+            }
+            await MainActor.run {
+                withAnimation {
+                    profileImageIsLoading = false
+                }
             }
         }
     }

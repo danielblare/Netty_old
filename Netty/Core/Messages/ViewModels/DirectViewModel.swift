@@ -29,7 +29,7 @@ class DirectViewModel: ObservableObject {
     
     // Current user's record ID
     let userId: CKRecord.ID
-    
+        
     // Chat data service
     private let dataService = ChatModelService.instance
         
@@ -74,7 +74,20 @@ class DirectViewModel: ObservableObject {
     
     /// Syncs chats
     func sync() async {
+        await MainActor.run {
+            withAnimation {
+                isRefreshing = true
+            }
+        }
+        
         await downloadData()
+        
+        await MainActor.run {
+            withAnimation {
+                isRefreshing = false
+            }
+        }
+
     }
     
     /// Deletes chat
@@ -105,14 +118,15 @@ class DirectViewModel: ObservableObject {
             }
         }
     }
+    #warning("Follow button in public profile")
     
+    #warning("User limit in navigation hierarchy")
+    
+    #warning("Feed")
+    
+    #warning("Make normal data fetching")
     /// Downloads user's chats
     private func downloadData() async {
-            await MainActor.run(body: {
-                withAnimation {
-                    isRefreshing = true
-                }
-            })
             switch await dataService.getChatsIDsListForUser(with: userId) { // Gets IDs for all chats of current user
             case .success(let IDs):
                 switch await dataService.getChats(with: IDs) { // Fetches chats from IDs
@@ -149,11 +163,6 @@ class DirectViewModel: ObservableObject {
             case .failure(let failure):
                 showAlert(title: "Error while getting chats IDs", message: failure.localizedDescription)
             }
-        await MainActor.run(body: {
-            withAnimation {
-                isRefreshing = false
-            }
-        })
     }
     
     /// Shows alert

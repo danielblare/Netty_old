@@ -41,8 +41,8 @@ struct FindUserView: View {
     private let finishPickingFunc: (() -> Void)?
     private let forDestination: UserModelDestination
     
-    init(id: CKRecord.ID, forDestination: UserModelDestination, finishPickingFunc: (() -> Void)? = nil) {
-        _vm = .init(wrappedValue: FindUserViewModel(id: id))
+    init(ownId: CKRecord.ID, forDestination: UserModelDestination, finishPickingFunc: (() -> Void)? = nil) {
+        _vm = .init(wrappedValue: FindUserViewModel(id: ownId))
         self.finishPickingFunc = finishPickingFunc
         self.forDestination = forDestination
     }
@@ -180,7 +180,7 @@ struct FindUserView: View {
 struct FindUserView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            FindUserView(id: TestUser.id, forDestination: .profile)
+            FindUserView(ownId: TestUser.daniel.id, forDestination: .profile)
         }
     }
 }

@@ -48,17 +48,17 @@ class ProfileImageViewModel: ObservableObject {
             }
             switch await AvatarImageService.instance.fetchAvatarForUser(with: id) {
             case .success(let returnedValue):
-                await MainActor.run(body: {
+                cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: returnedValue)
+                await MainActor.run {
                     self.image = returnedValue
-                    withAnimation {
-                        isLoading = false
-                    }
-                    if let image = returnedValue {
-                        cacheManager.addTo(cacheManager.photoCache, key: "\(id.recordName)_avatar", value: image)
-                    }
-                })
-            case .failure(let error):
-                print(error.localizedDescription)
+                }
+            case .failure(_):
+                break
+            }
+            await MainActor.run {
+                withAnimation {
+                    isLoading = false
+                }
             }
         }
     }

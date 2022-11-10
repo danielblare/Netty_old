@@ -16,7 +16,123 @@ actor UserInfoService {
     
     private init() {}
     
-    func fetchUserDataForUser(with id: CKRecord.ID) async -> Result<UserModel?, Error> {
+    enum CustomError: Error {
+        case dataError
+    }
+    
+    func follow(_ user: UserModel, ownId: CKRecord.ID) async -> Result<Void, Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: ownId) { returnedRecord, error in
+                if let error = error {
+                    continuation.resume(returning: .failure(error))
+                } else if let ownUser = returnedRecord {
+                    CKContainer.default().publicCloudDatabase.fetch(withRecordID: user.id) { returnedRecord, error in
+                        if let error = error {
+                            continuation.resume(returning: .failure(error))
+                        } else if let userToFollow = returnedRecord {
+                            
+                            var following = ownUser[.followingRecordField] as? [CKRecord.Reference] ?? []
+                            var followers = userToFollow[.followersRecordField] as? [CKRecord.Reference] ?? []
+                            let oldUser = ownUser
+                            following.insert(CKRecord.Reference(record: userToFollow, action: .none), at: 0)
+                            followers.insert(CKRecord.Reference(record: ownUser, action: .none), at: 0)
+                            ownUser[.followingRecordField] = following
+                            userToFollow[.followersRecordField] = followers
+                            
+                            CKContainer.default().publicCloudDatabase.save(ownUser) { returnedRecord, error in
+                                if let error = error {
+                                    continuation.resume(returning: .failure(error))
+                                } else if returnedRecord != nil {
+                                    
+                                    CKContainer.default().publicCloudDatabase.save(userToFollow) { returnedRecord, error in
+                                        if returnedRecord != nil {
+                                            continuation.resume(returning: .success(()))
+                                        } else {
+                                            CKContainer.default().publicCloudDatabase.save(oldUser) { _, _ in }
+                                            
+                                            if let error = error {
+                                                continuation.resume(returning: .failure(error))
+                                            } else {
+                                                continuation.resume(returning: .failure(CustomError.dataError))
+                                            }
+                                        }
+                                    }
+                                    
+                                } else {
+                                    continuation.resume(returning: .failure(CustomError.dataError))
+                                }
+                            }
+                        } else {
+                            continuation.resume(returning: .failure(CustomError.dataError))
+                        }
+                    }
+                    
+                } else {
+                    continuation.resume(returning: .failure(CustomError.dataError))
+                }
+            }
+        }
+    }
+    
+    func unfollow(_ user: UserModel, ownId: CKRecord.ID) async -> Result<Void, Error> {
+        await withCheckedContinuation { continuation in
+            CKContainer.default().publicCloudDatabase.fetch(withRecordID: ownId) { returnedRecord, error in
+                if let error = error {
+                    continuation.resume(returning: .failure(error))
+                } else if let ownUser = returnedRecord {
+                    CKContainer.default().publicCloudDatabase.fetch(withRecordID: user.id) { returnedRecord, error in
+                        if let error = error {
+                            continuation.resume(returning: .failure(error))
+                        } else if let userToFollow = returnedRecord {
+                            
+                            if var following = ownUser[.followingRecordField] as? [CKRecord.Reference],
+                               var followers = userToFollow[.followersRecordField] as? [CKRecord.Reference] {
+                                let oldUser = ownUser
+                                following.removeAll(where: { $0.recordID == user.id })
+                                followers.removeAll(where: { $0.recordID == ownId })
+                                ownUser[.followingRecordField] = following
+                                userToFollow[.followersRecordField] = followers
+                                
+                                CKContainer.default().publicCloudDatabase.save(ownUser) { returnedRecord, error in
+                                    if let error = error {
+                                        continuation.resume(returning: .failure(error))
+                                    } else if returnedRecord != nil {
+                                        
+                                        CKContainer.default().publicCloudDatabase.save(userToFollow) { returnedRecord, error in
+                                            if returnedRecord != nil {
+                                                continuation.resume(returning: .success(()))
+                                            } else {
+                                                CKContainer.default().publicCloudDatabase.save(oldUser) { _, _ in }
+                                                
+                                                if let error = error {
+                                                    continuation.resume(returning: .failure(error))
+                                                } else {
+                                                    continuation.resume(returning: .failure(CustomError.dataError))
+                                                }
+                                            }
+                                        }
+                                        
+                                    } else {
+                                        continuation.resume(returning: .failure(CustomError.dataError))
+                                    }
+                                }
+                            } else {
+                                continuation.resume(returning: .failure(CustomError.dataError))
+                            }
+                        } else {
+                            continuation.resume(returning: .failure(CustomError.dataError))
+                        }
+                    }
+                    
+                } else {
+                    continuation.resume(returning: .failure(CustomError.dataError))
+                }
+            }
+        }
+    }
+    
+    
+    func fetchUserDataForUser(with id: CKRecord.ID) async -> Result<UserModel, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedUser, error in
                 if let error = error {
@@ -29,13 +145,13 @@ actor UserInfoService {
                     let following = user[.followingRecordField] as? [CKRecord.Reference] ?? []
                     continuation.resume(returning: .success(UserModel(id: user.recordID, firstName: firstName, lastName: lastName, nickname: nickname, followers: followers, following: following)))
                 } else {
-                    continuation.resume(returning: .success(nil))
+                    continuation.resume(returning: .failure(CustomError.dataError))
                 }
             }
         }
     }
     
-    func fetchUserDataForUsers(with ids: [CKRecord.ID]) async -> Result<[UserModel]?, Error> {
+    func fetchUserDataForUsers(with ids: [CKRecord.ID]) async -> Result<[UserModel], Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordIDs: ids) { result in
                 switch result {
@@ -51,7 +167,7 @@ actor UserInfoService {
                                 let following = user[.followingRecordField] as? [CKRecord.Reference] ?? []
                                 resultArray.append(UserModel(id: user.recordID, firstName: firstName, lastName: lastName, nickname: nickname, followers: followers, following: following))
                             } else {
-                                continuation.resume(returning: .success(nil))
+                                continuation.resume(returning: .failure(CustomError.dataError))
                                 return
                             }
                         case .failure(let error):
@@ -67,46 +183,15 @@ actor UserInfoService {
         }
     }
     
-    func fetchFirstNameForUser(with id: CKRecord.ID) async -> Result<String?, Error> {
-        await withCheckedContinuation { continuation in
-            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
-                if let returnedRecord = returnedRecord {
-                    if let firstName = returnedRecord[.firstNameRecordField] as? String {
-                        continuation.resume(returning: .success(firstName))
-                    } else {
-                        continuation.resume(returning: .success(nil))
-                    }
-                } else if let error = error {
-                    continuation.resume(returning: .failure(error))
-                }
-            }
-        }
-    }
     
-    func fetchLastNameForUser(with id: CKRecord.ID) async -> Result<String?, Error> {
-        await withCheckedContinuation { continuation in
-            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
-                if let returnedRecord = returnedRecord {
-                    if let lastName = returnedRecord[.lastNameRecordField] as? String {
-                        continuation.resume(returning: .success(lastName))
-                    } else {
-                        continuation.resume(returning: .success(nil))
-                    }
-                } else if let error = error {
-                    continuation.resume(returning: .failure(error))
-                }
-            }
-        }
-    }
-    
-    func fetchNicknameForUser(with id: CKRecord.ID) async -> Result<String?, Error> {
+    func fetchNicknameForUser(with id: CKRecord.ID) async -> Result<String, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedRecord, error in
                 if let returnedRecord = returnedRecord {
                     if let nickname = returnedRecord[.nicknameRecordField] as? String {
                         continuation.resume(returning: .success(nickname))
                     } else {
-                        continuation.resume(returning: .success(nil))
+                        continuation.resume(returning: .failure(CustomError.dataError))
                     }
                 } else if let error = error {
                     continuation.resume(returning: .failure(error))

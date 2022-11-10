@@ -8,12 +8,6 @@
 import SwiftUI
 import CloudKit
 
-struct TestUser {
-    static let id: CKRecord.ID = .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736")
-    
-    static let userModel: UserModel = UserModel(id: id, firstName: "TestName", lastName: "TestLastNake", nickname: "TestNickname", followers: [], following: [])
-}
-
 class MainScreenViewModel: ObservableObject {
     @Published var path: NavigationPath = NavigationPath()
 } 
@@ -67,18 +61,11 @@ struct MainScreenView: View {
                 case .chat:
                     ChatView(for: userModelHolder.userModel, ownId: userId)
                 case .profile:
-                    PublicProfileView(for: userModelHolder.userModel)
+                    PublicProfileView(for: userModelHolder.userModel, ownId: userId)
                 }
             }
             .navigationDestination(for: RefsHolderWithDestination.self) { holder in
-                switch holder.destination {
-                case .following:
-                    Text(holder.refs[0].recordID.recordName)
-
-                case .followers:
-                    FollowersPageView(refs: holder.refs, ownId: userId)
-
-                }
+                FollowersAndFollowingPageView(holder: holder, ownId: userId)
             }
         }
         .environmentObject(vm)
@@ -94,7 +81,7 @@ struct MainScreenView: View {
 
 struct MainScreenView_Previews: PreviewProvider {
     static var previews: some View {
-        MainScreenView(userId: TestUser.id)
-        MainScreenView(userId: TestUser.id)
+        MainScreenView(userId: TestUser.daniel.id)
+        MainScreenView(userId: TestUser.daniel.id)
     }
 }

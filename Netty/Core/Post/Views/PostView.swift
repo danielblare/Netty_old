@@ -121,7 +121,7 @@ struct PostView: View {
 
 struct PostView_Previews: PreviewProvider {
     
-    static let post = PostModel(id: .init(recordName: "3F744AF1-0FB3-4395-A0CA-C8AC9FC5722A"), ownerId: .init(recordName: "A6244FDA-A0DA-47CB-8E12-8F2603271899"), photo: UIImage(named: "testImage")!, creationDate: .now)
+    static let post = PostModel(id: .init(recordName: "3F744AF1-0FB3-4395-A0CA-C8AC9FC5722A"), ownerId: TestUser.anastasia.id, photo: UIImage(named: "testImage")!, creationDate: .now)
     static func delete(_ post: PostModel) async {
         
     }

@@ -216,11 +216,9 @@ struct PersonalInfoPage: View {
 
 
 struct PersonalInfoPage_Previews: PreviewProvider {
-    static private let id = CKRecord.ID(recordName: "7C21B420-2449-22D0-1F26-387A189663EA")
-    
     static var previews: some View {
         NavigationStack {
-            PersonalInfoPage(id: id)
+            PersonalInfoPage(id: TestUser.daniel.id)
         }
     }
 }

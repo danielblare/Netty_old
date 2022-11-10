@@ -44,7 +44,7 @@ struct ProfileImageView: View {
 
 struct ProfileImageView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileImageView(for: .init(recordName: "3AF89E4F-8FFA-46CA-A2D3-D6268C5AF11C"))
+        ProfileImageView(for: TestUser.daniel.id)
             .scaledToFit()
             .previewLayout(.sizeThatFits)
     }

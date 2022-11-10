@@ -33,13 +33,13 @@ struct HomeView: View {
                     }
                 }
                 .refreshable {
-                    vm.createNews()
+                    await vm.createNews()
                 }
                 .toolbar { getToolbar(proxy) }
             }
             .sheet(isPresented: $sheetIsPresented) {
                 NavigationStack {
-                    FindUserView(id: vm.userId, forDestination: .profile, finishPickingFunc: findUserFinishPicking)
+                    FindUserView(ownId: vm.userId, forDestination: .profile, finishPickingFunc: findUserFinishPicking)
                         .navigationTitle("Find User")
                         .navigationBarTitleDisplayMode(.inline)
                 }
@@ -86,9 +86,9 @@ struct HomeView: View {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(userId: TestUser.id)
+        HomeView(userId: TestUser.daniel.id)
             .preferredColorScheme(.dark)
-        HomeView(userId: TestUser.id)
+        HomeView(userId: TestUser.daniel.id)
             .preferredColorScheme(.light)
     }
 }

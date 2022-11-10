@@ -14,7 +14,7 @@ actor PostsService {
     static let instance = PostsService()
     
     enum CustomError: Error {
-        case errorWhileConvertingImage
+        case errorWhileConvertingImage, dataError
     }
     
     private func getPostsReferencesForUserWith(_ id: CKRecord.ID) async -> Result<[CKRecord.Reference], Error> {
@@ -29,7 +29,7 @@ actor PostsService {
         }
     }
     
-    func deletePost(_ post: PostModel) async -> Result<CKRecord.ID?, Error> {
+    func deletePost(_ post: PostModel) async -> Result<Void, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: post.ownerId) { returnedUser, error in
                 if let error = error {
@@ -46,13 +46,13 @@ actor PostsService {
                                 if let error = error {
                                     continuation.resume(returning: .failure(error))
                                 } else {
-                                    continuation.resume(returning: .success(returnedRecord))
+                                    continuation.resume(returning: .success(()))
                                 }
                             }
                         }
                     }
                 } else {
-                    continuation.resume(returning: .success(nil))
+                    continuation.resume(returning: .failure(CustomError.dataError))
                 }
             }
         }

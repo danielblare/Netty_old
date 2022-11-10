@@ -64,17 +64,13 @@ final class ChatViewModel: ObservableObject {
             let message = ChatMessageModel(userId: ownId.recordName, message: messageTextField, date: .now)
             if let data = try? JSONEncoder().encode(message) {
                 switch await ChatModelService.instance.sendMessage(data, in: chatId, ownId: ownId, palsId: userModel.id) {
-                case .success(let returnedRecord):
-                    if returnedRecord != nil {
-                        await MainActor.run {
-                            withAnimation {
-                                messageTextField = ""
-                                isSending = false
-                                chatMessages.append(message)
-                            }
+                case .success(_):
+                    await MainActor.run {
+                        withAnimation {
+                            messageTextField = ""
+                            isSending = false
+                            chatMessages.append(message)
                         }
-                    } else {
-                        showAlert(title: "Error sending message", message: "Error while saving new data to database")
                     }
                 case .failure(let error):
                     showAlert(title: "Error sending message", message: error.localizedDescription)

@@ -50,7 +50,7 @@ struct MessageView: View {
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader { geo in
-            MessageView(ChatMessageModel(userId: "30E1675A-A59C-4FB4-8A2A-5E99D197E736", message: "Hello", date: Date()), ownId: .init(recordName: "30E1675A-A59C-4FB4-8A2A-5E99D197E736"), geo: geo)
+            MessageView(ChatMessageModel(userId: TestUser.anastasia.id.recordName, message: "Hello", date: Date()), ownId: TestUser.daniel.id, geo: geo)
             .previewLayout(.sizeThatFits)
         }
     }

@@ -77,13 +77,14 @@ struct PrivateProfileView: View {
                 getToolbar()
             }
             .refreshable {
-                Task {
-                    await vm.sync()
-                }
+                await vm.sync()
             }
-            .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}, message: {
+            .onAppear {
+                vm.updateValuesFromCache()
+            }
+            .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}) {
                 Text(vm.alertMessage)
-            })
+            }
             .fullScreenCover(isPresented: $showPhotoImportSheet) {
                 ImagePicker(source: photoInputSource) { image in
                     switch importFor {
@@ -328,12 +329,10 @@ struct PrivateProfileView: View {
 
 
 struct ProfileView_Previews: PreviewProvider {
-    
-    static private let id = CKRecord.ID(recordName: "A6244FDA-A0DA-47CB-8E12-8F2603271899")
     static var previews: some View {
-        PrivateProfileView(userId: id)
+        PrivateProfileView(userId: TestUser.daniel.id)
             .preferredColorScheme(.light)
-        PrivateProfileView(userId: id)
+        PrivateProfileView(userId: TestUser.daniel.id)
             .preferredColorScheme(.dark)
     }
 }

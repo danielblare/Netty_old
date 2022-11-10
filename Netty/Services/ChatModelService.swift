@@ -15,8 +15,7 @@ actor ChatModelService {
     private init() {}
     
     enum CustomError: Error {
-        case userHaveNoChats
-        case cantGetChatsListFromDatabase
+        case userHaveNoChats, cantGetChatsListFromDatabase, chatWasNotFound
     }
     
     func deleteChat(with chatId: CKRecord.ID, for userId: CKRecord.ID) async -> Result<Void, Error> {
@@ -47,7 +46,7 @@ actor ChatModelService {
         }
     }
     
-    func sendMessage(_ data: Data, in chatId: CKRecord.ID, ownId: CKRecord.ID, palsId: CKRecord.ID) async -> Result<CKRecord?, Error> {
+    func sendMessage(_ data: Data, in chatId: CKRecord.ID, ownId: CKRecord.ID, palsId: CKRecord.ID) async -> Result<Void, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: chatId) { returnedRecord, error in
                 if let error = error {
@@ -64,13 +63,14 @@ actor ChatModelService {
                     CKContainer.default().publicCloudDatabase.save(chatRecord) { returnedRecord, error in
                         if let error = error {
                             continuation.resume(returning: .failure(error))
-                        } else if let record = returnedRecord {
+                        } else if returnedRecord != nil {
                             Task {
                                 switch await self.addChatToUsersListIfNeeded(chatId, userId: ownId) {
                                 case .success(_):
                                     break
                                 case .failure(let error):
                                     continuation.resume(returning: .failure(error))
+                                    return
                                 }
                                 
                                 switch await self.addChatToUsersListIfNeeded(chatId, userId: palsId) {
@@ -78,14 +78,17 @@ actor ChatModelService {
                                     break
                                 case .failure(let error):
                                     continuation.resume(returning: .failure(error))
+                                    return
                                 }
                                 
-                                continuation.resume(returning: .success(record))
+                                continuation.resume(returning: .success(()))
                             }
+                        } else {
+                            continuation.resume(returning: .failure(CustomError.chatWasNotFound))
                         }
                     }
                 } else {
-                    continuation.resume(returning: .success(nil))
+                    continuation.resume(returning: .failure(CustomError.chatWasNotFound))
                 }
             }
         }

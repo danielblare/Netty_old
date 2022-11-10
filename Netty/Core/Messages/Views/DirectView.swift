@@ -55,9 +55,7 @@ struct DirectView: View {
             }
             .disabled(vm.isLoading)
             .refreshable {
-                Task {
-                    await vm.sync()
-                }
+                await vm.sync()
             }
             .toolbar { getToolbar() }
         }
@@ -71,7 +69,7 @@ struct DirectView: View {
         })
         .sheet(isPresented: $showSheet) {
             NavigationStack {
-                FindUserView(id: vm.userId, forDestination: .chat, finishPickingFunc: findUserFinishPicking)
+                FindUserView(ownId: vm.userId, forDestination: .chat, finishPickingFunc: findUserFinishPicking)
                     .navigationTitle("New message")
                     .navigationBarTitleDisplayMode(.inline)
             }
@@ -185,8 +183,8 @@ struct DirectView: View {
 
 struct DirectView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectView(userId: TestUser.id)
-        DirectView(userId: TestUser.id)
+        DirectView(userId: TestUser.daniel.id)
+        DirectView(userId: TestUser.daniel.id)
     }
 }
 
