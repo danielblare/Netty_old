@@ -31,10 +31,10 @@ struct PostsFeed: View {
             ScrollView {
                 ForEach(posts) { post in
                     if let deleteFunc = deleteFunc {
-                        PostView(postModel: post, deleteFunc: deleteFunc)
+                        PostView(postModel: post, deleteFunc: deleteFunc, showNavTitle: true)
                             .id(post.id)
                     } else {
-                        PostView(postModel: post)
+                        PostView(postModel: post, showNavTitle: true)
                             .id(post.id)
                     }
                 }

@@ -151,7 +151,7 @@ struct PrivateProfileView: View {
                 LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
                     ForEach(vm.posts) { post in
                         NavigationLink {
-                            PostView(postModel: post, deleteFunc: vm.deletePost)
+                            PostView(postModel: post, deleteFunc: vm.deletePost, showNavTitle: true)
                         } label: {
                             Image(uiImage: post.photo)
                                 .resizable()
@@ -163,7 +163,7 @@ struct PrivateProfileView: View {
                                 showPostDeletionConfirmationDialog = true
                             }
                         } preview: {
-                            PostView(postModel: post, deleteFunc: vm.deletePost)
+                            PostView(postModel: post, deleteFunc: vm.deletePost, showNavTitle: true)
                         }
                         
                     }

@@ -25,9 +25,13 @@ struct FollowersAndFollowingPageView: View {
     
     var body: some View {
         ZStack {
-            if let users = vm.users?.filter({ $0.id != vm.ownId }) {
+            if let users = vm.users {
                 List(searchResults(users: users)) { user in
-                    UserWithFollowButtonRowView(model: user, isFollowed: user.followers.contains(where: { $0.recordID == vm.ownId }), followFunc: vm.follow, unfollowFunc: vm.unfollow)
+                    if user.id == vm.ownId {
+                        userRow(user)
+                    } else {
+                        UserWithFollowButtonRowView(model: user, isFollowed: user.followers.contains(where: { $0.recordID == vm.ownId }), followFunc: vm.follow, unfollowFunc: vm.unfollow)
+                    }
                 }
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
                 .listStyle(.plain)
@@ -56,6 +60,26 @@ struct FollowersAndFollowingPageView: View {
         })
         .navigationTitle(getTitle())
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    private func userRow(_ model: UserModel) -> some View {
+        HStack {
+            ProfileImageView(for: model.id)
+                .frame(width: 60, height: 60)
+            VStack(alignment: .leading, spacing: 5) {
+                Text(model.nickname)
+                    .lineLimit(1)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                
+                Text("\(model.firstName) \(model.lastName)")
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .font(.subheadline)
+            }
+            
+            Spacer(minLength: 0)
+        }
     }
     
     private func getEmptyText() -> String {
@@ -88,7 +112,7 @@ struct FollowersAndFollowingPageView: View {
 struct FollowersPageView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            FollowersAndFollowingPageView(holder: RefsHolderWithDestination(destination: .followers, refs: [CKRecord.Reference.init(recordID: TestUser.anastasia.id, action: .none)]), ownId: TestUser.daniel.id)
+            FollowersAndFollowingPageView(holder: RefsHolderWithDestination(destination: .following, refs: [CKRecord.Reference.init(recordID: TestUser.daniel.id, action: .none)]), ownId: TestUser.daniel.id)
         }
     }
 }

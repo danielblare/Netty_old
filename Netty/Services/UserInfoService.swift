@@ -185,7 +185,8 @@ actor UserInfoService {
                                let nickname = user[.nicknameRecordField] as? String {
                                 let followers = user[.followersRecordField] as? [CKRecord.Reference] ?? []
                                 let following = user[.followingRecordField] as? [CKRecord.Reference] ?? []
-                                resultArray.append(UserModel(id: user.recordID, firstName: firstName, lastName: lastName, nickname: nickname, followers: followers, following: following))
+                                let model = UserModel(id: user.recordID, firstName: firstName, lastName: lastName, nickname: nickname, followers: followers, following: following)
+                                resultArray.append(model)
                             } else {
                                 continuation.resume(returning: .failure(CustomError.dataError))
                                 return
@@ -193,6 +194,11 @@ actor UserInfoService {
                         case .failure(let error):
                             continuation.resume(returning: .failure(error))
                             return
+                        }
+                    }
+                    for index in ids.indices {
+                        if let firstIndex = resultArray.firstIndex(where: { ids[index] == $0.id }) {
+                            resultArray.move(fromOffsets: IndexSet(integer: firstIndex), toOffset: index)
                         }
                     }
                     continuation.resume(returning: .success(resultArray))

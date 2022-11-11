@@ -17,18 +17,6 @@ actor PostsService {
         case errorWhileConvertingImage, dataError
     }
     
-    private func getPostsReferencesForUserWith(_ id: CKRecord.ID) async -> Result<[CKRecord.Reference], Error> {
-        await withCheckedContinuation { continuation in
-            CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedUser, error in
-                if let error = error {
-                    continuation.resume(returning: .failure(error))
-                } else if let user = returnedUser {
-                    continuation.resume(returning: .success(user[.postsRecordField] as? [CKRecord.Reference] ?? []))
-                }
-            }
-        }
-    }
-    
     func deletePost(_ post: PostModel) async -> Result<Void, Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: post.ownerId) { returnedUser, error in
@@ -59,36 +47,69 @@ actor PostsService {
     }
     
     func getPostsForUserWith(_ id: CKRecord.ID) async -> Result<[PostModel], Error> {
-        switch await getPostsReferencesForUserWith(id) {
-        case .success(let references):
-            return await withCheckedContinuation { continuation in
-                CKContainer.default().publicCloudDatabase.fetch(withRecordIDs: references.map({ $0.recordID })) { result in
-                    switch result {
-                    case .success(let records):
-                        var postModels: [PostModel] = []
-                        for result in records {
-                            switch result.value {
-                            case .success(let postRecord):
-                                if let imageAsset = postRecord[.imageRecordField] as? CKAsset,
-                                   let owner = postRecord[.ownerRecordField] as? CKRecord.Reference,
-                                   let imageURL = imageAsset.fileURL,
-                                   let data = try? Data(contentsOf: imageURL),
-                                   let image = UIImage(data: data) {
-                                    postModels.append(PostModel(id: postRecord.recordID, ownerId: owner.recordID, photo: image, creationDate: postRecord.creationDate ?? .now))
-                                }
-                            case .failure(let error):
-                                continuation.resume(returning: .failure(error))
-                                return
+        await withCheckedContinuation { continuation in
+            let predicate = NSPredicate(format: "\(String.ownerRecordField) == %@", CKRecord.Reference(recordID: id, action: .none))
+            let query = CKQuery(recordType: .postsRecordType, predicate: predicate)
+            CKContainer.default().publicCloudDatabase.fetch(withQuery: query) { completion in
+                switch completion {
+                case .success(let results):
+                    var postModels: [PostModel] = []
+                    for result in results.matchResults {
+                        switch result.1 {
+                        case .success(let postRecord):
+                            if let imageAsset = postRecord[.imageRecordField] as? CKAsset,
+                               let owner = postRecord[.ownerRecordField] as? CKRecord.Reference,
+                               let imageURL = imageAsset.fileURL,
+                               let data = try? Data(contentsOf: imageURL),
+                               let image = UIImage(data: data) {
+                                postModels.append(PostModel(id: postRecord.recordID, ownerId: owner.recordID, photo: image, creationDate: postRecord.creationDate ?? .now))
                             }
+                        case .failure(let error):
+                            continuation.resume(returning: .failure(error))
+                            return
                         }
-                        continuation.resume(returning: .success(postModels.sorted(by: { $0.creationDate > $1.creationDate })))
-                    case .failure(let error):
-                        continuation.resume(returning: .failure(error))
                     }
+                    continuation.resume(returning: .success(postModels.sorted(by: { $0.creationDate > $1.creationDate })))
+                case .failure(let error):
+                    continuation.resume(returning: .failure(error))
                 }
             }
-        case .failure(let error):
-            return .failure(error)
+        }
+    }
+    
+    
+    func getPostsForUsersWith(_ refs: [CKRecord.Reference], from: NSDate, to: NSDate) async -> Result<[PostModel], Error> {
+        await withCheckedContinuation { continuation in
+            
+            let refPredicate = NSPredicate(format: "%K IN %@", String.ownerRecordField, refs)
+            let datePredicate = NSPredicate(format: "creationDate >= %@ && creationDate <= %@", from, to)
+            let predicate = NSCompoundPredicate(type: .and, subpredicates: [refPredicate, datePredicate])
+            let query = CKQuery(recordType: .postsRecordType, predicate: predicate)
+            
+            CKContainer.default().publicCloudDatabase.fetch(withQuery: query) { completion in
+                switch completion {
+                case .success(let results):
+                    var postModels: [PostModel] = []
+                    for result in results.matchResults {
+                        switch result.1 {
+                        case .success(let postRecord):
+                            if let imageAsset = postRecord[.imageRecordField] as? CKAsset,
+                               let owner = postRecord[.ownerRecordField] as? CKRecord.Reference,
+                               let imageURL = imageAsset.fileURL,
+                               let data = try? Data(contentsOf: imageURL),
+                               let image = UIImage(data: data) {
+                                postModels.append(PostModel(id: postRecord.recordID, ownerId: owner.recordID, photo: image, creationDate: postRecord.creationDate ?? .now))
+                            }
+                        case .failure(let error):
+                            continuation.resume(returning: .failure(error))
+                            return
+                        }
+                    }
+                    continuation.resume(returning: .success(postModels.sorted(by: { $0.creationDate > $1.creationDate })))
+                case .failure(let error):
+                    continuation.resume(returning: .failure(error))
+                }
+            }
         }
     }
     
@@ -139,3 +160,4 @@ actor PostsService {
         }
     }
 }
+

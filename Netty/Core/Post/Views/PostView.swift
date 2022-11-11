@@ -18,15 +18,18 @@ struct PostView: View {
     private let deleteFunc: ((PostModel) async -> ())?
     @State private var showConfDialog: Bool = false
     @State private var showDeletionConfDialog: Bool = false
+    let showNavTitle: Bool
     
-    init(postModel: PostModel, deleteFunc: @escaping (PostModel) async -> ()) {
+    init(postModel: PostModel, deleteFunc: @escaping (PostModel) async -> (), showNavTitle: Bool = false) {
         _vm = .init(wrappedValue: PostViewModel(postModel: postModel))
         self.deleteFunc = deleteFunc
+        self.showNavTitle = showNavTitle
     }
     
-    init(postModel: PostModel) {
+    init(postModel: PostModel, showNavTitle: Bool = false) {
         _vm = .init(wrappedValue: PostViewModel(postModel: postModel))
         self.deleteFunc = nil
+        self.showNavTitle = showNavTitle
     }
     
     var body: some View {
@@ -90,8 +93,7 @@ struct PostView: View {
                 .padding(10)
             }
         }
-        .navigationTitle(vm.nickname ?? "")
-        .navigationBarTitleDisplayMode(.inline)
+        .modifier(CustomNavTitle(showNavTitle: showNavTitle, nickname: vm.nickname ?? ""))
         .confirmationDialog("", isPresented: $showConfDialog, titleVisibility: .hidden) {
             Button("TestButton") {
                 print("Test")
@@ -117,6 +119,21 @@ struct PostView: View {
             Button("Cancel", role: .cancel, action: {})
         }
     }
+    
+    struct CustomNavTitle: ViewModifier {
+        let showNavTitle: Bool
+        let nickname: String
+        
+        func body(content: Content) -> some View {
+            if showNavTitle {
+                content
+                    .navigationTitle(nickname)
+                    .navigationBarTitleDisplayMode(.inline)
+            } else {
+                content
+            }
+        }
+    }
 }
 
 struct PostView_Previews: PreviewProvider {
@@ -128,7 +145,7 @@ struct PostView_Previews: PreviewProvider {
     
     static var previews: some View {
         NavigationView {
-            PostView(postModel: post, deleteFunc: delete)
+            PostView(postModel: post, deleteFunc: delete, showNavTitle: true)
                 .previewLayout(.sizeThatFits)
         }
     }

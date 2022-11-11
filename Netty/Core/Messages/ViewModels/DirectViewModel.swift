@@ -102,10 +102,7 @@ class DirectViewModel: ObservableObject {
     }
     
     private let cacheManager = CacheManager.instance
-    #warning("Feed")
-    
-    #warning("washing machine")
-    
+
     /// Downloads user's chats
     private func downloadData() async {
         

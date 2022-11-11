@@ -78,7 +78,7 @@ struct PublicProfileView: View {
                 LazyVGrid(columns: .init(repeating: GridItem(spacing: 1), count: 3), spacing: 1) {
                     ForEach(vm.posts) { post in
                         NavigationLink {
-                            PostView(postModel: post)
+                            PostView(postModel: post, showNavTitle: true)
                         } label: {
                             Image(uiImage: post.photo)
                                 .resizable()
@@ -89,7 +89,7 @@ struct PublicProfileView: View {
                                 print("test")
                             }
                         } preview: {
-                            PostView(postModel: post)
+                            PostView(postModel: post, showNavTitle: true)
                         }
                         
                     }
@@ -148,10 +148,10 @@ struct PublicProfileView: View {
                             }
                                 
                         }
+                        .foregroundColor(followersDisabled ? .secondary : .primary)
                     }
                     .foregroundColor(.primary)
                     .disabled(followersDisabled)
-                    .foregroundColor(followersDisabled ? .secondary : .primary)
                     
                     Spacer(minLength: 0)
                     
@@ -169,10 +169,10 @@ struct PublicProfileView: View {
                                     .font(.callout)
                             }
                         }
+                        .foregroundColor(followingDisabled ? .secondary : .primary)
                     }
                     .foregroundColor(.primary)
                     .disabled(followingDisabled)
-                    .foregroundColor(followingDisabled ? .secondary : .primary)
 
                 }
                 .padding([.trailing, .vertical])

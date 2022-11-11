@@ -30,6 +30,7 @@
 		BB7346422893066400E07487 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB7346412893066400E07487 /* FileManager.swift */; };
 		BB81459028CE09FF00B35A5D /* UserInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB81458F28CE09FF00B35A5D /* UserInfoService.swift */; };
 		BB81459228CE0D1300B35A5D /* LoadingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB81459128CE0D1300B35A5D /* LoadingAnimation.swift */; };
+		BB8E8B39291EB13100BB226D /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8E8B38291EB13100BB226D /* Date.swift */; };
 		BB8F9A4828F2F840009101FB /* PersonalInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8F9A4728F2F840009101FB /* PersonalInfoViewModel.swift */; };
 		BB8F9A4A28F2F8DC009101FB /* PresonalInfoPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB8F9A4928F2F8DC009101FB /* PresonalInfoPage.swift */; };
 		BB9067FD2888137400962B21 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9067FC2888137400962B21 /* HomeView.swift */; };
@@ -103,6 +104,7 @@
 		BB7346412893066400E07487 /* FileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		BB81458F28CE09FF00B35A5D /* UserInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoService.swift; sourceTree = "<group>"; };
 		BB81459128CE0D1300B35A5D /* LoadingAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingAnimation.swift; sourceTree = "<group>"; };
+		BB8E8B38291EB13100BB226D /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		BB8F9A4728F2F840009101FB /* PersonalInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalInfoViewModel.swift; sourceTree = "<group>"; };
 		BB8F9A4928F2F8DC009101FB /* PresonalInfoPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresonalInfoPage.swift; sourceTree = "<group>"; };
 		BB9067FC2888137400962B21 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -451,6 +453,7 @@
 				BBE36D1828D346A200AC1DF9 /* UIScreen.swift */,
 				BBF64891291C1D1D0086CB5A /* Double.swift */,
 				BBF64893291C1D380086CB5A /* Int.swift */,
+				BB8E8B38291EB13100BB226D /* Date.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -668,6 +671,7 @@
 				BBA71B97288307390089D613 /* UIApplication.swift in Sources */,
 				BBF64894291C1D380086CB5A /* Int.swift in Sources */,
 				BBBD05AB288455FE00F18140 /* NicknamePageView.swift in Sources */,
+				BB8E8B39291EB13100BB226D /* Date.swift in Sources */,
 				BBE9E48E2883626900775325 /* HapticManager.swift in Sources */,
 				BBBBF0B428D22CC100FF7C65 /* ChatModelService.swift in Sources */,
 				BB34FB0529186174004D5AB6 /* PostViewModel.swift in Sources */,

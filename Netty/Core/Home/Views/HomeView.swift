@@ -21,32 +21,60 @@ struct HomeView: View {
         
     var body: some View {
         NavigationView {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    ForEach(vm.news) { new in
-                        Text(new.id.uuidString)
-                            .id(new.id)
+            if !vm.isLoading {
+                ScrollViewReader { proxy in
+                    
+                    ScrollView {
+                        if vm.posts.isEmpty {
+                            VStack(spacing: 15) {
+                                Image(systemName: "newspaper")
+                                    .imageScale(.large)
+                                Text("No posts")
+                            }
                             .font(.title)
-                            .fontWeight(.semibold)
-                            .padding()
-                            .frame(maxWidth: .infinity)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 200)
+                        } else {
+                            LazyVStack {
+                                ForEach(vm.posts) { post in
+                                    PostView(postModel: post)
+                                        .id(post.id)
+                                        .onAppear {
+                                            print("appearing")
+                                            vm.getMorePostsIfNeeded(post)
+                                        }
+                                }
+                                if vm.downloadingMorePosts {
+                                    ProgressView()
+                                        .padding(.bottom)
+                                }
+                            }
+                        }
                     }
+                    .refreshable {
+                        await vm.sync()
+                    }
+                    .toolbar { getToolbar(proxy) }
                 }
-                .refreshable {
-                    await vm.createNews()
+                .sheet(isPresented: $sheetIsPresented) {
+                    NavigationStack {
+                        FindUserView(ownId: vm.ownId, forDestination: .profile, finishPickingFunc: findUserFinishPicking)
+                            .navigationTitle("Find User")
+                            .navigationBarTitleDisplayMode(.inline)
+                    }
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                    .padding(.top)
                 }
-                .toolbar { getToolbar(proxy) }
             }
-            .sheet(isPresented: $sheetIsPresented) {
-                NavigationStack {
-                    FindUserView(ownId: vm.userId, forDestination: .profile, finishPickingFunc: findUserFinishPicking)
-                        .navigationTitle("Find User")
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .presentationDetents([.large])
-                .presentationDragIndicator(.visible)
-                .padding(.top)
+        }
+        .overlay {
+            if vm.isLoading {
+                ProgressView()
             }
+        }
+        .alert(Text(vm.alertTitle), isPresented: $vm.showAlert, actions: {}) {
+            Text(vm.alertMessage)
         }
     }
     
@@ -62,7 +90,7 @@ struct HomeView: View {
             Text("Feed")
                 .onTapGesture {
                     withAnimation {
-                        proxy.scrollTo(vm.news.first?.id)
+                        proxy.scrollTo(vm.posts.first?.id)
                     }
                 }
                 .fontWeight(.semibold)
