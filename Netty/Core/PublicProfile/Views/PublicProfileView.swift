@@ -16,25 +16,36 @@ struct PublicProfileView: View {
     init(for userModel: UserModel, ownId: CKRecord.ID) {
         self._vm = .init(wrappedValue: PublicProfileViewModel(userModel, ownId: ownId))
     }
-    
-    
+            
     var body: some View {
         ScrollView {
-            HStack {
+            VStack {
+                HStack {
+                    
+                    // Photo
+                    ProfileImageView(for: vm.user.id)
+                        .frame(width: 100, height: 100)
+                        .padding(.horizontal)
+                    
+                    // Name & nickname
+                    UserInfo
+                        .frame(height: 100)
+                    
+                    Spacer(minLength: 0)
+                }
                 
-                
-                ProfileImageView(for: vm.user.id)
-                    .frame(width: 100, height: 100)
-                    .padding(.horizontal)
-                
-                UserInfo
-                    .padding(.vertical)
-                    .frame(height: 100)
-                
-                
-                Spacer(minLength: 0)
+                FollowButton
+                .overlay {
+                    if vm.followButtonIsLoading {
+                        ProgressView()
+                    }
+                }
+                .disabled(vm.followButtonIsLoading)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.horizontal)
+
             }
-            .padding(.vertical)
+            .padding(.top)
             
             Divider()
             
@@ -92,7 +103,7 @@ struct PublicProfileView: View {
     }
     
     private var UserInfo: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 0) {
             
             if vm.userInfoIsLoading {
                 LoadingAnimation()
@@ -164,10 +175,21 @@ struct PublicProfileView: View {
                     .foregroundColor(followingDisabled ? .secondary : .primary)
 
                 }
-                .padding([.top, .trailing])
+                .padding([.trailing, .vertical])
+                
+                
             }
-            Spacer(minLength: 0)
         }
+    }
+    
+    private var FollowButton: some View {
+        Button {
+            vm.followButtonPressed()
+        } label: {
+            Text(vm.isFollowed ?? false ? "Unfollow" : "Follow")
+                .frame(maxWidth: .infinity)
+        }
+        .followButtonStyle(isFollowed: vm.isFollowed ?? false)
     }
     
     private var followingDisabled: Bool {

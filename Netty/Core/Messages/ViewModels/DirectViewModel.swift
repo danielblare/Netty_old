@@ -17,11 +17,8 @@ class DirectViewModel: ObservableObject {
     @Published var chatsArray: [ChatRowModel] = []
     
     // Shows loading view if true
-    @Published var isLoading: Bool = true
-    
-    // Rotates refreshing arrow if true
-    @Published var isRefreshing: Bool = false
-    
+    @Published var isLoading: Bool = false
+        
     // Alert
     @Published var showAlert: Bool = false
     var alertTitle: String = ""
@@ -36,9 +33,7 @@ class DirectViewModel: ObservableObject {
     init(userId: CKRecord.ID) {
         self.userId = userId
         Task {
-            isLoading = true
             await sync()
-            isLoading = false
         }
         requestNotificationPermission()
         subscribeToNotifications()
@@ -74,20 +69,7 @@ class DirectViewModel: ObservableObject {
     
     /// Syncs chats
     func sync() async {
-        await MainActor.run {
-            withAnimation {
-                isRefreshing = true
-            }
-        }
-        
         await downloadData()
-        
-        await MainActor.run {
-            withAnimation {
-                isRefreshing = false
-            }
-        }
-
     }
     
     /// Deletes chat
@@ -96,7 +78,7 @@ class DirectViewModel: ObservableObject {
         chatsArray.removeAll(where: { $0.id == chat.id }) // Removes chat from array
         switch await dataService.deleteChat(with: chat.id, for: userId) { // Deletes chat in database
         case .success(_):
-            break
+            cacheManager.addTo(cacheManager.chatRows, key: userId.recordName, value: ChatRowModelsHolder(chatsArray))
         case .failure(let error):
             if let backup = backup { // If failure restores chat from backup
                 chatsArray.append(backup)
@@ -118,51 +100,57 @@ class DirectViewModel: ObservableObject {
             }
         }
     }
-    #warning("Follow button in public profile")
     
-    #warning("User limit in navigation hierarchy")
-    
+    private let cacheManager = CacheManager.instance
     #warning("Feed")
     
-    #warning("Make normal data fetching")
+    #warning("washing machine")
+    
     /// Downloads user's chats
     private func downloadData() async {
-            switch await dataService.getChatsIDsListForUser(with: userId) { // Gets IDs for all chats of current user
-            case .success(let IDs):
-                switch await dataService.getChats(with: IDs) { // Fetches chats from IDs
-                case .success(let chats):
-                    var result: [ChatRowModel] = []
-                    for chat in chats {
-                        switch chat.value {
-                        case .success(let record):
-                            switch await dataService.downloadChatModel(for: record, currentUserId: userId, modificationDate: record.modificationDate) { // Downloads chat models
-                            case .success(let chatModel):
-                                result.append(chatModel)
-                            case .failure(let error):
-                                showAlert(title: "Error while getting chat model", message: error.localizedDescription)
-                            }
-                        case .failure(let error):
-                            showAlert(title: "Error while getting chats", message: error.localizedDescription)
-                        }
+        
+        if let savedChatRows = cacheManager.getFrom(cacheManager.chatRows, key: userId.recordName) {
+            await MainActor.run {
+                if savedChatRows.rows != chatsArray {
+                    withAnimation {
+                        chatsArray = savedChatRows.rows
                     }
-                    await MainActor.run(body: {
-                        withAnimation {
-                            chatsArray = result.sorted { f, s in // Sorts chats
-                                if let fdate = f.modificationDate,
-                                   let sdate = s.modificationDate {
-                                    return fdate > sdate
-                                } else {
-                                    return false
-                                }
-                            }
-                        }
-                    })
-                case .failure(let error):
-                    showAlert(title: "Error while getting chats", message: error.localizedDescription)
                 }
-            case .failure(let failure):
-                showAlert(title: "Error while getting chats IDs", message: failure.localizedDescription)
             }
+            switch await dataService.getChatsForUserWith(userId) {
+            case .success(let chats):
+                if chats != chatsArray {
+                    cacheManager.addTo(cacheManager.chatRows, key: userId.recordName, value: ChatRowModelsHolder(chats))
+                    await MainActor.run {
+                        chatsArray = chats
+                    }
+                }
+            case .failure(_):
+                break
+            }
+        } else {
+            await MainActor.run {
+                isLoading = true
+            }
+            switch await dataService.getChatsForUserWith(userId) {
+            case .success(let chats):
+                cacheManager.addTo(cacheManager.chatRows, key: userId.recordName, value: ChatRowModelsHolder(chats))
+                await MainActor.run {
+                    chatsArray = chats
+                    withAnimation {
+                        isLoading = false
+                    }
+                }
+            case .failure(let error):
+                await MainActor.run {
+                    isLoading = false
+                }
+                showAlert(title: "Error while fetching chats", message: error.localizedDescription)
+            }
+        }
+        
+        
+            
     }
     
     /// Shows alert

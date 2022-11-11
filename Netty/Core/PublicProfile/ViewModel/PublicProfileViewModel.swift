@@ -39,7 +39,9 @@ class PublicProfileViewModel: ObservableObject {
     
     @Published var following: [CKRecord.Reference]? = nil
 
-    
+    @Published var isFollowed: Bool? = nil
+    @Published var followButtonIsLoading: Bool = false
+
     @Published var postsNumber: String? = nil
         
     private let cacheManager = CacheManager.instance
@@ -55,6 +57,58 @@ class PublicProfileViewModel: ObservableObject {
         }
     }
     
+    func followButtonPressed() {
+        if let isFollowed = isFollowed {
+            if isFollowed {
+                Task {
+                    await MainActor.run {
+                        followButtonIsLoading = true
+                    }
+                    
+                    switch await UserInfoService.instance.unfollow(user, ownId: ownId) {
+                    case .success(_):
+                        await MainActor.run {
+                            self.isFollowed = false
+                            followers?.removeAll(where: { $0.recordID == ownId })
+                        }
+                    case .failure(let error):
+                        HapticManager.instance.notification(of: .error)
+                        showAlert(title: "Error while unfollowing", message: error.localizedDescription)
+                    }
+                    await MainActor.run {
+                        withAnimation {
+                            followButtonIsLoading = false
+                        }
+                    }
+                }
+                
+            } else {
+                Task {
+                    await MainActor.run {
+                        followButtonIsLoading = true
+                    }
+                    
+                    switch await UserInfoService.instance.follow(user, ownId: ownId) {
+                    case .success(_):
+                        await MainActor.run {
+                            self.isFollowed = true
+                            followers?.append(CKRecord.Reference(recordID: ownId, action: .none))
+                        }
+                    case .failure(let error):
+                        HapticManager.instance.notification(of: .error)
+                        showAlert(title: "Error while following", message: error.localizedDescription)
+                    }
+                    await MainActor.run {
+                        withAnimation {
+                            followButtonIsLoading = false
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+    
     private func addSubs() {
         $posts
             .sink(receiveValue: { self.postsNumber = "\($0.count)" })
@@ -67,8 +121,9 @@ class PublicProfileViewModel: ObservableObject {
                 firstName = savedUser.user.firstName
                 lastName = savedUser.user.lastName
                 nickname = savedUser.user.nickname
-                followers = savedUser.user.followers.filter({ $0.recordID != ownId })
-                following = savedUser.user.following.filter({ $0.recordID != ownId })
+                isFollowed = savedUser.user.followers.contains(where: { $0.recordID == ownId })
+                followers = savedUser.user.followers
+                following = savedUser.user.following
 
             }
             switch await UserInfoService.instance.fetchUserDataForUser(with: user.id) {
@@ -79,8 +134,9 @@ class PublicProfileViewModel: ObservableObject {
                         firstName = userModel.firstName
                         lastName = userModel.lastName
                         nickname = userModel.nickname
-                        followers = userModel.followers.filter({ $0.recordID != ownId })
-                        following = userModel.following.filter({ $0.recordID != ownId })
+                        isFollowed = userModel.followers.contains(where: { $0.recordID == ownId })
+                        followers = userModel.followers
+                        following = userModel.following
 
                     }
                 }
@@ -90,6 +146,7 @@ class PublicProfileViewModel: ObservableObject {
         } else {
             await MainActor.run {
                 userInfoIsLoading = true
+                followButtonIsLoading = true
             }
             
 
@@ -100,18 +157,22 @@ class PublicProfileViewModel: ObservableObject {
                     firstName = userModel.firstName
                     lastName = userModel.lastName
                     nickname = userModel.nickname
-                    followers = userModel.followers.filter({ $0.recordID != ownId })
-                    following = userModel.following.filter({ $0.recordID != ownId })
+                    isFollowed = userModel.followers.contains(where: { $0.recordID == ownId })
+                    followers = userModel.followers
+                    following = userModel.following
 
                     userInfoIsLoading = false
+                    followButtonIsLoading = false
                 }
             case .failure(let error):
                 showAlert(title: "Error while fetching user data", message: error.localizedDescription)
                 await MainActor.run {
                     userInfoIsLoading = false
+                    followButtonIsLoading = false
                 }
             }
-        }    }
+        }
+    }
     
     private func getUserPosts() async {
         

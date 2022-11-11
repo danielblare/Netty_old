@@ -5,7 +5,7 @@
 //  Created by Danny on 10/31/22.
 //
 
-import Foundation
+import SwiftUI
 
 
 enum EmailButtonText: String {
@@ -14,6 +14,26 @@ enum EmailButtonText: String {
     case verified = ""
 }
 
+struct FollowButtonModifier: ViewModifier {
+    
+    let isFollowed: Bool
+        
+    func body(content: Content) -> some View {
+        if isFollowed {
+            content
+                .buttonStyle(.bordered)
+        } else {
+            content
+                .buttonStyle(.borderedProminent)
+        }
+    }
+}
+
+extension View {
+    func followButtonStyle(isFollowed: Bool) -> some View {
+        modifier(FollowButtonModifier(isFollowed: isFollowed))
+    }
+}
 
 enum PasswordWarningMessage: String {
     case short = "Enter at least 8 symbols"

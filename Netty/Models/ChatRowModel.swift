@@ -16,3 +16,11 @@ struct ChatRowModel: Identifiable, Hashable, Equatable {
     let lastMessage: String?
     let modificationDate: Date?
 }
+
+class ChatRowModelsHolder {
+    let rows: [ChatRowModel]
+    
+    init(_ rows: [ChatRowModel]) {
+        self.rows = rows
+    }
+}

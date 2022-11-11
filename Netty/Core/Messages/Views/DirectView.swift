@@ -29,23 +29,24 @@ struct DirectView: View {
         NavigationView {
             GeometryReader { geo in
                 ZStack {
-                    if vm.chatsArray.isEmpty && !vm.isLoading { // No messages
+                    if !vm.isLoading {
                         
-                        noChatsView
-                        
-                    } else if !vm.chatsArray.isEmpty {
-                        
-                        List(searchResults) { chat in
-                        NavigationLink(value: UserModelHolderWithDestination(destination: .chat, userModel: chat.user)) {
-                                chatRowView(for: chat, with: geo)
-                                    .swipeActions {
-                                        getSwipeActionsFor(chat)
-                                    }
+                        if vm.chatsArray.isEmpty {
+                            noChatsView
+                        } else {
+                            List(searchResults) { chat in
+                            NavigationLink(value: UserModelHolderWithDestination(destination: .chat, userModel: chat.user)) {
+                                    chatRowView(for: chat, with: geo)
+                                        .swipeActions {
+                                            getSwipeActionsFor(chat)
+                                        }
+                                }
                             }
+                            
+                            .listStyle(.inset)
+                            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic))
+
                         }
-                        
-                        .listStyle(.inset)
-                        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic))
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -161,7 +162,6 @@ struct DirectView: View {
                     Text("Tap to reload")
                 } icon: {
                     Image(systemName: "arrow.clockwise")
-                        .rotationEffect(vm.isRefreshing ? Angle(degrees: 360) : Angle(degrees: 0))
                 }
             }
         }

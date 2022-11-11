@@ -46,6 +46,16 @@ actor UserInfoService {
                                     
                                     CKContainer.default().publicCloudDatabase.save(userToFollow) { returnedRecord, error in
                                         if returnedRecord != nil {
+                                            if let cacheValue = CacheManager.instance.getFrom(CacheManager.instance.userData, key: ownId.recordName) {
+                                                var following = cacheValue.user.following
+                                                following.insert(CKRecord.Reference(recordID: user.id, action: .none), at: 0)
+                                                CacheManager.instance.addTo(CacheManager.instance.userData, key: ownId.recordName, value: UserModelHolder(UserModel(id: cacheValue.user.id, firstName: cacheValue.user.firstName, lastName: cacheValue.user.lastName, nickname: cacheValue.user.nickname, followers: cacheValue.user.followers, following: following)))
+                                            }
+                                            if let cacheValue = CacheManager.instance.getFrom(CacheManager.instance.userData, key: user.id.recordName) {
+                                                var followers = cacheValue.user.followers
+                                                followers.insert(CKRecord.Reference(recordID: ownId, action: .none), at: 0)
+                                                CacheManager.instance.addTo(CacheManager.instance.userData, key: user.id.recordName, value: UserModelHolder(UserModel(id: cacheValue.user.id, firstName: cacheValue.user.firstName, lastName: cacheValue.user.lastName, nickname: cacheValue.user.nickname, followers: followers, following: cacheValue.user.following)))
+                                            }
                                             continuation.resume(returning: .success(()))
                                         } else {
                                             CKContainer.default().publicCloudDatabase.save(oldUser) { _, _ in }
@@ -100,6 +110,16 @@ actor UserInfoService {
                                         
                                         CKContainer.default().publicCloudDatabase.save(userToFollow) { returnedRecord, error in
                                             if returnedRecord != nil {
+                                                if let cacheValue = CacheManager.instance.getFrom(CacheManager.instance.userData, key: ownId.recordName) {
+                                                    var following = cacheValue.user.following
+                                                    following.removeAll(where: { $0.recordID == user.id })
+                                                    CacheManager.instance.addTo(CacheManager.instance.userData, key: ownId.recordName, value: UserModelHolder(UserModel(id: cacheValue.user.id, firstName: cacheValue.user.firstName, lastName: cacheValue.user.lastName, nickname: cacheValue.user.nickname, followers: cacheValue.user.followers, following: following)))
+                                                }
+                                                if let cacheValue = CacheManager.instance.getFrom(CacheManager.instance.userData, key: user.id.recordName) {
+                                                    var followers = cacheValue.user.followers
+                                                    followers.removeAll(where: { $0.recordID == ownId })
+                                                    CacheManager.instance.addTo(CacheManager.instance.userData, key: user.id.recordName, value: UserModelHolder(UserModel(id: cacheValue.user.id, firstName: cacheValue.user.firstName, lastName: cacheValue.user.lastName, nickname: cacheValue.user.nickname, followers: followers, following: cacheValue.user.following)))
+                                                }
                                                 continuation.resume(returning: .success(()))
                                             } else {
                                                 CKContainer.default().publicCloudDatabase.save(oldUser) { _, _ in }

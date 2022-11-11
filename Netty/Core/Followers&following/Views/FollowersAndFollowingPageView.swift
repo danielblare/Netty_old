@@ -25,7 +25,7 @@ struct FollowersAndFollowingPageView: View {
     
     var body: some View {
         ZStack {
-            if let users = vm.users {
+            if let users = vm.users?.filter({ $0.id != vm.ownId }) {
                 List(searchResults(users: users)) { user in
                     UserWithFollowButtonRowView(model: user, isFollowed: user.followers.contains(where: { $0.recordID == vm.ownId }), followFunc: vm.follow, unfollowFunc: vm.unfollow)
                 }

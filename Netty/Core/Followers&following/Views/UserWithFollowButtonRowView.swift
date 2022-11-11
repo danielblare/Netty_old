@@ -48,63 +48,13 @@ struct UserWithFollowButtonRowView: View {
                 Spacer(minLength: 0)
                 
                 
-                Button {
-                    if isFollowed {
-                        Task {
-                            await MainActor.run {
-                                isLoading = true
-                            }
-                            
-                            switch await unfollowFunc(model) {
-                            case .success(_):
-                                await MainActor.run {
-                                    isFollowed = false
-                                }
-                            case .failure(let error):
-                                HapticManager.instance.notification(of: .error)
-                                showAlert(title: "Error while unfollowing", message: error.localizedDescription)
-                            }
-                            await MainActor.run {
-                                withAnimation {
-                                    isLoading = false
-                                }
-                            }
-                        }
-
-                    } else {
-                        Task {
-                            await MainActor.run {
-                                isLoading = true
-                            }
-                            
-                            switch await followFunc(model) {
-                            case .success(_):
-                                await MainActor.run {
-                                    isFollowed = true
-                                }
-                            case .failure(let error):
-                                HapticManager.instance.notification(of: .error)
-                                showAlert(title: "Error while following", message: error.localizedDescription)
-                            }
-                            await MainActor.run {
-                                withAnimation {
-                                    isLoading = false
-                                }
-                            }
-                        }
-
-                    }
-                } label: {
-                    Text(isFollowed ? "Unfollow" : "Follow")
-                        .frame(minWidth: 67)
-                }
+                FollowButton
                 .overlay {
                     if isLoading {
                         ProgressView()
                     }
                 }
                 .disabled(isLoading)
-                .modifier(FollowButton(isFollowed: isFollowed))
                 .padding(.leading)
             }
         }
@@ -113,23 +63,60 @@ struct UserWithFollowButtonRowView: View {
         }
     }
     
-    struct FollowButton: ViewModifier {
-        
-        let isFollowed: Bool
-        
-        @Namespace private var namespace
-        
-        func body(content: Content) -> some View {
+    private var FollowButton: some View {
+        Button {
             if isFollowed {
-                content
-                    .buttonStyle(.bordered)
+                Task {
+                    await MainActor.run {
+                        isLoading = true
+                    }
+                    
+                    switch await unfollowFunc(model) {
+                    case .success(_):
+                        await MainActor.run {
+                            isFollowed = false
+                        }
+                    case .failure(let error):
+                        HapticManager.instance.notification(of: .error)
+                        showAlert(title: "Error while unfollowing", message: error.localizedDescription)
+                    }
+                    await MainActor.run {
+                        withAnimation {
+                            isLoading = false
+                        }
+                    }
+                }
+
             } else {
-                content
-                    .buttonStyle(.borderedProminent)
+                Task {
+                    await MainActor.run {
+                        isLoading = true
+                    }
+                    
+                    switch await followFunc(model) {
+                    case .success(_):
+                        await MainActor.run {
+                            isFollowed = true
+                        }
+                    case .failure(let error):
+                        HapticManager.instance.notification(of: .error)
+                        showAlert(title: "Error while following", message: error.localizedDescription)
+                    }
+                    await MainActor.run {
+                        withAnimation {
+                            isLoading = false
+                        }
+                    }
+                }
+
             }
+        } label: {
+            Text(isFollowed ? "Unfollow" : "Follow")
+                .frame(minWidth: 67)
         }
+        .followButtonStyle(isFollowed: isFollowed)
     }
-    
+        
     private func showAlert(title: String, message: String) {
         DispatchQueue.main.async {
             alertTitle = title

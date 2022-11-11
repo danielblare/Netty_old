@@ -195,7 +195,7 @@ actor ChatModelService {
     }
 
     
-    func getChatsIDsListForUser(with id: CKRecord.ID) async -> Result<[CKRecord.ID], Error> {
+    private func getChatsIDsListForUser(with id: CKRecord.ID) async -> Result<[CKRecord.ID], Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordID: id) { returnedUserRecord, error in
                 if let user = returnedUserRecord {
@@ -216,7 +216,42 @@ actor ChatModelService {
         }
     }
     
-    func getChats(with IDs: [CKRecord.ID]) async -> Result<([CKRecord.ID : Result<CKRecord, Error>]), Error> {
+    func getChatsForUserWith(_ id: CKRecord.ID) async -> Result<[ChatRowModel], Error> {
+        switch await getChatsIDsListForUser(with: id) { // Gets IDs for all chats of current user
+        case .success(let IDs):
+            switch await getChats(with: IDs) { // Fetches chats from IDs
+            case .success(let chats):
+                var result: [ChatRowModel] = []
+                for chat in chats {
+                    switch chat.value {
+                    case .success(let record):
+                        switch await downloadChatModel(for: record, currentUserId: id, modificationDate: record.modificationDate) { // Downloads chat models
+                        case .success(let chatModel):
+                            result.append(chatModel)
+                        case .failure(let error):
+                            return .failure(error)
+                        }
+                    case .failure(let error):
+                        return .failure(error)
+                    }
+                }
+                return .success(result.sorted { f, s in // Sorts chats
+                    if let fdate = f.modificationDate,
+                       let sdate = s.modificationDate {
+                        return fdate > sdate
+                    } else {
+                        return false
+                    }
+                })
+            case .failure(let error):
+                return .failure(error)
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+    
+    private func getChats(with IDs: [CKRecord.ID]) async -> Result<([CKRecord.ID : Result<CKRecord, Error>]), Error> {
         await withCheckedContinuation { continuation in
             CKContainer.default().publicCloudDatabase.fetch(withRecordIDs: IDs) { result in
                 switch result {
@@ -229,7 +264,7 @@ actor ChatModelService {
         }
     }
     
-    func downloadChatModel(for chatRecord: CKRecord, currentUserId: CKRecord.ID, modificationDate: Date?) async -> Result<ChatRowModel, Error> {
+    private func downloadChatModel(for chatRecord: CKRecord, currentUserId: CKRecord.ID, modificationDate: Date?) async -> Result<ChatRowModel, Error> {
         await withCheckedContinuation { continuation in
             if let participantsArray = chatRecord[.participantsRecordField] as? [CKRecord.Reference],
                let otherParticipant = participantsArray.first(where: { $0.recordID != currentUserId }) {

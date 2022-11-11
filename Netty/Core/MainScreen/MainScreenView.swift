@@ -7,9 +7,14 @@
 
 import SwiftUI
 import CloudKit
+import Combine
 
 class MainScreenViewModel: ObservableObject {
-    @Published var path: NavigationPath = NavigationPath()
+    @Published var path: NavigationPath
+    
+    init() {
+        path = NavigationPath()
+    }
 } 
 
 struct MainScreenView: View {
