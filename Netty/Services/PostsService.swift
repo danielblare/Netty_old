@@ -80,7 +80,10 @@ actor PostsService {
     
     func getPostsForUsersWith(_ refs: [CKRecord.Reference], from: NSDate, to: NSDate) async -> Result<[PostModel], Error> {
         await withCheckedContinuation { continuation in
-            
+            if refs.isEmpty {
+                continuation.resume(returning: .success([]))
+                return
+            }
             let refPredicate = NSPredicate(format: "%K IN %@", String.ownerRecordField, refs)
             let datePredicate = NSPredicate(format: "creationDate >= %@ && creationDate <= %@", from, to)
             let predicate = NSCompoundPredicate(type: .and, subpredicates: [refPredicate, datePredicate])
@@ -116,7 +119,7 @@ actor PostsService {
     func addPostForUserWith(_ id: CKRecord.ID, image: UIImage) async -> Result<PostModel, Error> {
         await withCheckedContinuation { continuation in
             let newPost = CKRecord(recordType: .postsRecordType)
-            let owner = CKRecord.Reference.init(recordID: id, action: .none)
+            let owner = CKRecord.Reference.init(recordID: id, action: .deleteSelf)
             if let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathExtension("post.jpg"),
                let data = image.jpegData(compressionQuality: 1) {
                 do {

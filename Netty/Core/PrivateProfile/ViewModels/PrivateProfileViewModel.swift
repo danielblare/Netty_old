@@ -177,6 +177,7 @@ class PrivateProfileViewModel: ObservableObject {
                     withAnimation {
                         posts.insert(postModel, at: 0)
                     }
+                    cacheManager.addTo(cacheManager.posts, key: "\(userId.recordName)", value: PostModelsHolder(posts))
                 }
             case .failure(let error):
                 showAlert(title: "Error uploading new post", message: error.localizedDescription)

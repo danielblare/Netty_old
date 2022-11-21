@@ -15,7 +15,7 @@ class HomeViewModel: ObservableObject {
     @Published var showAlert: Bool = false
     var alertMessage: String = ""
     
-    private let hourStep: Int = 12
+    private let hourStep: Int = 24
     private var hoursForPosts: Int
     
     @Published var posts: [PostModel] = []
