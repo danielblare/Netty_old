@@ -9,4 +9,4 @@ An iOS social network with ability to create your account with all personal data
 * Async/await, actors
 * Combining UIKit with SwiftUI
 * JSON Data
-* Cache and File manages
+* Cache and File managers
