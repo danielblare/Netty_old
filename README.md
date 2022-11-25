@@ -1,5 +1,6 @@
 # Netty
-An iOS social network with ability to create your account with all personal data, change avatar, find and share info with others, messaging.
+An iOS social network with ability to create an account with personal data, send messages, upload photos, follow others.
+
 # What I learned
 * Core data
 * CloudKit
