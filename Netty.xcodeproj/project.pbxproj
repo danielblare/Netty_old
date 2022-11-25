@@ -387,6 +387,13 @@
 			path = AvatarImageView;
 			sourceTree = "<group>";
 		};
+		BBE1B7D929310DD000313D32 /* Preview */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Preview;
+			sourceTree = "<group>";
+		};
 		BBE36D1A28D34C6B00AC1DF9 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -401,6 +408,7 @@
 			isa = PBXGroup;
 			children = (
 				BB34BAC528848C6E00636BE5 /* Netty.entitlements */,
+				BBE1B7D929310DD000313D32 /* Preview */,
 				BBE72A902882CE0600CBDEAD /* Netty */,
 				BBE72A952882CE0800CBDEAD /* Assets.xcassets */,
 				BBE72A8F2882CE0600CBDEAD /* Products */,

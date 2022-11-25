@@ -128,9 +128,11 @@ actor PostsService {
                     newPost[.imageRecordField] = asset
                 } catch {
                     continuation.resume(returning: .failure(error))
+                    return
                 }
             } else {
                 continuation.resume(returning: .failure(CustomError.errorWhileConvertingImage))
+                return
             }
             newPost[.ownerRecordField] = owner
             CKContainer.default().publicCloudDatabase.save(newPost) { returnedPost, error in

@@ -207,7 +207,7 @@ class SignUpViewModel: ObservableObject {
         newUser[.loggedInDeviceRecordField] = ""
         
         let result = await CloudKitManager.instance.saveRecordToPublicDatabase(newUser)
-        await MainActor.run(body: {
+        await MainActor.run {
             creatingAccountIsLoading = false
             switch result {
             case .success(let returnedRecord):
@@ -223,7 +223,7 @@ class SignUpViewModel: ObservableObject {
             case .failure(let error):
                 showAlert(title: "Error while creating an account", message: error.localizedDescription)
             }
-        })
+        }
     }
     
     /// Performs actions if confirm button pressed
