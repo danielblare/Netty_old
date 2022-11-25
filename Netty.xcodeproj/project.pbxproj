@@ -131,10 +131,10 @@
 		BBCD2B4528D2645F00C7E32A /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
 		BBCD2B4728D2646A00C7E32A /* ProfileImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageViewModel.swift; sourceTree = "<group>"; };
 		BBDBBB602885B9E8004BFEF8 /* EmailSendManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailSendManager.swift; sourceTree = "<group>"; };
-		BBE1B7DA293110E200313D32 /* profile.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = profile.gif; sourceTree = "<group>"; };
-		BBE1B7DB293110E200313D32 /* messaging.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = messaging.gif; sourceTree = "<group>"; };
-		BBE1B7DC293110E200313D32 /* following.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = following.gif; sourceTree = "<group>"; };
-		BBE1B7DD293110E200313D32 /* signUp.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = signUp.gif; sourceTree = "<group>"; };
+		BBE1B7DE29311BA700313D32 /* signUp.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = signUp.gif; sourceTree = "<group>"; };
+		BBE1B7DF29311BA700313D32 /* following.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = following.gif; sourceTree = "<group>"; };
+		BBE1B7E029311BA800313D32 /* messaging.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = messaging.gif; sourceTree = "<group>"; };
+		BBE1B7E129311BA800313D32 /* profile.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = profile.gif; sourceTree = "<group>"; };
 		BBE36D1828D346A200AC1DF9 /* UIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreen.swift; sourceTree = "<group>"; };
 		BBE72A8E2882CE0600CBDEAD /* Netty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Netty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBE72A912882CE0600CBDEAD /* NettyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NettyApp.swift; sourceTree = "<group>"; };
@@ -394,10 +394,10 @@
 		BBE1B7D929310DD000313D32 /* Preview */ = {
 			isa = PBXGroup;
 			children = (
-				BBE1B7DC293110E200313D32 /* following.gif */,
-				BBE1B7DB293110E200313D32 /* messaging.gif */,
-				BBE1B7DA293110E200313D32 /* profile.gif */,
-				BBE1B7DD293110E200313D32 /* signUp.gif */,
+				BBE1B7DF29311BA700313D32 /* following.gif */,
+				BBE1B7E029311BA800313D32 /* messaging.gif */,
+				BBE1B7E129311BA800313D32 /* profile.gif */,
+				BBE1B7DE29311BA700313D32 /* signUp.gif */,
 			);
 			path = Preview;
 			sourceTree = "<group>";
